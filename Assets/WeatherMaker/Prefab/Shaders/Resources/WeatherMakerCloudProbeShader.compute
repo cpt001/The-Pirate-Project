@@ -1,0 +1,81 @@
+﻿// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSMain
+
+struct CloudProbeInput
+{
+	float4 Source;
+	float4 Target;
+};
+
+// Create a RenderTexture with enableRandomWrite flag and set it with cs.SetTexture
+RWStructuredBuffer<CloudProbeInput> probe;
+
+#define WEATHER_MAKER_ENABLE_TEXTURE_DEFINES
+#define WEATHER_MAKER_COMPUTE_SHADER
+
+#include "../WeatherMakerCloudShaderInclude.cginc"
+#include "../WeatherMakerCloudVolumetricSamplingShaderInclude.cginc"
+
+#define RAY_SAMPLE_COUNT 64
+#define INV_RAY_SAMPLE_COUNT (1.0 / float(RAY_SAMPLE_COUNT))
+#define MIN_PROBE_STEP_LENGTH 10.0
+
+[numthreads(4,1,1)]
+void CSMain(uint3 id : SV_DispatchThreadID)
+{
+	CloudProbeInput i = probe[id.x];
+	float3 start = i.Source;
+	float3 end = i.Target;
+	float3 offset = lerp(float3Zero, WEATHER_MAKER_CAMERA_POS, _WeatherMakerWeatherMapTextureStatic); // hack, one place we don't use WEATHER_MAKER_CLOUD_CAMERA_POS
+	start -= offset;
+	end -= offset;
+	float heightFrac = GetCloudHeightFractionForPoint(start);
+	float4 weatherData = CloudVolumetricSampleWeather(start, heightFrac, 0.0);
+	float sourceDensity = SampleCloudDensity(start, weatherData, heightFrac, 0.0, true);
+	probe[id.x].Source.x = sourceDensity;
+
+	UNITY_BRANCH
+	if (start.x == end.x && start.y == end.y && start.z == end.z)
+	{
+		probe[id.x].Source.y = 0.0;
+		probe[id.x].Source.z = 0.0;
+	}
+	else
+	{
+		float3 startPos;
+		float3 endPos;
+		float rayLength;
+		float distanceToSphere;
+		float3 startPos2;
+		float3 endPos2;
+		float rayLength2;
+		float distanceToSphere2;
+		float3 rayDir = normalize(end - start);
+		float rayDensity = 0.0;
+
+		uint iterations = SetupCloudRaymarch(start, rayDir, distance(start, end), 0.0,
+			startPos, endPos, rayLength, distanceToSphere, startPos2, endPos2, rayLength2, distanceToSphere2);
+
+		float marchStep = max(MIN_PROBE_STEP_LENGTH, rayLength * INV_RAY_SAMPLE_COUNT);
+		heightFrac = GetCloudHeightFractionForPoint(end);
+		weatherData = CloudVolumetricSampleWeather(end, heightFrac, 0.0);
+		float destDensity = SampleCloudDensity(end, weatherData, heightFrac, 0.0, true);
+		probe[id.x].Source.y = destDensity;
+
+		float3 marchDir = marchStep * rayDir;
+		float3 marchPos = startPos;
+
+		UNITY_LOOP
+		for (uint i = 0; i < RAY_SAMPLE_COUNT; i++)
+		{
+			marchPos += marchDir;
+			heightFrac = GetCloudHeightFractionForPoint(marchPos);
+			weatherData = CloudVolumetricSampleWeather(marchPos, heightFrac, 0.0);
+			rayDensity += SampleCloudDensity(marchPos, weatherData, heightFrac, 0.0, true);
+		}
+
+		rayDensity += ComputeFlatCloudDensityBetween(rayDir, start, end);
+
+		probe[id.x].Source.z = rayDensity;
+	}
+}

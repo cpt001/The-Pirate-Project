@@ -1,0 +1,1040 @@
+﻿7.3.0 (2022-06-12)
+- Fix issue with downsampling and artifacts around edges of geometry.
+- Fix issue with sky depth fade being too sharp.
+- Dithering and ray-march tweaks.
+
+7.2.4 (2022-06-01)
+- Reduce GC of cloud probe and screen space shadow command buffers.
+- Fix null/off by one error in weather profiles.
+- Adjust dithering of most cloud profiles.
+- Fix sky depth fade property to work again.
+
+7.2.3 (2022-05-24)
+- Attempt to fix Android build error.
+
+7.2.2 (2022-04-26)
+- Fix an issue where dynamically loading the player would not render properly.
+
+7.2.1 (2022-04-11)
+- Fix issue with sound zone index out of range exception.
+
+7.2.0 (2022-03-12)
+- You can specify a cloud seed in the full screen cloud script to get identical clouds. Leave as -1 for random clouds.
+
+7.1.4 (2022-03-09)
+- Add example of a launcher scene, main menu and game scene.
+- Add launcher setup to readme.txt file.
+
+7.1.3 (2022-03-03)
+- Fix performance regression on Metal.
+- Move auto clone profile option to WeatherMakerScript.
+- Reduce grainy clouds.
+
+7.1.2 (2022-02-16)
+- Fix moon not showing when horizon scaling was disabled.
+- Fix weather map mask not working.
+- Fix clouds not showing up in some cases.
+
+7.1.1 (2021-12-12)
+- Big performance boost for volumetric clouds (~15-20%).
+- Fix popping of clouds in some cases at high parts of the clouds.
+- Fix a bug with cloud coverage, density and type curves not animating smoothly.
+- Add a cloud detail curve to control intensity of cloud details at various heights.
+- Add option to disable scale moon at horizon.
+
+7.1.0 (2021-12-08)
+- Post processing options for weather map and clouds.
+- Example post processing scene with a vortex and oil painting filter (DemoSceneCloudPostProcessing).
+
+7.0.5 (2021-11-28)
+- Command buffer fix.
+- URP now requires URP 12 and Unity 2021.2.
+- Fix clouds not showing in flythrough.
+
+7.0.4 (2021-11-10)
+- Fix for reflections and reflection probe cameras.
+- Fix bug with clouds not showing in final build.
+- Allow curves to control cloud coverage, density and type over height.
+
+7.0.3 (2021-10-20)
+- Fixes for URP and overlay cameras.
+- Fixes for lightning artifacts and rapid transitions in volumetric clouds.
+
+7.0.2 (2021-10-14)
+- Fixes for VR.
+- Allow atmospheric fog for VR.
+- Fix artifacts during lightning.
+
+7.0.1 (2021-10-02)
+- Hotfix for allowed cameras.
+- Fix bugs with flag cloud lighting.
+
+7.0.0 (2021-09-27)
+- Please backup your project before updating.
+- For best results, remove Weather Maker entirely and then re-download.
+- Further improvements to cloud noise, lighting and performance.
+- Add cloud roundness parameter for improved shaping.
+- Add cloud ambient shadow for improved ambient lighting.
+- Remove some and refactor other cloud profile properties.
+- Auto set URP render pipeline asset to current quality level.
+
+6.1.3 (2021-08-11)
+- Improve clouds sharpness and overall appearance.
+
+6.1.2 (2021-08-08)
+- Improve cloud performance.
+- Improve horizon fade.
+- Improve fly-through profile and performance.
+- Adjust cloud noise textures.
+
+6.1.1 (2021-08-04)
+- Fix for black sky on Android and iOS.
+- Fix bugs with fly through clouds.
+- Fix banding in clouds.
+
+6.1.0 (2021-07-27)
+- Revamp of cloud profiles to improve variation and general appearance.
+
+6.0.5 (2021-07-18)
+- Re-upload to fix corrupted package.
+
+6.0.4 (2021-07-08)
+- Improve cloud variety via noise scaling and negation.
+- Fix moon rendering and moon glow offset.
+- Fix URP compile issue.
+
+6.0.3 (2021-07-03)
+- Wet Stuff integration, see bottom of Readme.txt for instructions.
+
+6.0.2 (2021-07-02)
+- Fixes for VR.
+
+6.0.1 (2021-06-29)
+- Fixes for fog box and sphere.
+
+6.0.0 (2021-06-12)
+- Re-enable URP! Unity 2021 and URP 11 or newer required.
+
+5.9.18 (2021-05-08)
+- Min version is now Unity 2018.4.
+- Fixes for reflection/cubemap volumetric cloud shadows. Still not perfect but getting there...
+
+5.9.17 (2021-04-14)
+- Fix for cloud rendering on latest Unity versions.
+
+5.9.16 (2021-01-22)
+- Refresh version.
+- Fix shadow strength on precipitation materials, was corrupted by previous Unity update.
+
+5.9.15 (2020-07-11)
+- Disable crunch compression, was causing crashes/freezing on newer Unity versions.
+
+5.9.14 (2020-06-17)
+- Fix issue with moonlight, fog and light absorption not playing nice together.
+- Attempted fixes for iOS pink material.
+
+5.9.13 (2020-06-02)
+- Improve fly-through scene depth handling, appearance and performance.
+- Fix issue with origin offset and fog lights.
+- Added airplane 3D model in fly-through scene from https://www.turbosquid.com/FullPreview/Index.cfm/ID/711530.
+
+5.9.12 (2020-05-24)
+- Fix additional issues with cloud edges and cloud noisy areas.
+- Fixes for VR (test with HTC Vive).
+- Change sky sphere, sky plane, sun and moon to use meshes from the project. This should reduce the size of your scenes.
+
+5.9.11 (2020-05-05)
+- Add sdf (signed distance field) option for volumetric cloud profile. Enabling for sparser covered clouds can improve performance by a good amount as it speeds up ray-marching.
+- Adjust cloud depth buffer handling to be better. This is a work in progress, I'd love any feedback. The demo scene fly through now has a giant pillar that intersects the clouds for testing.
+- Allow a box collider to be assign to the full screen cloud script. If assigned, the weather map and clouds will be re-mapped to this box using the x and z min/max coordinates of the box. The height of the clouds will still be determined by the cloud profile.
+- Add option to performance profile to cast shadows using cascade shadow map on the volumetric clouds. See demo scene fly through for an example. Set shadow distance to 32768.
+- Fix issue with cloud depth buffer edges.
+- Fix outline on clouds and geometry.
+- Fix night stars not showing in the default sky profiles.
+
+5.9.10 (2020-04-29)
+- Reduce shader keyword count.
+- Support 3 quality levels.
+- Add option in performance profile to show cloud shadows in reflection cameras.
+- Auto blur cloud temporal reprojection if fov changes and AutoSetTemporalReprojectionBlendMode is true.
+- Fix fog light absorption to apply properly, and change it to a gradient where center is sun at horizon. Use the alpha channel.
+- Add global ambient multiplier gradient to full screen cloud script. Use this if your clouds get too bright when modifying ambient settings.
+
+5.9.9 (2020-02-19)
+- Add texture support to sky box material (sphere texture mode only). Any textures set on the sky sphere profile will apply even if the sky sphere is not being used and instead you are relying on camera skybox clear flags and lighting material.
+
+5.9.8 (2020-02-01)
+- Enable Unity 2019.3+ URP support. for Unity 2019.2, only LWRP is supported.
+- Change slightly how switching to URP/LWRP works. There is no longer a package to import, but instead you must manually assign render features to your profile. Instructions will show up when you click Weather Maker -> Enable Universal/Lightweight Pipeline.
+- Change precision of sky and atmosphere textures to attempt to fix issues on certain mobile devices.
+- Fix Oculus Quest shader errors when building for device.
+
+5.9.7 (2019-01-18)
+- Add option to WeatherMakerScript to auto-set the performance profile from Unity quality level, default of true.
+
+5.9.6 (2019-12-16)
+- Fix issue / workaround LWRP render order issue. Sky and clouds should render in correct order now!
+- Improve sandstorm transition appearance.
+- Add WeatherMakerIsPlayerScript, this allows you to override the IsPlayer and IsLocalPlayer methods. Add this script to your player objects that have a trigger collider.
+
+5.9.5 (2019-12-04)
+- Fix mirror networking compile error.
+- Fix Vegetation Studio Pro compile error.
+
+5.9.4 (2019-10-20)
+- Add option to set sky sphere ground color based on time of day. You can set the ground color gradient to all transparent (0 alpha) to disable this feature.
+
+5.9.3 (2019-09-22)
+- Add vegetation studio pro extension to sync rain/snow/wind to vegetation studio pro biomes.
+
+5.9.2 (2019-09-14)
+- Fix issue with depth buffer not being generated for reflection cameras.
+
+5.9.1 (2019-09-05)
+- MegaSplat integration, add WeatherMakerExtensionMegaSplatScript to a game object in your scene (Component -> WeatherMaker -> Extensions).
+- MicroSplat integration, add WeatherMakerExtensionMicroSplatScript to a game object in your scene (Component -> WeatherMaker -> Extensions).
+
+5.9.0 (2019-09-02)
+- *IMPORTANT* Please remove Weather Maker entirely before upgrading, project folder structure has changed.
+- *Breaking* Replace NightAdd and NightTint colors on day/night profile with gradients which can now tint based on sun position, where center of gradients is sun at horizon. The sky transitions from night, dawn/dusk and day look much better now.
+- *Breaking* Moved most files out of resource folders. All resource files are now added to a new resource container scriptable object. See WeatherMakerScript -> ResourceContainer. This should make it much easier to manage resources for Desktop, Mobile, etc.
+- Added DemoScene2DNo3D. Use this demo scene and the WeatherMakerPrefab2DNo3D for 2D games that do not need weather zones or weather profiles and do not need the 3D rendering pieces of Weather Maker. This will save you a ton of space on your 2D game builds.
+- Add meteor shower prefab. Place this at the root of your scene for a nice meteor shower effect. Meteor shower profile allows easy customization. You can also modify the particle system directly.
+- Enable crunch texture compression for most Weather Maker textures. This should reduce your final build size by a good amount. This will cause a one-time slower build, but then the crunch textures should be cached from then on.
+
+5.8.9 (2019-08-30)
+- Add floating point origin support. See WeatherMakerCommandBufferManagerScript and Readme.txt for details.
+
+5.8.8 (2019-08-28)
+- Fix headless null ref error on atmosphere profile
+- Null zone shader fixes for metal
+- Add shadow multiplier power property to full screen fog profile
+
+5.8.7 (2019-08-12)
+- Add day night cycle date/time setter from WorldManager API date/time.
+- Fix strange shader build errors in VR builds.
+- Fix black sky for certain date / times.
+
+5.8.6 (2019-08-07)
+- Fix issue with blur mode temporal reprojection jittering each frame.
+
+5.8.5 (2019-07-30)
+- Fix an issue where fog would sometimes not turn back on after being turned off.
+- Fix rendering issues in VR.
+- Fix jitter during some cloud transitions.
+
+5.8.4 (2019-07-25)
+- Auto-detect RenderToCubemap and setup appropriate rendering. RenderToCubemap is only supported in the editor, it is not supported in builds to the actual device.
+
+5.8.3   (2019-07-17)
+- Fix clouds not rendering in metal. Remove support for OpenGL on MAC and iOS.
+- Fix atmospheric scattering in metal.
+- Fix null ref error in mirror networking and uMMORPG. You must run all instances with actual builds.
+- Fix material memory leak in command buffers.
+
+5.8.2 (2019-07-15)
+- VR fixes
+
+5.8.1 (2019-07-09)
+- Fix full screen snow. Revert prefab to default to get fixes.
+
+5.8.0 (2019-07-03)
+- BIG UPDATE! Backup your project first.
+- If you get any errors, delete and reimport Weather Maker and re-add the WeatherMakerPrefab.
+- Add a editor command to toggle LWRP on and off. Much easier to get in and out of LWRP now. Window -> Weather Maker -> Enable/Disable LWRP.
+- Add physically based atmospheric scattering solution from industry standard BSD licensed open source project. See Sky Sphere -> Sky Profile -> Atmosphere Profile. Not yet supported in VR.
+- Add atmosphere profile and attach to sky profile.
+- Improve fly-through and storm cloud appearance.
+- Option to blend sky sphere into scene, sky fade parameters are on the sky profile.
+- Add additional moon fade options to moon material.
+- Sky sphere, atmosphere, clouds and aurora borealis (northern lights) are all rendered in the full screen clouds script now which must not be deactivated.
+- Fix full screen snow in forward rendering. Deferred rendering is still highly recommended for full screen snow.
+- Fix and improve cloud and fog shadow interaction.
+- Fix fog too bright at night with moon.
+
+5.7.4 (2019-06-09)
+- Cloud temporal reprojection blur mode set to sharp by default. If lightning is showing, falls back to blur. Switches back to sharp when lightning disappears.
+- You can turn this auto-set cloud temporal reprojection blend mode feature off by setting AutoSetTemporalReprojectionBlendMode to false on the full screen cloud script.
+- Multiple command buffer and temporal reprojection bug fixes
+- Fix specular in water when directional light is blocked by clouds.
+
+5.7.3 (2019-06-06)
+- Fix for cloud probe with multiple cameras and/or scene view open.
+
+5.7.2 (2019-06-02)
+- Water and command buffers hot fix.
+- Fix null zones.
+
+5.7.1 (2019-05-30)
+- Add basic water to LWRP rendering. Refractions and fog interaction still has some issues to work out.
+- Improve cloud shadow performance by generating a lookup texture that can be used for fog, water and precipitation shaders.
+- Improve GC with command buffers and cloud probes by pooling buffers, requests and results.
+- Fog dir light shadows now include cloud shadows.
+- Fix scene view UI corruption by adding AllowSceneCamera to WeatherMakerScript. Default is false which fixes the screen corruption issue. I've sent a bug report to Unity.
+- Fix water reflection bug.
+- Add screen space shadow flip hack back for VR in Unity 2019.1+. I will remove this once they fix the uv.y value being upside down in VR.
+- Remove procedural preetham sky mode in preparation for physically based sky rendering.
+
+5.7.0   (2019-05-26)
+- Basic LWRP support. Precipitation, clouds, cloud shadows, fog, volumetric light should work fine. Water is not yet ported to LWRP.
+- Please import the WeatherMaker/Demo/LWRP/WeatherMakerLWRP.unitypackage for LWRP demo assets.
+- Unity 2019.1 or newer is required for LWRP support in Weather Maker.
+
+5.6.9 (2019-05-23)
+- Remove hack for Unity 2019 VR, Unity fixed the problem in Unity 2019.1.3.
+
+5.6.8 (2019-05-21)
+- Fix an issue with flat clouds causing outlines around geometry.
+- Add proper lens flare blocking. Flat and volumetric clouds now block the lens flare for the sun by default. Compute shaders required.
+
+5.6.7 (2019-05-18)
+- Fix WAPI compile error.
+- Maintain prefab link when adding from menu.
+- Add code and instructions to readme.txt for Crest Ocean integration.
+- Improve ocean water profile appearance.
+- Add auto-bounds option to water y depth script. Turn this off to manually tune the area sampled for depth and wave heights.
+
+5.6.6 (2019-05-14)
+- Improve VR performance.
+- Fix mirror script integration compile error.
+
+5.6.5 (2019-05-13)
+- Change volumetric cloud min/max height to be ranges for more randomization.
+- Add play maker integration for getting and setting both date and time along with weather profile by name.
+- Add events to WeatherMakerScript for weather profile change, weather zone change and year, month, day, hour, minute, second, day/night, dawn/dusk and sunrise/sunset.
+- Improve storm cloud profile appearance.
+
+5.6.4 (2019-05-10)
+- Add weather api demo scene using open weather map. This syncs weather maker profile to weather conditions from an API - see DemoSceneWeatherApi and WeatherMakerLocationWeatherScript for an example.
+- Improve additive scene loading.
+
+5.6.3 (2019-05-08)
+- Add option to full screen fog shafts to add in the frame buffer color with intensity and tint.
+- Optimize cloud shadows to not render for pixels that have a full screen space shadow already.
+- Allow controlling cloud shadow distance fade (see cloud shadow material).
+- HACK: Fix Unity 2019 VR rendering, work-around Unity 2019 bug that flips VR command buffers in some cases.
+- Fix editor mode selection not working or always selecting the weather maker prefab.
+- Fix fog full screen shafts and add performance profile option for shaft downsample scale.
+- Fix null zone to work without soft particles.
+
+5.6.2 (2019-05-03)
+- Reduce water texture samplers to 16, fixing issues on MAC and mobile.
+- Fix water corruption and display issues.
+- Add water caustics, foam and refraction to performance profiles.
+- Add overcast cloud and weather profiles.
+- Fix fog causing dir light scattering to show behind heavy clouds.
+- Fix cloud shadows to not show as much for flat clouds like cirrus.
+- Tweak moon to be less specular.
+- Tweak fly-through cloud profile to remove some artifacts at bottom of clouds.
+- Fix 2D sky.
+
+5.6.1 (2019-04-26)
+- Eliminate GC alloc of WeatherMakerShaderPropertiesScript.
+- Reduce GC alloc of access of gradient color keys.
+- Fix dithering and halo around storm clouds.
+
+5.6.0 (2019-04-24)
+- Volumetric cloud render performance improvements of 50-100%.
+- Improved cloud shadow appearance.
+- Added high detail cloud shadow texture to cloud shadow map material.
+- Dither and blur cloud dir light rays, reduce banding.
+- Improve appearance of volumetric heavy bright, heavy dark and storm cloud profiles.
+- Improve fog sun and moon shafts. You may need to increase the brightness on your full screen fog profiles as a result of shader changes.
+- Improve flat layer interactions with volumetric clouds.
+- Cloud noise editor now scales to window height.
+- Fix nested weather zones.
+- Fix VR performance regression.
+- Fix full screen fog.
+- Fix underwater mode not triggering.
+- Fix flat clouds not showing up when volumetric clouds are disabled.
+- Fix flat cloud transitions.
+
+5.5.1 (2019-04-16)
+- Improve cloud probe performance with gpu read async, on supported platforms.
+- Fix sky sphere and weather map material to not change all the time, making git use easier.
+- Code refactoring.
+
+5.5.0 (2019-04-13)
+- Cloud gradient heights (stratus, strato-cumuls, cumuls) can now be edited in real-time.
+- Add method to probe volumetric cloud density. Source only or raycast density can be obtained, see WeatherMakerCloudProbeScript.cs (requires compute shaders).
+- Fade cloud shadows near far plane.
+- Reduce sky ambient for clouds that are closer.
+- Add fog density gradient to fog profile to allow fog density multiplier based on time of day.
+- Vary cloud density and curl noise based on cloud type.
+- Add rolling storm performance profile and greatly improve look of rolling storm.
+- Improve cloud shadow appearance.
+- Improve fly-through cloud appearance.
+- Performance improvements.
+- Unity 2019 fixes.
+
+5.4.1 (2019-03-29)
+- Improve fly through clouds (nice whispy soft clouds).
+- Greatly improve performance of weather map noise generation. As a consequence, cloud scales have changed slightly. If you have custom profiles you may want to reduce your scales slightly.
+- Improve performance of weather map texture lookup.
+- Improve appearance of fantastic performance profile and clouds.
+- Null zones work in editor mode now.
+- Add IsPermanent to WeatherMakerScript. This calls DontDestroyOnLoad on the game object if true.
+- Add allow camera names partial to Weather Maker script, this lets camera names match even if the name is not an exact match.
+- Fix full screen fog sun shafts.
+- Fix bug with sphere null zone with animated texture puddles not working right.
+- Change WeatherMakerCelestialObjectScript 'Custom' mode to do nothing - if using that mode it is up to you to move the directional light. Removed custom position script field from WeatherMakerCelestialObjectScript.
+- Add LightMode property to WeatherMakerCelestialObject script, allows simple, default or custom light intensity.
+- Change weather map scalar to Vector3 to allow cloud profiles to stretch clouds (x,y are noise scalar, z is world pos scalar).
+
+5.4.0 (2019-03-22)
+- Clouds and fog can now be edited/tested in editor mode, just drag a profile in and configure it. No need to press play.
+- Increase cloud velocity by 10x. You can reduce your cloud noise velocities to slow down the clouds. This should make it match better with meters per second in the sky.
+- Fix import asset crash. Unfortunately I had to remove DemoSceneNetwork, it was the culprit, along with changing the asset title.
+- Improve volumetric cloud performance.
+- Remove Player and NetworkPlayer prefabs and replace with WeatherMakerPlayer and WeatherMakerNetworkPlayer prefabs, which are now in Assets/WeatherMaker/Prefab
+- Add Window -> Weather Maker -> Add Player, and Window -> Weather Maker -> Setup Post Processing menu items.
+- Add FogCloudShadowStrength property to fog profile for indoor fog that will not be reduced by volumetric cloud shadows.
+- Make weather more random in choosing a profile from a profile group.
+- Fix bug with sky sphere not following cameras.
+- Fix bug with cloud weather map jitter and multiple cameras and scene view.
+- Fix a bug setting the cloud profile before playing that would cause no clouds to show up.
+
+5.3.0 (2019-03-15)
+- Big update! If you see any issues, delete Weather Maker from your project and re-add.
+- Additional tweaks and fixes for Mirror networking.
+- Tested with uMMORPG with headless Linux server and multiple players.
+- Add cloud noise generator. This allows easy customization of the shape and detail texture for the clouds. Noise generation uses profiles for ease of use and extra cutomizability. Window -> WeatherMaker -> Cloud Noise Editor.
+- Add horizon multiplier to WeatherMakerCelestialObjectScript. This allows for brighter sunsets with clouds.
+- Fix an issue where multiple fog cubes and spheres would not display properly.
+- Fog cubes and spheres now correctly render in editor mode.
+- Water script no longer clones the material but instead uses material property blocks.
+- Add sky and aurora profile to weather profiles. If sky profile is null, existing sky profile will be used.
+- Improve fog appearance with heavier clouds.
+- Fix fog start depth being less than the end depth causing no fog to appear.
+- Expose additional aurora parameters in aurora profile.
+
+5.2.4 (2019-03-08)
+- 2D prefab now allows 3D volumetric clouds, sun and moon. See DemoScene2D for instructions.
+- 2D prefab now includes a 2D and 3D camera in the prefab. If you need to customize 2D movement with your own special camera, deactivate the 2D camera, duplicate it and make your own outside the prefab.
+- Light manager no longer requires that you add suns and moons manually. This is done automatically now. Any directional light with a WeatherMakerCelestialObject script becomes a sun or moon. Use the IsSun property to tell Weather Maker if it is a sun or moon.
+- Add shaft multiplier to WeatherMakerCelestialObjectScript. This allows you to brighten up fog and clouds shafts per directional light, especially for moons.
+- All moons cast shafts now if their shaft multiplier is greater than 0.
+- Start adding support for multiple suns. This is not ready yet, but is a work in progress.
+
+5.2.3 (2019-03-06)
+- Improve WAPI (World Manager API) support. Just drag WeatherMakerExtensionWorldManagerScript to a game object to enable.
+- Add fog end depth property to fog profile.
+- Improve aurora ray march and appearance.
+
+5.2.2 (2019-02-26)
+- Add option to use Unity fog in the full screen fog script. This will apply color, density and mode to Unity fog and ignore all other fog settings.
+- Fix outline showing around geometry like mountains and trees with volumetric clouds.
+
+5.2.1 (2019-02-25)
+- Mirror networking integration, replaces UNet. Things should work the same as before with UNet, only better.
+- Improve cloud appearance/fade when interacting with mountains, etc.
+- Add fog gradient color to fog profile for color based on sun position.
+- Add night power property to sky plane and sky sphere, to allow the night to come in faster.
+- Add night dusk multiplier to allow the night sky to be visible over dawn/dusk colors.
+
+5.2.0 (2019-02-15)
+- Add aurora borealis / northern lights. See tutorial in readme.txt for details. This took over 60 hours, I hope you all like it :)
+
+5.1.0 (2019-02-11)
+- Big speed boost for cloud sun / god rays.
+- Add ray march optimization parameters for volumetric clouds. Please watch the new tutorial in the readme.txt file.
+- Cloud performance boost from ray march optimization parameters.
+- Improve moon light appearance for clouds.
+- Additional fly through improvements. Still trying to fix horizon when in clouds or near clouds.
+
+5.0.2 (2019-02-03)
+- Support null zone sphere collider (in addition to box collider which is already supported).
+- Add fog start depth property to fog profile.
+- Fix cloud fly through above cloud artifacts.
+- Improve flat cloud appearance and add scatter multiplier and horizon fade to flat cloud profile.
+
+5.0.1 (2019-01-15)
+- Tweak how Weather Maker shadow strength works for water and precipitation to be more in-line with how shadow strength works on directional lights.
+- Add directional light and cloud shadows to precipitation.
+- Fix fog shadows and light, especially in deferred rendering.
+- Fix deferred rendering in VR.
+- Raise bias on sun and moon shadows to help reduce artifacts.
+- Remove sun shadow strength gradient from day night cycle profile. Light intensity reduction alone is sufficient as sun drops below horizon.
+- Begin refactor to support scriptable render pipelines. This will all be internal and should not impact any interface/API into Weather Maker.
+- Null zone culling and strength parameter.
+- Fix precipitation not showing on Unity 2018.3.
+- Bug fixes of course!
+
+5.0.0 (2019-01-02)
+- BIG UPDATE! Please backup your project and remove Weather Maker before updating.
+- *IMPORTANT* Unity 2018.3 crashes when opening Weather Maker on MAC OS X. Please use an earlier Unity version until Unity fixes this bug.
+- Volumetric Clouds! Beautiful, 3D clouds are now in Weather Maker! It's been a long several months and lots of late nights but they are finally ready. Please view the tutorial video in readme.txt to learn all about them.
+- Weather Maker now uses screen space shadows for overlay effects (full screen snow). If your platform cannot support screen space shadows, then the snow overlay will not have shadows. Volumetric clouds cast screen space shadows.
+- Added new performance profiles, this matches up with Unity quality settings. Available on root of prefab in WeatherMakerScript.
+- Depth aware and alpha aware blur and up-scale for clouds and fog.
+- Temporal reprojection for clouds and volumetric fog/lights to spread rendering over multiple frames, greatly enhancing performance.
+- Improve performance by using integers for all shader properties instead of strings.
+- Add min/max slider property drawer for all range fields.
+- Add new better looking lake water material and profile for smaller, stiller bodies of water.
+- Precipitation now receives shadows from primary directional light shadow if per pixel lighting setting is on.
+- Exact frustum culling for water to avoid reflection rendering when water does not intersect the camera frustum.
+- The built in moon casts shadows by default now.
+- Remove dependencies on standard assets, no need to import them now.
+- Fixes / improvements for 2D lightning. Revert your 2D prefab to get the correct lightning settings for 2D.
+- Fix sun light color gradient option to actually change the sun color.
+- Fix moon to not show stars behind at dawn/dusk.
+- Remove water forward base+forward add pass. Too much code to maintain. One pass all light option is the only option now for water.
+- Unity 2017.4 latest patch or newer required. Dropped support for older Unity versions.
+- Improved dithering/banding reduction of lights in fog, especially at night.
+- Improved volumetric fog spot light performance.
+- Remove noise mask for flat clouds, texture sampler slots were needed for volumetric clouds. May add in the future if I figure out how to stay under 17 samplers.
+- DX9 no longer supported. Shader target 3.5+ required for all shaders in Weather Maker.
+
+4.3.2 (2018-10-09)
+- Add WeatherVolumeModifier property to audio manager to allow controlling the weather sound volumes separately from the ambient sound volumes.
+- Add tesselated water materials for more detailed waves, at a cost of some performance. Tesselated water properties are at bottom of material properties for water.
+- Add displacement options for tesselated water. Non-tesselated water will not have displacement options.
+
+4.3.1 (2018-10-05)
+- Add rotate axis option to sky sphere profile to allow rotation with day/night cycle. Only works with procedural sky modes.
+- Add night sky tint and add color to day night profile.
+- Move directional light intensity and shadow multipliers to WeatherMakerLightManagerScript.
+
+4.3.0 (2018-10-02)
+- Add water profiles. These are set now on water script. Regular, ocean and blue profiles are provided.
+- Add wind affects wave option to water profile.
+- Use water height depth texture for fade param and wave reduction (smaller waves at the shores). See readme.txt water section for details.
+- Add water null zone and boat example to water scene.
+- Tweak ocean appearance, add surface texture option to water material.
+
+4.2.1 (2018-09-26)
+- Better water ocean appearance.
+- Fix water prefab to use correct dampening and null zone settings.
+
+4.2.0 (2018-09-25)
+- Add foam and waves back to water. See water section of readme.txt for details.
+- Add simplified water fade option. Inv fade x is depth fade, Inv fade y is normal fade, Inv fade z is reflection strength, Inv fade w is reserved for future use.
+- Fix fog sphere and box to better handle increased fog density.
+- Add fog factor multiplier to fog profile. This can help get really dense fog even in small fog volumes.
+- Added dampening zone script with lightning light reduction. This combines and replaces all other dampening scripts which have been deleted. WeatherMakerNullZoneClosed prefab has this built in, or you can use WeatherMakerDampeningZone prefab.
+
+4.1.1 (2018-09-20)
+- Reduce shader keyword usage, this should have no performance impact as modern mobile and desktop GPU handle uniform branch basically for free.
+- Improve cloud light performance - only spot, point and area lights that intersect the cloud area are processed.
+
+4.1.0 (2018-09-13)
+- Water:
+ - Unified water shader and prefab. No more separate underwater and water objects and shaders. Revert your water prefabs to get the changes.
+ - Better appearance and performance for water fog.
+ - Reduce sun intensity as camera depth under water increases.
+ - Temporarily remove water foam, water waves and water volumetric light/shadows. There were performance and appearance issues. They will be back in a future update.
+- Precipitation:
+ - Tweak particle systems. Local space particle systems will now anchor slightly opposite of the wind direction to ensure more visibility of particles.
+ - Fix snow overlay covering water.
+ - Fix full screen fog not reflecting properly in water.
+ - Added optional grass shader overrides to use if full screen snow is covering the grass. See full screen snow section in readme.txt for details.
+- Other:
+ - Null reference error fixes.
+ - Callback on WeatherMakerThunderAndLightningScript for when thunder sounds plays (see WeatherMakerThunderAndLightningScript.Instance.ThunderSoundPlayed property).
+
+4.0.2 (2018-09-10)
+- Auto blend y param of water can be set to 0 for no fade, which results in much better refraction at the expense of sharper shorelines.
+- Water reflection now uses vertex lit pipeline for improved performance and stability.
+- Increase wind impact on snow particles.
+- Disable shore foam properties on water material. It was quite buggy anyway. Foam may return in a future version.
+- Handle orthographic size changes with 2D clouds.
+- Add lots of objects to water demo (thanks to catlikecoding.com for sharing).
+
+4.0.1 (2018-09-09)
+- Release follow up with bug fixes, including transition duration / hold fix for weather zone.
+- Null zones can have negative fade for special overlay handling. Hover over fade and read tooltip for details.
+
+4.0.0 (2018-09-07)
+*** BIG UPDATE - BACKUP YOUR PROJECT FIRST IF UPGRADING ***
+This release contains hundreds of hours of work from me. I really hope that you like it. I've tried my very best to make it awesome, performant and bug free.
+Please contact me if you have issues with this update and I will try to help, or I can give you the previous version (3.9.2). This new version has a few breaking API / prefab changes.
+You will need to delete the WeatherMaker folder and re-download the asset as several scripts have been renamed and/or moved.
+You will need to delete and re-add any Weather Maker prefabs or water prefabs to your scenes.
+Please watch the tutorial videos that explains everything about the new setup (see readme.txt).
+- General:
+ - Added weather zones. Apply a weather profile or profile group to a collider including nested weather zone support. Please view the tutorial video to learn what this means, and what other prefab changes there are.
+ - Make the configuration panel a separate prefab, no longer in WeatherMakerPrefab.
+ - Vegetation studio integration: use a weather zone on a vegetation studio area, control snow/rain amount (see WeatherMakerWeatherZoneScript.cs).
+ - Remove the weather manager entirely. This is replaced by weather zones and weather profile groups, which have all the capability the weather manager used to have. I've created several weather profile groups for you.
+ - Changed weather profiles to use fog, precipitation, wind, audio and lightning profiles. You will need to update any weather profiles to use this new mechanism.
+ - Remove IgnoreCameras. Add AllowCameras property to WeatherMakerScript. This will default to main camera, but you can add more. This script is on the root of the prefab. Every other camera is ignored by default.
+ - Extensions must be manually added now, they are not automatic anymore. There were too many people running into problems with them getting added automatically.
+ - Drop gles 2.0 support. You must use gles 3.0 or newer.
+- Null Zones
+ - Null fog zone is now just null zone - because they can block more than fog.
+ - Null zones can now block precipitation, fog, snow overlay and under-water fog. This can be changed via mask property on null fog zone script. Requires soft particles enabled to block precipitation.
+ - Null zones can be rotated now, great for indoor environments and buildings.
+- Sky:
+ - Refactor celestial objects to be a separate script that you attach to your directional light. See the Sun and Moon under WeatherMakerPrefab. Celestial object references for light are now on the light manager.
+- Fog:
+ - Fog profile now animates smoothly between all fog profile settings - even noise.
+ - Fog box and fog sphere volumetric light only processes lights that intersect the bounds, greatly improving performance.
+- Audio:
+ - Move audio settings to new audio manager class.
+ - Audio settings are now optionally part of the weather profile. This allows you to replace the global sounds that follow the player depending on the type of weather.
+- Water:
+ - Improve underwater appearance and capabilities, including adding a fog box to underwater area.
+ - Add underwater ambient and splash sound.
+ - Add sound zone dampener to under water area.
+ - You will need to add post processing volume to underwater object for now with depth of field and color grading. I will add this once I drop support for older Unity versions.
+- Wind:
+ - Tweak wind to behave better with precipitation and trees. More realistic velocities, turbulence, etc.
+
+3.9.2 (2018-08-14)
+- Fix for VR multi view (oculus, etc.).
+
+3.9.1 (2018-08-10)
+- Improve fog performance on VR and mobile.
+- General shader refactor and performance improvement.
+- Particle systems are now on the ignore raycast layer.
+- Water reflection now ignores the ignore raycast layer by default.
+
+3.9.0 (2018-08-08)
+- Improve box fog edges and appearance, add smoothing options in fog profile.
+- Improve sphere fog edges and appearance, add smoothing options in fog profile.
+- Continue progress on vegetation studio integration and weather zones. Not ready yet :)
+
+3.8.9 (2018-08-02)
+- Single pass instancing support.
+- Fix broken prefabs due to Unity corruption issue.
+
+3.8.8 (2018-08-01)
+- Improve storm cloud appearance in gamma color space.
+
+3.8.7 (2018-07-26)
+- Progress on underwater rendering. Looking up through the water surface now renders properly. Better underwater effects and integration with post processing volumes coming in a future version.
+- Enable / disable of sounds zones after play has started correctly resumes and pauses respectively.
+- Water + fog bug fixes.
+
+3.8.6 (2018-07-18)
+- Add a way to use camera.RenderToCubemap properly with full screen fog and clouds. Set WeatherMakerCommandBufferManagerScript.CubemapCamera, call RenderToCubemap, then set WeatherMakerCommandBufferManagerScript.CubemapCamera to null.
+
+3.8.5 (2018-06-30)
+- Fix rain puddles to fade in and out if geometry exists above the camera.
+- Fix rain puddles moving with the camera.
+
+3.8.4 (2018-06-21)
+- Enable fog for DX9 profiles.
+
+3.8.3 (2018-06-20)
+- Fix a bug with multiple cameras and cameras in the ignore camera list causing certain effects to not render properly.
+- Animated rain texture now checks depth texture and will not render if depth is too far away.
+  
+3.8.2 (2018-06-11)
+- Fix null ref error in light manager.
+- If z offset of rain puddles is 0, they will not rotate with the camera.
+- More underwater progress. You can now go under water and look up through the surface. Still working on full underwater effects.
+
+3.8.1 (2018-05-23)
+- Add minimum cloud cover to block lens flare option in full screen clouds script.
+- Temporarily remove clouds shadows. They were quite broken, and will come back in a future release.
+- Start work on underwater mode. This is not ready yet.
+- The water clear prefab has been deleted and replaced. You may need to replace your existing water prefabs.
+- Fix null ref error with some of the demo lights.
+
+3.8.0 (2018-05-19)
+- Add water caustics option. See water material caustics section.
+- Forward base + add pass water bug fixes.
+
+3.7.1 (2018-05-13)
+- Fix compile error with areaSize property.
+- Add sparkle options to water material, organize material properties into groups.
+- Add option to day/night profile to leave Unity ambient mode as is.
+
+3.7.0 (2018-05-10)
+- Support real-time volumetric and water area lights (SM 4.0+).
+- Low light improvements.
+- Constant and linear fog handle shadow strength better.
+
+3.6.1 (2018-05-07)
+- More VR water fixes. Reflections now work properly in single and multi pass modes.
+- Improve volumetric shadow appearance on water surface. Skip volumetric shadows when sample count is 0.
+
+3.6.0 (2018-05-03)
+- Add volumetric sun shadows to water. See water material clear for volumetric properties.
+- Additional light fixes, especially spot lights.
+- Add dithering to water, helps a lot in low light scenes.
+- VR water fixes.
+- Fog box and sphere light fixes.
+
+3.5.0 (2018-04-30)
+- Added water prefabs. See DemoSceneWater. Now you can have water without needing a 3rd party asset. I will continue to work on improving the water over time. I'd love any feedback.
+- Add IsFirstPerson property to 3d precipitation. If true, it anchors around each camera. If false, it anchors to wherever you place it in the scene.
+- Made new precipitation zone prefabs, see Readme.txt for details.
+- Fixes for moon and ambient lighting, clouds, etc. Ambient modes now set Unity trilight ambient mode properly.
+- Improve snow overlay lighting appearance.
+- Add option to light manager to have a duration that must elapse before light state is upadated for each camera, saving CPU usage.
+- Improve full screen fog sun ray dither.
+
+3.4.3 (2018-04-09)
+- Improve night lighting with moon and clouds.
+- Start work on water prefab and demo scene, not ready yet :)
+- Fix issue with sound and particle systems with deactivating the prefab and reactivating.
+
+3.4.2 (2018-04-05)
+- Add lightning intensity flicker and more glow to give lightning a more organic feel.
+
+3.4.1 (2018-04-04)
+- Fix default shadow bias in Weather Maker prefab sun directional light.
+- Make rain explosion even more visible.
+- Tweak cloud appearance.
+- Remove standard assets -> environment from the package which was accidently included.
+
+3.4.0 (2018-04-02)
+- Fix clouds, fog and snow overlay to render in reflection probes properly. Please let me know if you see any glitches with this, it required several nasty hacks.
+- Add "IgnoreReflectionProbes" boolean property to Weather Maker script.
+- Add intensity damper zone script and prefab. Use this to reduce or eliminate weather effects like particles, wind, lightning, etc. as the player moves indoors, in caves, etc.
+- Fix bug where velocities were applied multiple times per frame for clouds, fog and snow overlay.
+
+3.3.8 (2018-03-29)
+- Fix jarring transition as sun goes below horizon.
+- Update getting started to include light settings.
+- Fix y offset multiplier for sky sphere to actually move the mesh.
+
+3.3.7 (2018-03-27)
+- Increase visibility of rain splash particles.
+- Change rain puddle visibility default intensity to 0.5 instead of 1.
+
+3.3.6 (2018-03-14)
+- Add CloudShadowStrength and CloudLightStrength to cloud profile. Use these to change how clouds affect shadow and light intensities.
+
+3.3.5 (2018-03-12)
+- Always show explosion particle system upon particle death in 2D mode. This works even with collision turned off.
+
+3.3.4 (2018-03-10)
+- Make sky preetham lighting last a little longer as sun gets near horizon.
+
+3.3.3 (2018-01-19)
+- Fix sphere and box fog prefabs.
+- Make max fog factor work again.
+
+3.3.2 (2018-01-03)
+- Support single pass stereo instancing (right eye is not rendered in single pass instanced on VR - this is a bug in Unity that I have sent them and they are working on fixing).
+- Add fog emission color and fog light absorption parameters.
+- Bug fixes.
+
+3.3.1 (2017-12-06)
+- Moved configuration canvas script off root of prefab and into configuration canvas. Added helpful note about where day / night cycle and time of day settings live.
+- Fix hail appearance.
+
+3.3.0 (2017-12-04)
+- Additional sky option, procedural preetham model (see https://threejs.org/examples/webgl_shaders_sky.html)
+- Improved precipitation appearance for rain and sleet, and for collision effect.
+- Added rain and sleet ripples effect. This works even without collision turned on. See readme file for more details.
+
+3.2.1 (2017-11-28)
+- Fix GAIA extension compile error.
+- Add directional light intensity and shadow strength multipliers to cloud profile.
+
+3.2.0 (2017-11-24)
+- Refactor fog into scriptable object profiles.
+- Be aware that Weather Maker will clone or create default profiles at runtime (except clouds). If you need to edit a profile at runtime, drag it into the inspector from the project view during play mode.
+- Refactor cloud profiles into separate layers. Each cloud profile now references 4 layer profiles. This makes it super easy to mix and match individual cloud layers. You will need to backup your project before updating as any custom cloud profiles will be lost and you'll need to duplicate them with individual layers.
+- Refactor day night cycle into scriptable object profiles.
+- Improve fog appearance as it animates in, especially at low densities.
+- Add more ambient options to day night cycle profile, including ambient gradients and sky, ground and equator gradients options.
+- Remove some GC found after a long deep profile session.
+- Weather manager can now use properties as well as fields.
+- World manager integration.
+
+3.1.0 (2017-11-17)
+- Add full screen snow effect, see WeatherMakerFullScreenOverlayScript.cs, under precipitation in the prefab. Deactivated by default, you can activate to set snow settings! More overlays are planned for future (i.e. wetness).
+- Remove Cameras property and add IgnoreCameras property to Weather Maker script. All cameras, including temporary, water, 360 video, etc. cameras will render with Weather Maker unless in the IgnoreCameras list.
+- Fix bugs with sound zones and ambient sounds.
+- Fix bugs with screen space sun shafts in fog shader.
+- VR bug fixes and camera viewport bug fixes.
+- Restructured WeatherMakerPrefab hierarchy by removing some root level categories.
+- Change sun intensity and shadow strength calculation in day / night cycle manager script to use gradient, where center of gradient is sun at horizon.
+- Move sky sphere parameters to new sky profile scriptable objects, makes it much easier to customize different skies.
+
+3.0.2 (2017-11-05)
+- Ambient lighting fixes for clouds, especially storm clouds.
+- Added ambient light multiplier to cloud profile script.
+- Added cloud gradient color to cloud script.
+- Day/night cycle script has a new option to specify whether the ambient colors in the script modify the Unity ambient light settings.
+- Day/night cycle script: replace day, dawn/dusk and night fade degrees with a gradient. See the DayDawnDuskNightGradient property for more details.
+
+3.0.1 (2017-10-30)
+- Bug fixes, AQUAS water integration improvements.
+
+3.0.0 (2017-10-25)
+- Added cloud profiles with up to 4 layers.
+- Added sky sphere and sky plane exposure property.
+- Fixed DX9 render bugs.
+- Added secondary particle system for snow to increase snow flake counts and give more blizzard feel.
+- Moved everything in the Prefab/Prefab folder up one level, no sense having two Prefab folders.
+
+2.9.1 (2017-09-11)
+- Fix compile error when deleting demo folder.
+- Added sky gradient to sky sphere and sky plane. This will let you tweak the sky as the sun nears the horizon. Center of gradient is sun at horizon.
+- Added an additional day ambient sound.
+
+2.9.0 (2017-09-09)
+- Added Unity network support. Weather profiles and Weather manager are supported.
+- Restructured the prefab into logical child object groups. The prefab continues to grow and this helps keep it organized.
+
+2.8.0 (2017-09-07)
+- Added weather profiles. A simpler way to create different sets of weather.
+
+2.7.7 (2017-09-02)
+- Fix sound dampening.
+- Fix GAIA integration.
+
+2.7.6 (2017-08-28)
+- Added ambient sound to day night script.
+
+2.7.5 (2017-08-23)
+- Full screen cloud and fog fixes.
+
+2.7.4 (2017-08-22)
+- Integrations compile error fixes.
+
+2.7.3 (2017-08-19)
+- Fix fog in build (i.e. Windows, MAC, etc.) using conflicting shader keywords with Unity engine fog.
+
+2.7.2 (2017-08-16)
+- Fix volumetric spotlight on metal renderer.
+- AQUAS water asset integration.
+
+2.7.1 (2017-08-12)
+- Fix billboard clouds in multi-pass VR and fix null ref exception.
+
+2.7.0 (2017-08-11)
+- Added full screen clouds script (3D only). This replaces sky sphere clouds and paves the way for volumetric and much nicer looking clouds.
+- 2D sun intensity reduces as night approaches.
+- Renamed CloudScript property of Weather Maker Script to LegacyCloudScript2D. The new CloudScript property now points to the new full screen cloud script. I'll do better 2D clouds in the future as well.
+
+2.6.1 (2017-08-01)
+- Fix lens flare blocker.
+- Fix fog lights starting at night.
+- Fix shadow projector to fade smoothly.
+- Added null fog zone prefab - cuts out fog in the full screen fog, up to 8 visible supported. Zones must not overlap. See DemoSceneNullZoneAndSoundDampler.
+- Added sound dampening prefabs. Great for reducing wind, rain and thunder sounds when in-doors. See DemoSceneNullZoneAndSoundDampler.
+
+2.6.0 (2017-07-29)
+- Added shadow option to fog script. Currently this only applies to the sun, but future light types may be added in the future.
+- Lighting settings no longer requires nulling out the skybox.
+- Added update interval do day/night script. Increase this if you are seeing shadow flickering, etc.
+- Full screen fog now supports multi-pass stereo rendering.
+- Moved ambient colors back into the day/night cycle script, which is a much better place for them.
+- Primary fall particle system for precipitations now use world space and circle emitters, great for VR.
+- Remove cloud only sky sphere option as this had introduced a whole lot of rendering bugs. I'll create a separate cloud effect in a future version.
+- 2D particle systems now honor the start speed and size ranges instead of averaging them.
+
+2.5.4 (2017-07-19)
+- Fix GPU stall from read pixels in cloud shadow projector script.
+- Vastly improve sun-shaft appearance and performance.
+- Uber Standard Shader Ultra integration.
+- RTP - Relief Terrain Pack integration.
+
+2.5.3 (2017-07-18)
+- Improve sun shaft performance and fix to work in VR.
+- Fixes for night sky twinkling.
+
+2.5.2 (2017-07-16)
+- Added sun shafts (beta). This needs to be improved but is a proof of concept. Not VR compatible yet.
+- Fixes and improvements for all particle systems.
+- Add lens flare blocker. When the lens flare is behind clouds, it will fade out as if it was behind opaque geometry.
+
+2.5.1 (2017-07-12)
+- Unity 2017 support.
+- Standardize dithering algorithm, add time as an input to dithering.
+
+2.5.0 (2017-07-07)
+- New 2D procedural sky options including night sky.
+- Day/night handles time zone for you, including an editor mode only web service.
+- Fixes for VR including volumetric light fixes.
+- Added null checks for basically everything so you can disable stuff in the prefab.
+  
+2.4.0 (2017-07-06)
+- CTS (Complete Terrain Shader) integration. See extensions object in the prefab. Requires CTS to be in your project.
+- Gaia Integration. Under the Gaia manager, GX tab, Digital Ruby, LLC -> Weather Maker are a number of useful options.
+- 2D mode has a SkyPlane object for procedural sky, see DemoScene2D. This is still a work in progress.
+- Fixes for 2D lightning.
+- More null camera checks.
+- Fix cloud shadow projector flickering.
+
+2.3.2 (2017-06-19)
+- Added procedural cloud only option to sky sphere. With this option, you use your own skybox. See DemoSceneTransparentSkySphere for details.
+- Sky sphere, moon and sun render queues have been changed to go right before the transparent queue. This should vastly improved performance via depth buffer rejection of sky, moon and sun pixels, although performance was already still very good.
+- Fix ground lightning appearance.
+- The WindDirection property has been removed. The rotation of the Wind object now determines the wind direction (i.e. transform.forward).
+- Added max wind change direction property.
+- Added custom orbits to celestial objects (see WeatherMakerScript.cs, OrbitTypeCustomScript property).
+
+2.3.1 (2017-06-12)
+- Fix UWP builds.
+- Move light base intensity, base shadow strength and light color into the celestial object scripts in the Sun/Moons properties of WeatherMakerScript.
+
+2.3.0 (2017-06-01)
+- Fog now supports volumetric point & spot lights. Turn on EnableFogLights on the fog script to see this in action. Lights must be added to the light manager. See readme.txt for more info.
+- Refactor fog - it looks a lot better and scatters directional lights more realistically. Fog has proper 3D noise.
+- Storm cloud sharpness now uses the same value as other cloud types for performance.
+- Removed fog noise texture parameter as all fog uses a 3D noise texture now.
+- Removed fog noise height parameters as fog noise is now 3D.
+
+2.2.2 (2017-05-17)
+- Fix lens flare to hide when medium, heavy or storm clouds are showing
+- Fix rain not showing in demo scene
+
+2.2.1 (2017-05-11)
+- Fixes for: sharp cloud edges, dithering, linear color space cloud shadows, and sun shader
+- Added CloudLightAbsorption property to SkySphereScript. This produces grayer, better looking clouds.
+- Fix fog box prefab and add fog sphere prefab.
+
+2.2.0 (2017-05-05)
+- Added infrastructure for multiple suns. Only one sun is still supported currently. See the Suns array on WeatherMakerScript.Instance.
+- Added support for multiple moons. See the Moons array on WeatherMakerScript.Instance. Multiple moons are supported! Earth moon and mars are added by default. Mars is obviously bigger than it should be.
+- Sun and moons get slightly bigger at the horizon.
+- Multiple camera support. See DemoSceneMultipleCameras. Sky sphere, rain, etc. and full screen fog render against multiple cameras.
+- Moved the sky sun to it's own mesh renderer. This was needed to support multiple moons and multiple moon eclipses.
+
+2.1.0 (2017-04-26)
+- Clouds now cast shadows. See clouds section of Readme.txt for details.
+- Fix WebGL compile errors.
+
+2.0.3 (2017-04-20)
+- Code refactor - camera, sun and moon reference is now only done in WeatherMakerScript.cs.
+- Increase rain visibility in 3D
+
+2.0.2 (2017-04-17)
+- Fog affects sun shadow strength.
+- Added fog to rainy weather manager group.
+- Weather manager now automatically clears out precipitation intensity and fog density if it is not specified in the transition.
+- Refactor code.
+
+2.0.1 (2017-04-07)
+- Day night cycle actually uses the RotateYDegrees field now to orbit the sun and moon about the y axis.
+- Day night cycle runs in editor mode.
+
+2.0.0 (2017-04-01)
+- Added WeatherMakerWeatherManagerScript. This makes it easy and fun to create new climates and automated weather patterns. See readme.txt for more info.
+- Added Precipitation, Clouds and CloudChangeDuration fields to make it easier to create precipitation and clouds.
+- Refactor wind. WindIntensity is now used to set the wind speed. Max wind speed is the wind speed at intensity 1. Updated particle systems to better react to wind.
+
+1.9.6 (2017-03-08)
+- Sky sphere clouds show up in editor mode.
+
+1.9.5 (2017-03-03)
+- Moon is now a directional light.
+- Fix bugs with lightning forced visible and audio.
+
+1.9.4 (2017-03-01)
+- Expose all the internal sky sphere lighting parameters like atmosphere thickness, sky tint, etc.
+- Bug fixes for cloud lighting and sky sphere.
+- Moon scale is now a property on sky sphere script and is a percentage of the camera far plane.
+
+1.9.3 (2017-02-21)
+- Added cloud masking properties for better randomness and variety of clouds in the sky.
+- Added cloud emission color property.
+- Sky sphere correctly uses atmosphere thickness in night sky calculation.
+- Bug fixes for wind, add RandomizeWindDirection property to wind script.
+- Wind affects fog velocity, this can be turned off by setting FogVelocityMultiplier on wind script to 0.
+- Started work on weather manager for automated weather. This is not ready to use yet, but you may see some references to it if you are digging through the scripts.
+
+1.9.2 (2017-02-17)
+- Improved heavy clouds in Linear color space.
+- Added lightning callback for when bolts begin and end. See WeatherMakerScript.Instance.LightningBoltScript.LightningStartedCallback and WeatherMakerScript.Instance.LightningBoltScript.LightningEndedCallback.
+
+1.9.1 (2017-02-09)
+- Refactor Time of Day Day, Dawn/Dusk and Night Multiplier Code and fix bugs. WeatherMakerDayNightCycleManagerScript.cs now has all of these properties instead of the sky sphere.
+- Add option to WeatherMakerDayNightCycleManagerScript.cs for date to change as each day begins and ends.
+- Moon now illuminates clouds, with the fullness percent increasing the illumination exponentially
+- Fix bugs with the moon and time of day, lighting, etc.
+- Moon casts shadows and shows up during eclipse as black now.
+
+1.9.0 (2017-02-07)
+- Added Earths moon - please send me your feedback for improvement. Moon prefab is 3D only.
+- Clouds work better in linear color space.
+- Reduce dithering in linear color space.
+- Additional particle system performance tuning, especially with collisions in 3D mode.
+- Multiple misc. bug fixes.
+
+1.8.1 (2017-02-04)
+- Tweak sky sphere storm cloud appearance.
+- Added sharpness parameter to show clouds animated function.
+- Changed snow, sleet and rain collision particles to be a little smaller.
+- Blank demo scene now has proper skybox and lighting.
+- Added additional warnings and error messages.
+- Moved rain and sleet particles to vertical billboard using new Unity x,y,z sizing.
+
+1.8.0 (2017-01-31)
+- Vastly improve storm cloud performance. Storm clouds are integrated into the sky sphere now. See the configuration script for an example.
+- Old storm clouds are still available via CloudScript parameter on WeatherMakerScript.
+- Improved particle system performance.
+- Added sky sphere cloud density parameter. This increases the alpha (opaqueness) of the clouds.
+- Added density, whispiness and color to sky sphere show clouds animated function.
+
+1.7.4 (2017-01-24)
+- Ambient colors and intensity available in sky sphere script for day, dawn/dusk and night.
+
+1.7.3 (2017-01-15)
+- Full screen fog works in VR properly now with blur and/or downsampling.
+
+1.7.2 (2017-01-11)
+- Additional fixes for VR.
+
+1.7.1 (2017-01-06)
+- Fixed sound issue with wind.
+- Support VR for volumetric fog.
+- Fix performance issue with storm clouds.
+- Fix a bug where lightning lights didn't get removed from the light manager.
+- Remove cloud thickness parameter, as sun intensity reduction is now based on the cloud cover parameter.
+- EnablePerPixelLighting is now a property of WeatherMakerScript.
+- Improved sky sphere cloud appearance at horizon.
+
+1.7  (2017-01-05)
+- Add night sky star twinkling options.
+- Add RotateYDegrees parameter to day night cycle, useful if you want something besides an East/West cycle.
+- Sun dims slightly when heavy sky sphere clouds are created.
+- Sun shadows fade out when storm clouds are created.
+- Lightning bolt generation is now done in a background thread.
+- Refactored the wind component, making it easier to get or set the wind parameters.
+
+1.6  (2016-12-22)
+- Added procedural clouds to the sky sphere. They are lit up the same way as the sky. See readme.txt and sky sphere script for implementation details.
+- Configuration panel now has 5 types of cloud options: None, Light, Medium, Heavy, Storm.
+- Added a night speed to the day night script. Now you can make the night go faster or slower than the day easily.
+
+1.5.2 (2016-11-30)
+- Added dithering to particles to eliminate banding in low-light conditions.
+- Added secondary particle system option. Right now only rain uses this for a torrential rain effect. Other precipitation will get secondary particle systems soon.
+- Added mesh creation properties for particle systems for 3D mode. You can determine the near and far width and depth of the mesh the particles fall from if you desire.
+- Lots of bug fixes!
+
+1.5.1 (2016-11-28)
+- Added a prefab for volumetric fog cube. I'm still working on getting the noise just right, but it's a good start :)
+
+1.5.0 (2016-11-17)
+- Added full screen fog effect. This has lots of configuration options, so be sure to watch the tutorial video specified in the readme.txt file.
+- Moved weather maker prefabs into a prefab sub folder.
+- Fix banding in sky sphere in procedural modes.
+
+1.4.0 (2016-10-16)
+- Added procedural sky and procedural textured sky options to sky sphere, see details in the sky sphere section.
+- Added a sun option to sky sphere - high quality, fast or none, see details in the sky sphere section.
+
+1.3.0 (2016-9-24)
+- Change how time of day works - it is now a property (seconds) on the day night cycle script. Sun rotation is based on time of day instead of time of day being based off sun rotation now.
+- Added lat / lon, timezone and day/month/year properties to day night cycle for accurate sun positions and seasons. See "WeatherMakerDayNightCycleManagerScript.cs" for more details.
+- Small tweaks to make asset easier to jump right into.
+- Fade directional light in/out as it dips below or above the horizon.
+
+1.2.0 (2016-09-21)
+- Added a dawn / dusk texture and fade degrees to the sky sphere script.
+
+1.1.3 (2016-09-15)
+- Added a volume property to globally change the volume of all precipitation, wind and thunder sounds.
+
+1.1.2 (2016-09-08)
+- Fixes for particle emission : each precipitation has a new emission rate property that is multiplied by intensity.
+
+1.1.1 (2016-09-05)
+- Small bug fix to 2D particle collisions.
+- Toggle the configuration panel with Ctrl-`.
+
+1.1.0 (2016-09-01)
+- Added day / night cycle with time of day, and sun texture.
+
+1.0.0 (2016-08-21)
+- Initial Release.

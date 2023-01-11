@@ -1,0 +1,18 @@
+﻿#pragma kernel CSMain
+
+#include "UnityCG.cginc" 
+
+uniform sampler3D _Tex1;
+uniform sampler3D _Tex2;
+uniform float _Lerp;
+uniform float3 _Dimensions;
+RWTexture3D<float4> _Tex3;
+
+[numthreads(4, 4, 4)]
+void CSMain(uint3 id : SV_DispatchThreadID)
+{
+	float4 uv = float4((float(id.x) + 0.5) * _Dimensions.x, (float(id.y) + 0.5) * _Dimensions.y, (float(id.z) + 0.5) * _Dimensions.z, 0.0);
+	float4 samp1 = tex3Dlod(_Tex1, uv);
+	float4 samp2 = tex3Dlod(_Tex2, uv);
+	_Tex3[id.xyz] = lerp(samp1, samp2, _Lerp);
+}
