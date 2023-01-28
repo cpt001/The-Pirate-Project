@@ -1,21 +1,34 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using System.Linq;
 
 public class Structure : MonoBehaviour
 {
     private IslandController islandController;
 
+    [Header("Structure Setup")]
     private string buildingOwner;
     private string buildingName;
-    public List<string> buildingWorkers; //String 1 is name, string 2 should become task
+    [Tooltip("Structure does not have local residency, and is attached to a nearby structure for its workers")]
+    [SerializeField] private bool hasLinkedResidence;
+    [SerializeField] private Structure linkedStructure;
+    private int workerCount;
+    public List<PawnGeneration> masterWorkerList = new List<PawnGeneration>();
+    private List<PawnGeneration> shift1Workers; //String 1 is name, string 2 should become task
+    private List<PawnGeneration> shift2Workers; //String 1 is name, string 2 should become task
+    private List<PawnGeneration> shift3Workers; //String 1 is name, string 2 should become task
+    [SerializeField] private int buildingWorkerLimit;
     private bool isConstructionSite;    //Prevents requests from being made, unless they're construction related
 
     private bool canSellWaresToPlayer;
-    private bool isSpecialistIsland;        //Determines whether the building is a specialist on an island
+    private bool isSpecialistStructure;        //Determines whether the building is a specialist
     private bool storageBuilding;           //Determines whether the building idly contains extra resources from and for the island
     private bool producerBuilding = false;  //Determines whether the building can produce with no input
+    private int productionRangeMax = 20;
+    private int productionRangeMin = 10;
+    private int storageLimit;
     [SerializeField] private CargoSO emptyCargoObject;
 
     [SerializeField] private List<CargoSO> itemRequested;    //Items being requested by the structure
@@ -32,7 +45,7 @@ public class Structure : MonoBehaviour
 
     private enum TownStructure
     {
-        undefined,
+        undefined_structure,
 
         Apiary,     //Bee house         ||Req: Wood     ||Creates: Honey
         Apothecary, //Legal potions     ||Req: Roots, animal bones, water       ||Creates: Health potions, antivenoms
@@ -141,8 +154,8 @@ public class Structure : MonoBehaviour
     }
     [SerializeField] private SpecialistStructure specialistStructure;
 
-    [SerializeField] private TimeScalar timeKeeper;
-
+    private UnityAction dayUpdate;
+    private UnityAction updateWorkerCount;
 
     private void Awake()
     {
@@ -150,51 +163,90 @@ public class Structure : MonoBehaviour
         {
             islandController = GetComponentInParent<IslandController>();
         }
-        if(thisStructure != TownStructure.undefined && islandController != null)
+        if (thisStructure != TownStructure.undefined_structure && islandController != null)
         {
-            islandController.structureTracker.Add(this, null);  //This is a simple tracker that defines all the possible buildings on the island
+            //islandController.structureTracker.Add(this, null);  //This is a simple tracker that defines all the possible buildings on the island
             BuildingSetup();    //Create initial inventory, and request list
+            islandController.structureCheck.Add(this, false);
             //Populate workers
         }
-        else if ((thisStructure == TownStructure.undefined && fortStructure != FortStructure.Not_Fort) && islandController != null)
+        else if ((fortStructure != FortStructure.Not_Fort) && islandController != null)
         {
             Debug.Log("Fort structure");
             FortBuildingSetup();
         }
-        else if ((thisStructure == TownStructure.undefined && specialistStructure != SpecialistStructure.Not_Specialist) && islandController != null)
+        else if ((specialistStructure != SpecialistStructure.Not_Specialist) && islandController != null)
         {
-            Debug.Log("Specialist Structure");
+            //Debug.Log("Specialist structure");
+            producerBuilding = true;
         }
-        if (!timeKeeper)
-        {
-            timeKeeper = GameObject.Find("DemoLighting").GetComponent<TimeScalar>();
-        }
-
+        dayUpdate = new UnityAction(DayUpdate);
+        updateWorkerCount = new UnityAction(WorkerCountUpdate);
     }
 
-    private void FixedUpdate()
+    private void WorkerCountUpdate()
     {
-        if (timeKeeper.newDayTriggered)
+        if (buildingWorkerLimit > 0 && masterWorkerList.Count <= buildingWorkerLimit)
         {
-            DayUpdate();
+            Debug.Log(thisStructure + " worker limit is not zero; " + buildingWorkerLimit);
+            for (int i = 0; i < buildingWorkerLimit; i++)
+            {
+                Debug.Log("Called successfully");
+                if (islandController.unassignedWorkers.Count != 0 && islandController.unassignedWorkers[i] != null)
+                {
+                    masterWorkerList.Add(islandController.unassignedWorkers[i]);
+                    islandController.unassignedWorkers[i].workPlace = this;
+                    islandController.unassignedWorkers.RemoveAt(i);
+                }
+            }
+            workerCount = masterWorkerList.Count; //shift1Workers.Count + shift2Workers.Count + shift3Workers.Count;
+            if (workerCount >= buildingWorkerLimit)
+            {
+                {
+                    islandController.structureCheck[this] = true;
+                }
+            }
         }
+        else
+        {
+            //Debug.Log(thisStructure + " worker limit is 0!");
+        }
+    }
+
+    private void Update()
+    {
+        if (masterWorkerList.Count < 0)
+        {
+            Debug.Log(thisStructure + " has a non-zero pop");
+        }
+    }
+
+    private void OnEnable()
+    {
+        EventsManager.StartListening("NewDay", dayUpdate);
+        EventsManager.StartListening("PawnAddedToIsland", updateWorkerCount);
+    }
+    private void OnDisable()
+    {
+        EventsManager.StopListening("NewDay", dayUpdate);
     }
 
     private void DayUpdate()
     {
+        //Debug.Log("Update requested by structure: " + name);
         if (islandController != null)
         {
             if (!storageBuilding && !producerBuilding)  //Normal building, converts materials into other materials, or items.
             {
-                CommunicateRequestsToIslandController();
+                //CommunicateRequestsToIslandController();
                 UpdateInventoryStatus();    //Request
                 CraftNewMaterial();         //Creation/Conversion
 
             }
             if (producerBuilding)   //Creates raw materials
             {
-                producerBuilding = true;
                 CreateRawMaterial();
+
             }
             if (storageBuilding)    //Stores all types of materials
             {
@@ -203,7 +255,7 @@ public class Structure : MonoBehaviour
         }
     }
 
-    void CommunicateRequestsToIslandController()
+/*    void CommunicateRequestsToIslandController()
     {
         if (itemRequested.Count != 0)
         {
@@ -215,7 +267,7 @@ public class Structure : MonoBehaviour
                 }
             }
         }
-    }
+    }*/
 
     void UpdateInventoryStatus()
     {
@@ -268,17 +320,35 @@ public class Structure : MonoBehaviour
 
     void CreateRawMaterial()
     {
+        //Randomize amount per day.
+        //Add to list
+        //Debug.Log("Create raw called");
+        int resourcesProduced = Mathf.RoundToInt(Random.Range(productionRangeMin, productionRangeMax));
+        switch (specialistStructure)
+        {
+            case SpecialistStructure.Mineshaft:
+                {
+                    for (int i = 0; i < resourcesProduced; i++)
+                    {
+                        //Debug.Log("Ore added");
+                        var oreObject = emptyCargoObject;
+                        oreObject.cargoType = CargoSO.CargoType.Ore;
+                        currentStoreInventory.Add(oreObject);
 
+                    }
+                    break;
+                }
+        }
     }
 
 
     void BuildingSetup()
     {
-        if (!isSpecialistIsland)
+        if (!isSpecialistStructure)
         {
             switch (thisStructure)
             {
-                case TownStructure.undefined:
+                case TownStructure.undefined_structure:
                     {
                         if ((fortStructure == FortStructure.Not_Fort && specialistStructure == SpecialistStructure.Not_Specialist) 
                             || (fortStructure == FortStructure.Not_Fort || specialistStructure == SpecialistStructure.Not_Specialist))

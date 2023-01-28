@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Events;
 
 public class PawnGeneration : MonoBehaviour
 {
@@ -30,6 +31,7 @@ public class PawnGeneration : MonoBehaviour
     private bool hasPartner;
     public Dictionary<PawnGeneration, int> opinionMatrix;   //This won't appear in the inspector anyway, might as well keep it here -- Opinion of other pawns that have been met
     private int moneyOnHand;
+    private IslandController islandController = null;
 
     /// <summary>
     /// This section determines the unit's external gender, sexual preference, and time of day preference
@@ -44,6 +46,9 @@ public class PawnGeneration : MonoBehaviour
     public GenderPreference genderPrefs;                                            //Initialize default
     public enum TimePreference { NightOwl, EarlyRiser, Daybird, EveningDove };      //Preferred time of day to do activities + work
     public TimePreference timePreference;                                           //Randomize me per AI - 1-3 Night, 7-10 Day
+    private int sleepStartTime;
+    private enum WorkHours { First, Second, Grave };    //6p-2, 12p-8, 8p-4
+    private WorkHours workingHours;
     #endregion
 
     /// <summary>
@@ -53,7 +58,7 @@ public class PawnGeneration : MonoBehaviour
     #region
     public GameObject maleBody;
     public GameObject femaleBody;
-    public GameObject unitBody;
+    public GameObject unitBody = null;
     public EyeColor eyeColor;
     public enum EyeColor { Gray, Blue, Green, Brown, Red};
     private Color eyeColorToApply;
@@ -141,7 +146,7 @@ public class PawnGeneration : MonoBehaviour
     public float health = 100.0f;    //General stat, to be updated later
     public float moveSpeed; //How fast they move, ranged
     public int immuneSystem;  //How frequently they get sick -- 0 - 5 (Sickly, Susceptible, Normal, RarelySick, IronGuard)
-    public enum Sickness { Healthy, Sick, Medicated }     //Is the character sick? Healthy = 100%, Sick = 50%, Medicated = 75% of usual stats 
+    public enum Sickness { Healthy, Sick, Medicated, Bedridden }     //Is the character sick? Healthy = 100%, Sick = 50%, Medicated = 75% of usual stats 
     public Sickness isSick;
     #endregion
 
@@ -173,7 +178,6 @@ public class PawnGeneration : MonoBehaviour
     public FemaleBodyShape femBody;
     #endregion
 
-
     [Header("Stat Affectors")]
     #region
     public float will;          //The unit's motivation, and willingness to go outside their preferences
@@ -194,7 +198,8 @@ public class PawnGeneration : MonoBehaviour
     [Header("Navigation")]
     #region
     public NavMeshAgent agent;
-    //public Quarters homeQuarters;
+    public Structure homeStructure;
+    public Structure workPlace;
     public Transform goingTo;
     #endregion
 
@@ -214,244 +219,16 @@ public class PawnGeneration : MonoBehaviour
     public Personality personalityType;
     #endregion
 
+    #region AffectorVariables
+    private UnityAction hourlyUpdate;
+    private UnityAction dailyUpdate;
+    private int currentHourCount;
+    private int currentDayCount;
+    #endregion
+
     void GenerateNewPawn()
     {
-        #region Initialization [Gender, time, name]
-        characterName = "NullName"; //Name of the character
-        pawnGender = (Gender)Random.Range(0, 1);
-        genderPrefs = (GenderPreference)Random.Range(0, 2);
-        timePreference = (TimePreference)Random.Range(0, 1);
-        characterName = npcNamer.selectedName;
-                gameObject.name = "Pawn_" + npcNamer.selectedName + " [" + pawnGender + "]";
-        if (characterName == "NullName")
-        {
-            Debug.Log("Character has no name! " + gameObject);
-        }
-        #endregion
-        #region BodySetup
-        switch (pawnGender)
-        {
-            case Gender.Male:
-                {
-                    unitBody = maleBody;
-                    break;
-                }
-            case Gender.Female:
-                {
-                    unitBody = femaleBody;
-                    break;
-                }
 
-        }
-        transform.GetComponent<MeshRenderer>().enabled = false;
-        unitBody = Instantiate(unitBody, new Vector3(transform.position.x, transform.position.y - 1, transform.position.z), Quaternion.identity, transform);
-        #endregion
-        //Need to fix all the bloody RGBA to fit 0-1 color schemas -- Fixed with Color32 instead
-        #region EyeColor
-        eyeColor = (EyeColor)Random.Range(0, System.Enum.GetValues(typeof(EyeColor)).Length);
-        switch (eyeColor)
-        {
-            case EyeColor.Gray:
-                {
-                    eyeColorToApply = Color.gray;
-                    break;
-                }
-            case EyeColor.Blue:
-                {
-                    eyeColorToApply = Color.blue;
-                    break;
-                }
-            case EyeColor.Green:
-                {
-                    eyeColorToApply = Color.green;
-                    break;
-                }
-            case EyeColor.Brown:
-                {
-                    eyeColorToApply = new Color(0, 0.5f, 1, 0.6f);
-                    break;
-                }
-            case EyeColor.Red:
-                {
-                    eyeColorToApply = Color.red;
-                    break;
-                }
-        }
-        #endregion
-        #region HairColor
-        hairColor = (HairColor)Random.Range(0, System.Enum.GetValues(typeof(HairColor)).Length);
-        switch (hairColor)
-        {
-            case HairColor.White:
-                {
-                    hairColorToApply = Color.white;
-                    break;
-                }
-            case HairColor.Silver:
-                {
-                    hairColorToApply = new Color32(172, 170, 191, 1);
-                    break;
-                }
-            case HairColor.Blonde:
-                {
-                    hairColorToApply = new Color32(205, 184, 157, 1);
-                    break;
-                }
-            case HairColor.DirtyBlonde:
-                {
-                    hairColorToApply = new Color32(175, 129, 90, 1);
-                    break;
-                }
-            case HairColor.Auburn:
-                {
-                    hairColorToApply = new Color32(190, 91, 43, 1);
-                    break;
-                }
-            case HairColor.Brunette:
-                {
-                    hairColorToApply = new Color32(69, 41, 34, 1);
-                    break;
-                }
-            case HairColor.Dark:
-                {
-                    hairColorToApply = new Color32(56, 44, 58, 1);
-                    break;
-                }
-            case HairColor.Red:
-                {
-                    hairColorToApply = new Color32(147, 69, 37, 1);
-                    break;
-                }
-            case HairColor.Ginger:
-                {
-                    hairColorToApply = new Color32(158, 102, 60, 1);
-                    break;
-                }
-        }
-        #endregion
-        #region SkinColor
-        //skinColor = (SkinColor)Random.Range(0, System.Enum.GetValues(typeof(SkinColor)).Length);
-        //Move away from randomization, approach as a funnel system instead? -- 6 skin colors atm
-        //This implementation is sloppy, but it provides a nice result. Fuck it.
-        int rng1 = Random.Range(0, 100);
-        if (rng1 <= 70)
-        {
-            int rng2 = Random.Range(0, 100);
-            if (rng2 <= 50)
-            {
-                int rng3 = Random.Range(0, 100);
-                if (rng3 <= 40)
-                {
-                    int rng4 = Random.Range(0, 100);
-                    if (rng4 <= 30)
-                    {
-                        int rng5 = Random.Range(0, 100);
-                        if (rng5 <= 30)
-                        {
-                            skinColor = SkinColor.Albino;
-                        }
-                        else
-                        {
-                            skinColor = SkinColor.Black;
-                        }
-                    }
-                    else
-                    {
-                        skinColor = SkinColor.DarkBrown;
-                    }
-                }
-                else
-                {
-                    skinColor = SkinColor.Brown;
-                }
-            }
-            else
-            {
-                skinColor = SkinColor.Tan;
-            }
-        }
-        else
-        {
-            skinColor = SkinColor.White;    //70% bias
-        }
-        switch (skinColor)
-        {
-            case SkinColor.Albino:  //0.001
-                {
-                    skinColorToApply = Color.white;
-                    break;
-                }
-            case SkinColor.White:   //.30
-                {
-                    skinColorToApply = new Color32(153, 131, 103, 1);
-                    break;
-                }
-            case SkinColor.Tan:     //.20
-                {
-                    skinColorToApply = new Color32(251, 194, 125, 1);
-                    break;
-                }
-            case SkinColor.Brown:   //.20
-                {
-                    skinColorToApply = new Color32(143, 103, 63, 1);
-                    break;
-                }
-            case SkinColor.DarkBrown:   //.15
-                {
-                    skinColorToApply = new Color32(85, 51, 22, 1);
-                    break;
-                }
-            case SkinColor.Black:   //.15
-                {
-                    skinColorToApply = new Color32(44, 16, 17, 1);
-                    break;
-                }
-        }
-
-        foreach (Transform t in unitBody.transform)
-        {
-            if (t.GetComponent<Renderer>() != null)
-            {
-                if (t.GetComponent<Renderer>().material.name == "MainSkin" || t.GetComponent<Renderer>().material.name == "Genitals");
-                {
-                    //Debug.Log("Color applied");
-                    t.GetComponent<Renderer>().material.color = skinColorToApply;
-                }
-            }
-        }
-        #endregion
-        #region Hair and Eye Application
-        Transform hairTarget = unitBody.transform.Find("Hair");
-        hairTarget.GetComponent<Renderer>().material.color = hairColorToApply;
-        hairLength = (HairLength)Random.Range(0, System.Enum.GetValues(typeof(HairLength)).Length);
-        if (hairLength == HairLength.Bald)
-        {
-            if (pawnGender != Gender.Female)
-            {
-                hairTarget.gameObject.SetActive(false);
-            }
-            else
-            {
-                hairLength = HairLength.Buzz;
-            }
-        }
-        
-        foreach(Transform t in unitBody.transform)
-        {
-            //Debug.Log(t.name);
-            if (!heterochromatic_NYI)
-            {
-                if (t.name == "Eyeball")
-                {
-                    t.GetComponent<Renderer>().material.color = eyeColorToApply;
-                }
-            }
-            if (heterochromatic_NYI)
-            {
-                //Foreach loop for each eyeball
-            }
-        }
-        #endregion
         #region Opinion Matrix
         opinionMatrix = new Dictionary<PawnGeneration, int>();
         foreach (PawnGeneration go in FindObjectsOfType<PawnGeneration>())
@@ -539,25 +316,345 @@ public class PawnGeneration : MonoBehaviour
         forgivenessTolerance;    //If the relation quality, autofucks, sexfails, or really any stat drops too low, this is the amount of tolerance the AI will have before breaking up with MC
         #endregion
     }*/
-    void DayToDayIncrementals()
+    void SetBody()
     {
+        #region BodySetup
+        pawnGender = (Gender)Random.Range(0, 2);
+
+        switch (pawnGender)
+        {
+            case Gender.Male:
+                {
+                    unitBody = maleBody;
+                    npcNamer.GetRandomMaleName();
+                    break;
+                }
+            case Gender.Female:
+                {
+                    unitBody = femaleBody;
+                    npcNamer.GetRandomFemaleName();
+                    break;
+                }
+
+        }
+        transform.GetComponent<MeshRenderer>().enabled = false;
+        unitBody = Instantiate(unitBody, new Vector3(transform.position.x, transform.position.y - 1, transform.position.z), Quaternion.identity, transform);
+        #endregion
+    }
+    void DetermineUniqueCharacteristics()
+    {
+        #region Initialization [Gender, time, name]
+        characterName = "NullName"; //Name of the character
+        genderPrefs = (GenderPreference)Random.Range(0, 2);
+        characterName = npcNamer.selectedName;
+        gameObject.name = "Pawn_" + npcNamer.selectedName + " [" + pawnGender + "]";
+        if (characterName == "NullName")
+        {
+            Debug.Log("Character has no name! " + gameObject);
+        }
+        //Heterochromia determined here
+        #endregion
+    }
+    void SleepingHours()
+    {
+        timePreference = (TimePreference)Random.Range(0, 3);
+
+        switch (timePreference)
+        {
+            case TimePreference.NightOwl:   //10p-2p
+                {
+                    sleepStartTime = 14;
+                    break;
+                }
+            case TimePreference.EarlyRiser: //4a-8p
+                {
+                    sleepStartTime = 20;
+                    break;
+                }
+            case TimePreference.Daybird:    //6a - 10p
+                {
+                    sleepStartTime = 23;
+                    break;
+                }
+            case TimePreference.EveningDove:    //12p-4p
+                {
+                    sleepStartTime = 16;
+                    break;
+                }
+        }
+    }   //Needs updating with ranked choices
+    void WorkingHours()
+    {
+        if (timePreference != TimePreference.NightOwl)
+        {
+            workingHours = (WorkHours)Random.Range(0, 2);
+        }
+        else
+        {
+            workingHours = WorkHours.Grave;
+        }
+        //Debug.Log("Working hours: " + workingHours);
+    }
+    void DetermineSkinColor()
+    {
+        #region SkinColor
+        //skinColor = (SkinColor)Random.Range(0, System.Enum.GetValues(typeof(SkinColor)).Length);
+        //Move away from randomization, approach as a funnel system instead? -- 6 skin colors atm
+        //This implementation is sloppy, but it provides a nice result. Fuck it.
+        int rng1 = Random.Range(0, 100);
+        if (rng1 <= 40)
+        {
+            int rng2 = Random.Range(0, 100);
+            if (rng2 <= 30)
+            {
+                int rng3 = Random.Range(0, 100);
+                if (rng3 <= 20)
+                {
+                    int rng4 = Random.Range(0, 100);
+                    if (rng4 <= 15)
+                    {
+                        int rng5 = Random.Range(0, 100);
+                        if (rng5 <= 5)
+                        {
+                            skinColor = SkinColor.Albino;
+                        }
+                        else
+                        {
+                            skinColor = SkinColor.Black;
+                        }
+                    }
+                    else
+                    {
+                        skinColor = SkinColor.DarkBrown;
+                    }
+                }
+                else
+                {
+                    skinColor = SkinColor.Brown;
+                }
+            }
+            else
+            {
+                skinColor = SkinColor.Tan;
+            }
+        }
+        else
+        {
+            skinColor = SkinColor.White;    //70% bias
+        }
+        switch (skinColor)
+        {
+            case SkinColor.Albino:  //0.001
+                {
+                    skinColorToApply = Color.white;
+                    break;
+                }
+            case SkinColor.White:   //.30
+                {
+                    skinColorToApply = new Color32(153, 131, 103, 1);
+                    break;
+                }
+            case SkinColor.Tan:     //.20
+                {
+                    skinColorToApply = new Color32(251, 194, 125, 1);
+                    break;
+                }
+            case SkinColor.Brown:   //.20
+                {
+                    skinColorToApply = new Color32(143, 103, 63, 1);
+                    break;
+                }
+            case SkinColor.DarkBrown:   //.15
+                {
+                    skinColorToApply = new Color32(85, 51, 22, 1);
+                    break;
+                }
+            case SkinColor.Black:   //.15
+                {
+                    skinColorToApply = new Color32(44, 16, 17, 1);
+                    break;
+                }
+        }
+
+        foreach (Transform t in unitBody.transform)
+        {
+            if (t.GetComponent<Renderer>() != null)
+            {
+                //if (t.GetComponent<Renderer>().material.name == "MainSkin")   //Apparently redundant
+                {
+                    //Debug.Log("Color applied");
+                    t.GetComponent<Renderer>().material.color = skinColorToApply;
+                }
+            }
+        }
+        #endregion
+    }   //Needs bias based on island
+    void DetermineHair()    //Needs updating with ranked choices
+    {
+        #region HairColor
+        hairColor = (HairColor)Random.Range(0, System.Enum.GetValues(typeof(HairColor)).Length);
+        switch (hairColor)
+        {
+            case HairColor.White:
+                {
+                    hairColorToApply = Color.white;
+                    break;
+                }
+            case HairColor.Silver:
+                {
+                    hairColorToApply = new Color32(172, 170, 191, 1);
+                    break;
+                }
+            case HairColor.Blonde:
+                {
+                    hairColorToApply = new Color32(205, 184, 157, 1);
+                    break;
+                }
+            case HairColor.DirtyBlonde:
+                {
+                    hairColorToApply = new Color32(175, 129, 90, 1);
+                    break;
+                }
+            case HairColor.Auburn:
+                {
+                    hairColorToApply = new Color32(190, 91, 43, 1);
+                    break;
+                }
+            case HairColor.Brunette:
+                {
+                    hairColorToApply = new Color32(69, 41, 34, 1);
+                    break;
+                }
+            case HairColor.Dark:
+                {
+                    hairColorToApply = new Color32(56, 44, 58, 1);
+                    break;
+                }
+            case HairColor.Red:
+                {
+                    hairColorToApply = new Color32(147, 69, 37, 1);
+                    break;
+                }
+            case HairColor.Ginger:
+                {
+                    hairColorToApply = new Color32(158, 102, 60, 1);
+                    break;
+                }
+        }
+        #endregion
+    }
+    void DetermineEyeColor()
+    {
+        #region EyeColor
+        eyeColor = (EyeColor)Random.Range(0, System.Enum.GetValues(typeof(EyeColor)).Length);
+        switch (eyeColor)
+        {
+            case EyeColor.Gray:
+                {
+                    eyeColorToApply = Color.gray;
+                    break;
+                }
+            case EyeColor.Blue:
+                {
+                    eyeColorToApply = Color.blue;
+                    break;
+                }
+            case EyeColor.Green:
+                {
+                    eyeColorToApply = Color.green;
+                    break;
+                }
+            case EyeColor.Brown:
+                {
+                    eyeColorToApply = new Color(0, 0.5f, 1, 0.6f);
+                    break;
+                }
+            case EyeColor.Red:
+                {
+                    eyeColorToApply = Color.red;
+                    break;
+                }
+        }
+
+        foreach (Transform t in unitBody.transform)
+        {
+            //Debug.Log(t.name);
+            if (!heterochromatic_NYI)
+            {
+                if (t.name == "Eyeball")
+                {
+                    t.GetComponent<Renderer>().material.color = eyeColorToApply;
+                }
+            }
+            if (heterochromatic_NYI)
+            {
+                //Foreach loop for each eyeball
+            }
+        }
+        #endregion
 
     }
-    void DayToDayRandomization()
+    void DetermineHairStyle()
     {
-
+        Transform hairTarget = unitBody.transform.Find("Hair");
+        hairTarget.GetComponent<Renderer>().material.color = hairColorToApply;
+        hairLength = (HairLength)Random.Range(0, System.Enum.GetValues(typeof(HairLength)).Length);
+        if (hairLength == HairLength.Bald)
+        {
+            if (pawnGender != Gender.Female)
+            {
+                hairTarget.gameObject.SetActive(false);
+            }
+            else
+            {
+                hairLength = HairLength.Buzz;
+            }
+        }
+    }   //Bias?
+    void DetermineJob()
+    {
+        if (islandController)
+        {
+            islandController.unassignedWorkers.Add(this);
+            EventsManager.TriggerEvent("PawnAddedToIsland");
+        }
+        else
+        {
+            Debug.Log("Island controller is null");
+        }
+        //Check sleeping hours
+        //Check for jobs that align with hours
+        //Add name to job roster (Structure) -- jobs listed under island controller
+        //If job roster is full, change sleeping hours?
+        //If all job rosters on island are full, set job to bum
+        //If bum job > #jobs + #structure, remove pawn
     }
+
 
     private void Awake()
     {
-        if (!timeLord)
-        {
-            timeLord = GameObject.Find("DemoLighting").GetComponent<TimeScalar>();
-        }
+        hourlyUpdate = new UnityAction(HourToHourIncrementals);
+        dailyUpdate = new UnityAction(DayToDayIncrementals);
+        islandController = GetComponentInParent<IslandController>();
+        Init();
+    }
+
+    private void Init()
+    {
+        SetBody();
+        DetermineUniqueCharacteristics();
+        SleepingHours();
+        WorkingHours();
+        DetermineSkinColor();
+        DetermineHair();
+        DetermineEyeColor();
+        DetermineHairStyle();
+        //Job determination here, i think. 
     }
 
     private void Start()
     {
+        #region RB & Raycasting
         _rb = GetComponent<Rigidbody>();
         RaycastHit rayhit;
         if (Physics.Raycast(transform.position, Vector3.down, out rayhit, 3.0f))
@@ -572,10 +669,8 @@ public class PawnGeneration : MonoBehaviour
             }
             //else if (rayhit.transform.GetComponent<AIShip>().pawnsOnShip.Add(this))
         }
+        #endregion
 
-        //gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
-        //gameManager.gameUnits.Add(gameObject);
-        //timeLord = gameManager.gameObject.GetComponent<TimeScalar>();     
         if (!isPlayerPawn)
         {
             GenerateNewPawn();
@@ -584,24 +679,48 @@ public class PawnGeneration : MonoBehaviour
         {
             GeneratePlayerPawn();
         }
+        EventsManager.StartListening("NewHour", hourlyUpdate);
+        EventsManager.StartListening("NewDay", dailyUpdate);
+        SecondaryInit();
     }
 
-    // Update is called once per frame
-    void Update()
+    void SecondaryInit()
     {
-        DisplayPlayerSettings();
+        DetermineJob();
 
-        #region Time Increments; Pulled from Timelord script
-        if (timeLord.newDayTriggered)
+    }
+    /// <summary>
+    /// Need to build working hours and social hours
+    /// current - 8 sleep, 4 social, 8-10 work - leaves 2-4 hours free
+    /// social - 2 before, 2 after?
+    /// work - 8-10 hours, stops if production structure is full
+    /// </summary>
+    void HourToHourIncrementals()
+    {
+        currentHourCount++;
+        if (currentHourCount >= sleepStartTime)
         {
-            if (timeLord.dayNumber == birthday)
-            {
-                age++;
-                Debug.Log("Happy " + age + " Birthday, " + name + "!"); //works! :D
-            }
-            DayToDayIncrementals();
-            DayToDayRandomization();
+            Debug.Log("Time for bed!");
+            //Set destination to home quarters
         }
-        #endregion
+
+        if (age >= 15)
+        {
+            if (isSick != Sickness.Bedridden)
+            {
+
+            }
+        }
+    }
+
+    void DayToDayIncrementals()
+    {
+        currentDayCount++;
+        currentHourCount = 0;
+        if (currentDayCount == birthday)
+        {
+            age++;
+            //Debug.Log("Happy " + age + " Birthday, " + name + "!"); //works! :D
+        }
     }
 }

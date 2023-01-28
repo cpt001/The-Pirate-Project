@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using UnityEngine.Events;
 /// <summary>
 /// Idea:
 /// So, this is implementation 1 of the island controller.
@@ -14,6 +15,9 @@ using System.Linq;
 /// </summary>
 public class IslandController : MonoBehaviour
 {
+    //public List<Structure> structuresOnIsland = new List<Structure>();
+    public Dictionary<Structure, bool> structureCheck = new Dictionary<Structure, bool>();
+
     private bool isSpecialistIsland;
     private enum IslandSpecialization
     {
@@ -25,10 +29,27 @@ public class IslandController : MonoBehaviour
     public List<CargoSO> cargoRequestQueue;
     private List<CargoSO> cargoRequestsSent;
     private int requestCount;
-    public Dictionary<Structure, CargoSO> structureTracker = new Dictionary<Structure, CargoSO>();
-    public List<PawnGeneration> pawnsOnIsland;
+    //public Dictionary<Structure, CargoSO> structureTracker = new Dictionary<Structure, CargoSO>();
+    public List<PawnGeneration> unassignedWorkers = new List<PawnGeneration>();
+    public List<PawnGeneration> pawnsOnIsland = new List<PawnGeneration>();
+    private UnityAction pawnJobAssignment;
 
-    private void FixedUpdate()
+    private void Awake()
+    {
+        pawnJobAssignment = new UnityAction(AssignJobToPawn);
+        EventsManager.StartListening("PawnAddedToIsland", pawnJobAssignment);
+        /*foreach(KeyValuePair<Structure, bool> kvp in structureCheck)
+        {
+            Debug.Log("Structure listing: " + kvp.Key);
+        }*/
+    }
+
+    private void AssignJobToPawn()
+    {
+
+    }
+
+    /*private void FixedUpdate()
     {
         if (cargoRequestQueue.Count != 0)
         {
@@ -54,5 +75,5 @@ public class IslandController : MonoBehaviour
                 }
             }
         }
-    }
+    }*/
 }

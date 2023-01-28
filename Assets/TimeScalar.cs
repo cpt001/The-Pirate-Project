@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class TimeScalar : MonoBehaviour
 {
@@ -14,72 +15,65 @@ public class TimeScalar : MonoBehaviour
     public int dayNumber = 0;
 
     public bool newDayTriggered;
-    [SerializeField] private Vector3 sunRotation;
-    private float rotationSpeed = -1.25f;
-    //Midnight = 180, midday = 0
-    private int hoursPassed = 0;
-    [SerializeField] private int nextHour = 15;
-    [SerializeField] private int currentHour;
-    private bool hoursRising = true;
-    // Update is called once per frame
-    void Update()       //Fix the rotation, then get the angles. div by 15. That gives 24h
+    private float daylightSpeed = 1.25f;    //Controls how long daylight will last in a day.
+    private float timeSpeed = 1.25f;        //Controls how fast time will progress.
+    [SerializeField] private int hoursPassed = 0;
+    private int nextHour = 15;
+    private float fauxRotValue;
+
+    private void Start()
     {
-        transform.Rotate(Vector3.left * (rotationSpeed * Time.deltaTime));
-        Debug.Log("X Rotation: " + transform.localRotation.eulerAngles.x + " Next hour: " + nextHour);
-
-        if (transform.localRotation.eulerAngles.x >= (nextHour - 0.2f) && transform.localRotation.eulerAngles.x <= (nextHour + 0.2f))
-        {
-            if (hoursRising == true && nextHour != 105)
-            {
-                nextHour = nextHour + 15;   //105 is a miss? -- It's euler. It goes to 90, then back down. 
-            }
-            else if (nextHour == 105)
-            {
-                if (hoursRising == true)
-                {
-                    nextHour = 75;
-                }
-                hoursRising = false;
-                nextHour = nextHour - 15;
-            }
-            NewHour();
-        }
-        //currentHour = Mathf.RoundToInt((nextHour + 15) / 15);
-
-        if (currentHour == 12)
-        {
-            newDayTriggered = false;
-        }
-        else
-        {
-            //NewDay();
-            if (dayNumber > dayToYear)
-            {
-                NewYear();
-            }
-        }
+        StartCoroutine(NewDay());
     }
 
+    void Update()       //Fix the rotation, then get the angles. div by 15. That gives 24h - 6 = sunrise
+    {
+        transform.Rotate(Vector3.left * (daylightSpeed * Time.deltaTime));
+        fauxRotValue += timeSpeed * Time.deltaTime;
+        if (fauxRotValue >= (nextHour - 0.2f) && fauxRotValue <= (nextHour + 0.2f))
+        {
+            NewHour();
+        }
+    }
+    /// <summary>
+    /// Hour, day, and year all need to be tied to listener events for other scripts to make better use of them. 
+    /// Might also help clean this section up a bit as well
+    /// </summary>
     void NewHour()
     {
+        EventsManager.TriggerEvent("NewHour");
         hoursPassed++;
-        Debug.Log("Hours passed: " + hoursPassed);
+        if (nextHour < 360)
+        {
+            nextHour = nextHour + 15;
+        }
         if (hoursPassed == 24)
         {
             hoursPassed = 0;
             nextHour = 15;
-            NewDay();
+            fauxRotValue = 0;
+            StartCoroutine(NewDay());
         }
     }
 
-    void NewDay()
+    IEnumerator NewDay()
     {
-        Debug.Log("New day triggered!");
+        EventsManager.TriggerEvent("NewDay");
+        //Debug.Log("New day triggered!");
         dayNumber++;
         newDayTriggered = true;
+        if (dayNumber > dayToYear)
+        {
+            NewYear();
+        }
+        yield return null;  //This triggers too fast for the other scripts to pick up on it, but it feels like the right track
+        newDayTriggered = false;
+        //yield return null;
     }
+
     void NewYear()
     {
+        EventsManager.TriggerEvent("NewYear");
         year++;
         dayNumber = 0;
     }
