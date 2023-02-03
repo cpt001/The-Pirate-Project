@@ -19,7 +19,11 @@ public class CombatController : MonoBehaviour
     private KeyCode reloadFirearm = KeyCode.R;
     [SerializeField]
     private KeyCode throwMelee = KeyCode.H;
-
+    [SerializeField]
+    private KeyCode toggleLantern = KeyCode.L;
+    [SerializeField]
+    private GameObject lantern;
+    private bool lanternStatus;
     private bool hasMeleeEquipped;
     private bool hasFirearmEquipped;
     private bool hasVoodooEquipped;
@@ -38,6 +42,11 @@ public class CombatController : MonoBehaviour
     // Update mostly handles direct input
     void Update()
     {
+        if (Input.GetKeyDown(toggleLantern))
+        {
+            lanternStatus = !lanternStatus;
+            lantern.SetActive(lanternStatus);
+        }
         if (Input.GetKeyDown(disarm))
         {
             if (hasMeleeEquipped)

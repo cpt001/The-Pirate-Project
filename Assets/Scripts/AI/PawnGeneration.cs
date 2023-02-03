@@ -23,11 +23,10 @@ public class PawnGeneration : MonoBehaviour
     public TimeScalar timeLord;
     public GameObject currentTaskMaster;
     public NPCNames npcNamer;
-    public Rigidbody _rb;
     #endregion
 
     [Header("Special Cases")]
-    public bool isPlayerPawn;   //This simply determines if this setup is automated, or if the variables are exposed during char creation
+    //public bool isPlayerPawn;   //This simply determines if this setup is automated, or if the variables are exposed during char creation
     private bool hasPartner;
     public Dictionary<PawnGeneration, int> opinionMatrix;   //This won't appear in the inspector anyway, might as well keep it here -- Opinion of other pawns that have been met
     private int moneyOnHand;
@@ -44,11 +43,19 @@ public class PawnGeneration : MonoBehaviour
     public bool hidingGender;                                                       //Built in to accomodate scenarios where an NPC might be trying to hide their gender identity (ship crew, draft dodging, etc)
     public enum GenderPreference { Male, Female, Bisexual, Asexual };               //Simplified - what gender do they prefer to be partnered with?
     public GenderPreference genderPrefs;                                            //Initialize default
-    public enum TimePreference { NightOwl, EarlyRiser, Daybird, EveningDove };      //Preferred time of day to do activities + work
-    public TimePreference timePreference;                                           //Randomize me per AI - 1-3 Night, 7-10 Day
-    private int sleepStartTime;
     private enum WorkHours { First, Second, Grave };    //6p-2, 12p-8, 8p-4
     private WorkHours workingHours;
+    #endregion
+
+    [Header("DailyDetails")]
+    #region
+    //Everyday
+    private bool nightOwl;
+    private int sleepStartTime; //9-10p || 12-2p
+    private int sleepLength;    //7-10 hours
+    //Sundays
+    private int dayOfRest;
+    private bool restingDay;
     #endregion
 
     /// <summary>
@@ -137,8 +144,6 @@ public class PawnGeneration : MonoBehaviour
     private GameObject hair;
     #endregion
 
-    //[Header("What Job They Have")]
-
     [Header("Health")]
     #region
     public int age;   //Age of the character
@@ -200,7 +205,6 @@ public class PawnGeneration : MonoBehaviour
     public NavMeshAgent agent;
     public Structure homeStructure;
     public Structure workPlace;
-    public Transform goingTo;
     #endregion
 
     [Header("Character")]
@@ -228,7 +232,6 @@ public class PawnGeneration : MonoBehaviour
 
     void GenerateNewPawn()
     {
-
         #region Opinion Matrix
         opinionMatrix = new Dictionary<PawnGeneration, int>();
         foreach (PawnGeneration go in FindObjectsOfType<PawnGeneration>())
@@ -291,31 +294,6 @@ public class PawnGeneration : MonoBehaviour
         #endregion
     }
 
-    void DisplayPlayerSettings()
-    {
-
-    }
-
-    void GeneratePlayerPawn()
-    {
-        
-    }
-
-    /*void OpinionOfInteractable
-    {
-        #region Opinion of Interactable
-        flexibleSexuality;
-        alignmentOverall;  //Where they lie on the ship political spectrum.  (BDSM Anarchy - Sexual Deviant - Pervert - Corruptable - Neutral - Purist - Zealot - Incorruptable)
-        alignmentToPlayer; //What they think of the player                   (Monster - Asshole - Bad - Idiot - Strange Face - Neutral -  Acquaintance - Coworker - Friendly - Interest - Crush - Lover - Fuck Me Now - Have my babies)
-        maxAlignToPlayer;  //How far their opinion can actually be swayed..  (This should be a range based on day to day.)
-        comfort;   //How comfortable they are with the situation. Player coming on too strong may lower.
-        hasPartner; //If the AI has a partner already, they can be coerced into a new relationship, but this task may be more difficult than others
-        relationQuality; //Quality of current relationship. The lower, the more easily it can be broken.
-        numAutoFucks;    //Number of sessions since AutoFuck
-        sexFails;        //Number of fails
-        forgivenessTolerance;    //If the relation quality, autofucks, sexfails, or really any stat drops too low, this is the amount of tolerance the AI will have before breaking up with MC
-        #endregion
-    }*/
     void SetBody()
     {
         #region BodySetup
@@ -357,43 +335,15 @@ public class PawnGeneration : MonoBehaviour
     }
     void SleepingHours()
     {
-        timePreference = (TimePreference)Random.Range(0, 3);
-
-        switch (timePreference)
+        sleepLength = Mathf.RoundToInt(Random.Range(7, 10));
+        if (!nightOwl)
         {
-            case TimePreference.NightOwl:   //10p-2p
-                {
-                    sleepStartTime = 14;
-                    break;
-                }
-            case TimePreference.EarlyRiser: //4a-8p
-                {
-                    sleepStartTime = 20;
-                    break;
-                }
-            case TimePreference.Daybird:    //6a - 10p
-                {
-                    sleepStartTime = 23;
-                    break;
-                }
-            case TimePreference.EveningDove:    //12p-4p
-                {
-                    sleepStartTime = 16;
-                    break;
-                }
-        }
-    }   //Needs updating with ranked choices
-    void WorkingHours()
-    {
-        if (timePreference != TimePreference.NightOwl)
-        {
-            workingHours = (WorkHours)Random.Range(0, 2);
+            sleepStartTime = 22;
         }
         else
         {
-            workingHours = WorkHours.Grave;
+            sleepStartTime = 14;
         }
-        //Debug.Log("Working hours: " + workingHours);
     }
     void DetermineSkinColor()
     {
@@ -475,16 +425,26 @@ public class PawnGeneration : MonoBehaviour
                     break;
                 }
         }
-
+        //Need to fix this again
         foreach (Transform t in unitBody.transform)
         {
-            if (t.GetComponent<Renderer>() != null)
+            if (t.name == "HumanMaleRigged_LOD")
             {
-                //if (t.GetComponent<Renderer>().material.name == "MainSkin")   //Apparently redundant
+                foreach (Transform u in t)
                 {
-                    //Debug.Log("Color applied");
-                    t.GetComponent<Renderer>().material.color = skinColorToApply;
+                    u.GetComponentInChildren<Renderer>().material.color = skinColorToApply;
                 }
+            }
+            if (t.name == "HumanFemaleRigged_LOD")
+            {
+                foreach (Transform u in t)
+                {
+                    u.GetComponentInChildren<Renderer>().material.color = skinColorToApply;
+                }
+            }
+            else
+            {
+                //Do nothin
             }
         }
         #endregion
@@ -636,6 +596,7 @@ public class PawnGeneration : MonoBehaviour
         hourlyUpdate = new UnityAction(HourToHourIncrementals);
         dailyUpdate = new UnityAction(DayToDayIncrementals);
         islandController = GetComponentInParent<IslandController>();
+        agent = GetComponent<NavMeshAgent>();
         Init();
     }
 
@@ -644,7 +605,7 @@ public class PawnGeneration : MonoBehaviour
         SetBody();
         DetermineUniqueCharacteristics();
         SleepingHours();
-        WorkingHours();
+        //WorkingHours();   //Working hours is being changed. Job location is determined when the pawn enters a structure's premises. When the pawn is at their position, they'll receive wait time, pause commands, and contribute to resource gen speed
         DetermineSkinColor();
         DetermineHair();
         DetermineEyeColor();
@@ -654,8 +615,7 @@ public class PawnGeneration : MonoBehaviour
 
     private void Start()
     {
-        #region RB & Raycasting
-        _rb = GetComponent<Rigidbody>();
+        #region Island Raycasting
         RaycastHit rayhit;
         if (Physics.Raycast(transform.position, Vector3.down, out rayhit, 3.0f))
         {
@@ -671,14 +631,7 @@ public class PawnGeneration : MonoBehaviour
         }
         #endregion
 
-        if (!isPlayerPawn)
-        {
-            GenerateNewPawn();
-        }
-        else
-        {
-            GeneratePlayerPawn();
-        }
+        GenerateNewPawn();
         EventsManager.StartListening("NewHour", hourlyUpdate);
         EventsManager.StartListening("NewDay", dailyUpdate);
         SecondaryInit();
@@ -708,7 +661,23 @@ public class PawnGeneration : MonoBehaviour
         {
             if (isSick != Sickness.Bedridden)
             {
+                if (workPlace)
+                {
+                    agent.destination = workPlace.transform.position;
+                }
+                //Check distance or collider, then apply agent.stop command
+                //Structure seems okay, though its consistently requesting 1 additional worker
+                //Implement day of rest, and exceptions
+                //Most of the losses seem to be in this script. It's bad, but could be a lot worse
+                if (!restingDay)
+                {
+                    //Workday schedule
 
+                }
+                else
+                {
+                    //Resting day schedule
+                }
             }
         }
     }
@@ -721,6 +690,11 @@ public class PawnGeneration : MonoBehaviour
         {
             age++;
             //Debug.Log("Happy " + age + " Birthday, " + name + "!"); //works! :D
+        }
+        if (currentDayCount == dayOfRest)
+        {
+            dayOfRest += 5;
+            Debug.Log("Unit detects day of rest");
         }
     }
 }
