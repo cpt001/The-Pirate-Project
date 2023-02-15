@@ -8,12 +8,16 @@ public class TimeScalar : MonoBehaviour
     /// <summary>
     /// This class handles how time is calculated, and divides time into day, hour, and minute ticks
     /// -This class will also handle weather events and planning
+    /// 
+    /// Todo:
+    /// Implement seasons, and weather
     /// </summary>
     /// 
 
     public int year = 0;
     public int dayToYear = 100;
     public int dayNumber = 0;
+    private int dayTracker = 0;
 
     //public bool isDayOfRest;
     private float daylightSpeed = 1.25f;    //Controls how long daylight will last in a day.
@@ -30,6 +34,16 @@ public class TimeScalar : MonoBehaviour
         Winter,
     }
     private OverarchingSeason currentSeason;   //Div by 5
+    private enum DayName
+    {
+        Sun,
+        Moon,
+        Stone,
+        Sky,
+        Rest,
+    }
+    private DayName dayName;
+
     private enum SeaWeather
     {
         Doldrums,
@@ -63,6 +77,7 @@ public class TimeScalar : MonoBehaviour
     private void Start()
     {
         StartCoroutine(NewDay());
+        EventsManager.TriggerEvent("NewHour");
     }
 
     void Update()
@@ -104,8 +119,9 @@ public class TimeScalar : MonoBehaviour
         {
             NewYear();
         }
-        yield return null;
         SetSeason();
+        SetDayOfWeek();
+        yield return null;
     }
 
     void NewYear()
@@ -113,6 +129,45 @@ public class TimeScalar : MonoBehaviour
         EventsManager.TriggerEvent("NewYear");
         year++;
         dayNumber = 0;
+    }
+
+    void SetDayOfWeek()
+    {
+        switch (dayTracker)
+        {
+            case 0:
+                {
+                    dayName = DayName.Sun;
+                    break;
+                }
+            case 1:
+                {
+                    dayName = DayName.Moon;
+                    break;
+                }
+            case 2:
+                {
+                    dayName = DayName.Stone;
+                    break;
+                }            
+            case 3:
+                {
+                    dayName = DayName.Sky;
+                    break;
+                }            
+            case 4:
+                {
+                    EventsManager.TriggerEvent("DayOfRest");
+                    dayName = DayName.Rest;
+                    break;
+                }            
+            case 5:
+                {
+                    dayTracker = 0;
+                    break;
+                }
+
+        }
     }
 
     void SetSeason()

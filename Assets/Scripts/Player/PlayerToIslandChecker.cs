@@ -28,11 +28,20 @@ public class PlayerToIslandChecker : MonoBehaviour
     {
         foreach (Transform island in islandList)
         {
-            Debug.Log(island.name);
-            if (Vector3.Distance(island.position, closestIsland.position) < Vector3.Distance(transform.position, closestIsland.position))   //If the island is closer
+            if (closestIsland)
             {
-                closestIsland = island;
+                Debug.Log(island.name);
+
+                if (Vector3.Distance(island.position, closestIsland.position) < Vector3.Distance(transform.position, closestIsland.position))   //If the island is closer
+                {
+                    closestIsland = island;
+                }
             }
+            else
+            {
+                Debug.Log("No island found");
+            }
+
         }
         if (closestIsland != null)
         {

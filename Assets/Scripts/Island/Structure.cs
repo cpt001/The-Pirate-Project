@@ -40,6 +40,8 @@ public class Structure : MonoBehaviour
     [Header("Store saleable items")]
     [Tooltip("Populate this with items the store should sell to the player")] 
     [SerializeField] private List<Item> storeInventoryForPlayer;   //This controls what the store should have on hand at all times.
+    public List<WorkLocation> workSites = new List<WorkLocation>();
+    public Transform assignmentLocation;
 
     private enum TownStructure
     {
@@ -153,7 +155,7 @@ public class Structure : MonoBehaviour
     [SerializeField] private SpecialistStructure specialistStructure;
 
     private UnityAction dayUpdate;
-    private UnityAction updateWorkerCount;
+    //private UnityAction updateWorkerCount;
 
     private void Awake()
     {
@@ -178,12 +180,30 @@ public class Structure : MonoBehaviour
             //Debug.Log("Specialist structure");
             producerBuilding = true;
         }
+        CheckForWorkSites();
         dayUpdate = new UnityAction(DayUpdate);
-        updateWorkerCount = new UnityAction(WorkerCountUpdate);
+        //updateWorkerCount = new UnityAction(WorkerCountUpdate);
+    }
+
+    private void CheckForWorkSites()
+    {
+        foreach (Transform t in transform)
+        {
+            if (t.GetComponent<WorkLocation>())
+            {
+                workSites.Add(t.GetComponent<WorkLocation>());
+                buildingWorkerLimit++;
+            }
+            if (t.name == "AssignmentLocation")
+            {
+                assignmentLocation = t;
+            }
+        }
     }
 
     private void WorkerCountUpdate()
     {
+        //Debug.Log("Called");
         if (buildingWorkerLimit > 0 && masterWorkerList.Count <= buildingWorkerLimit)
         {
             //Debug.Log(thisStructure + " worker limit is not zero; " + buildingWorkerLimit);
@@ -222,7 +242,7 @@ public class Structure : MonoBehaviour
     private void OnEnable()
     {
         EventsManager.StartListening("NewDay", dayUpdate);
-        EventsManager.StartListening("PawnAddedToIsland", updateWorkerCount);
+        EventsManager.StartListening("PawnAddedToIsland", WorkerCountUpdate);
     }
     private void OnDisable()
     {
@@ -636,6 +656,14 @@ public class Structure : MonoBehaviour
                 {
                     break;
                 }
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.GetComponent<PawnGeneration>())
+        {
+            //Assign other to worksite, if assigned to building
         }
     }
 }

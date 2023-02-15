@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
+//using UnityEngine.AI;
 using UnityEngine.Events;
 
 public class PawnGeneration : MonoBehaviour
@@ -23,6 +23,7 @@ public class PawnGeneration : MonoBehaviour
     public TimeScalar timeLord;
     public GameObject currentTaskMaster;
     public NPCNames npcNamer;
+    //[SerializeField] private Transform goingTo;
     #endregion
 
     [Header("Special Cases")]
@@ -56,6 +57,7 @@ public class PawnGeneration : MonoBehaviour
     //Sundays
     private int dayOfRest;
     private bool restingDay;
+    public int timeToWait;
     #endregion
 
     /// <summary>
@@ -67,7 +69,7 @@ public class PawnGeneration : MonoBehaviour
     public GameObject femaleBody;
     public GameObject unitBody = null;
     public EyeColor eyeColor;
-    public enum EyeColor { Gray, Blue, Green, Brown, Red};
+    public enum EyeColor { Gray, Blue, Green, Brown, Red };
     private Color eyeColorToApply;
     public bool heterochromatic_NYI;
     public enum HairColor { White, Silver, Blonde, DirtyBlonde, Auburn, Brunette, Dark, Reddish, Red, Ginger };
@@ -202,9 +204,10 @@ public class PawnGeneration : MonoBehaviour
 
     [Header("Navigation")]
     #region
-    public NavMeshAgent agent;
+    public UnityEngine.AI.NavMeshAgent agent;
     public Structure homeStructure;
     public Structure workPlace;
+    private bool enrouteToAnotherLocation;
     #endregion
 
     [Header("Character")]
@@ -226,8 +229,9 @@ public class PawnGeneration : MonoBehaviour
     #region AffectorVariables
     private UnityAction hourlyUpdate;
     private UnityAction dailyUpdate;
-    private int currentHourCount;
-    private int currentDayCount;
+    private UnityAction newDestinationAssigned;
+    private int currentHourCount = -1;  //Hacky fix to get around an issue created from running days in start
+    private int internalDayCount;
     #endregion
 
     void GenerateNewPawn()
@@ -596,7 +600,7 @@ public class PawnGeneration : MonoBehaviour
         hourlyUpdate = new UnityAction(HourToHourIncrementals);
         dailyUpdate = new UnityAction(DayToDayIncrementals);
         islandController = GetComponentInParent<IslandController>();
-        agent = GetComponent<NavMeshAgent>();
+        agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
         Init();
     }
 
@@ -610,6 +614,7 @@ public class PawnGeneration : MonoBehaviour
         DetermineHair();
         DetermineEyeColor();
         DetermineHairStyle();
+
         //Job determination here, i think. 
     }
 
@@ -634,13 +639,9 @@ public class PawnGeneration : MonoBehaviour
         GenerateNewPawn();
         EventsManager.StartListening("NewHour", hourlyUpdate);
         EventsManager.StartListening("NewDay", dailyUpdate);
-        SecondaryInit();
-    }
-
-    void SecondaryInit()
-    {
-        DetermineJob();
-
+        EventsManager.StartListening("NewDestination_" + name, DestinationToggle);
+        EventsManager.StartListening("DayOfRest", DayOfRest);
+        DetermineJob(); //This needs to be called after the structure's awake functions
     }
     /// <summary>
     /// Need to build working hours and social hours
@@ -657,13 +658,32 @@ public class PawnGeneration : MonoBehaviour
             //Set destination to home quarters
         }
 
+        if (timeToWait != 0)
+        {
+            Debug.Log(name + " Wait timer: " + timeToWait);
+
+            timeToWait--;
+        }
+        else
+        {
+            enrouteToAnotherLocation = false;
+        }
+
         if (age >= 15)
         {
             if (isSick != Sickness.Bedridden)
             {
-                if (workPlace)
+                //Something in this logic is causing issues with changing destination
+                if (workPlace && timeToWait == 0 && enrouteToAnotherLocation == false)
                 {
-                    agent.destination = workPlace.transform.position;
+                    if (workPlace.assignmentLocation != null)
+                    {
+                        agent.destination = workPlace.assignmentLocation.position;
+                    }
+                    else
+                    {
+                        agent.destination = workPlace.transform.position;
+                    }
                 }
                 //Check distance or collider, then apply agent.stop command
                 //Structure seems okay, though its consistently requesting 1 additional worker
@@ -684,17 +704,22 @@ public class PawnGeneration : MonoBehaviour
 
     void DayToDayIncrementals()
     {
-        currentDayCount++;
+        internalDayCount++;
         currentHourCount = 0;
-        if (currentDayCount == birthday)
+        if (internalDayCount == birthday)
         {
             age++;
             //Debug.Log("Happy " + age + " Birthday, " + name + "!"); //works! :D
         }
-        if (currentDayCount == dayOfRest)
-        {
-            dayOfRest += 5;
-            Debug.Log("Unit detects day of rest");
-        }
+    }
+
+    void DayOfRest()
+    {
+        Debug.Log("Unit detects day of rest");
+    }
+
+    void DestinationToggle()
+    {
+        enrouteToAnotherLocation = true;
     }
 }
