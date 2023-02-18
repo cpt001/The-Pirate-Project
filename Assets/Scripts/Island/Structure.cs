@@ -203,32 +203,40 @@ public class Structure : MonoBehaviour
 
     private void WorkerCountUpdate()
     {
-        //Debug.Log("Called");
-        if (buildingWorkerLimit > 0 && masterWorkerList.Count <= buildingWorkerLimit)
+        if (islandController)
         {
-            //Debug.Log(thisStructure + " worker limit is not zero; " + buildingWorkerLimit);
-            for (int i = 0; i < buildingWorkerLimit; i++)
+            //Debug.Log("Called");
+            if (buildingWorkerLimit > 0 && masterWorkerList.Count <= buildingWorkerLimit)
             {
-                //Debug.Log("Called successfully");
-                if (islandController.unassignedWorkers.Count != 0 && islandController.unassignedWorkers[i] != null)
+                //Debug.Log(thisStructure + " worker limit is not zero; " + buildingWorkerLimit);
+                for (int i = 0; i < buildingWorkerLimit; i++)
                 {
-                    masterWorkerList.Add(islandController.unassignedWorkers[i]);
-                    islandController.unassignedWorkers[i].workPlace = this;
-                    islandController.unassignedWorkers.RemoveAt(i);
+                    //Debug.Log("Called successfully");
+                    if (islandController.unassignedWorkers.Count != 0 && islandController.unassignedWorkers[i] != null)
+                    {
+                        masterWorkerList.Add(islandController.unassignedWorkers[i]);
+                        islandController.unassignedWorkers[i].workPlace = this;
+                        islandController.unassignedWorkers.RemoveAt(i);
+                    }
+                }
+                workerCount = masterWorkerList.Count; //shift1Workers.Count + shift2Workers.Count + shift3Workers.Count;
+                if (workerCount >= buildingWorkerLimit)
+                {
+                    {
+                        islandController.structureCheck[this] = true;
+                    }
                 }
             }
-            workerCount = masterWorkerList.Count; //shift1Workers.Count + shift2Workers.Count + shift3Workers.Count;
-            if (workerCount >= buildingWorkerLimit)
+            else
             {
-                {
-                    islandController.structureCheck[this] = true;
-                }
+                //Debug.Log(thisStructure + " worker limit is 0!");
             }
         }
         else
         {
-            //Debug.Log(thisStructure + " worker limit is 0!");
+            Debug.Log(gameObject.name + " has no islandController");
         }
+
     }
 
     private void Update()

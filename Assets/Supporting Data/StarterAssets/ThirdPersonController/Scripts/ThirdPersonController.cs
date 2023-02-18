@@ -194,7 +194,7 @@ namespace StarterAssets
             if (Physics.Raycast(transform.position, Vector3.down, out rayHit, rayDistance, GroundLayers, QueryTriggerInteraction.Ignore))
             {
                 //Debug.Log("Raycast hit " + rayHit.transform.name);
-                if (rayHit.transform.tag == "Ship")
+                if (rayHit.transform.tag == "Ship" || rayHit.transform.tag =="Structure")
                 {
                     Debug.Log("raycast hitting object: " + rayHit.transform.name);
 
@@ -202,7 +202,7 @@ namespace StarterAssets
                     playerOnWalkableSurface = true;
                     nullRay = false;
                 }
-                else if (rayHit.transform.tag != "Ship")
+                else if (rayHit.transform.tag != "Ship" || rayHit.transform.tag != "Structure")
                 {
                     //Debug.Log("raycast not hitting ship");
                     gameObject.transform.SetParent(null);

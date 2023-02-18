@@ -669,7 +669,7 @@ public class PawnGeneration : MonoBehaviour
             enrouteToAnotherLocation = false;
         }
 
-        if (age >= 15)
+        if (age >= 15)  //This logic should be moved, possibly into the destination toggle
         {
             if (isSick != Sickness.Bedridden)
             {
@@ -718,8 +718,9 @@ public class PawnGeneration : MonoBehaviour
         Debug.Log("Unit detects day of rest");
     }
 
-    void DestinationToggle()
+    void DestinationToggle()    //Fix me!
     {
         enrouteToAnotherLocation = true;
+        Debug.Log("New location received, route locked");
     }
 }

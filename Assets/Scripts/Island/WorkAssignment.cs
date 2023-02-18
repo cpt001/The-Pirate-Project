@@ -27,8 +27,8 @@ public class WorkAssignment : MonoBehaviour
         {
             if (!workSite.isBeingWorked)
             {
-                thisPawn.agent.SetDestination(workSite.transform.position);
                 EventsManager.TriggerEvent("NewDestination_" + thisPawn.name);
+                thisPawn.agent.SetDestination(workSite.transform.position);
                 workSite.isBeingWorked = true;
                 break;
             }
