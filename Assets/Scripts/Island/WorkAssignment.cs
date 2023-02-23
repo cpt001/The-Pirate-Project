@@ -5,7 +5,11 @@ using UnityEngine;
 public class WorkAssignment : MonoBehaviour
 {
     private Structure parentStructure;
+    [SerializeField] private bool isMultiTask;
     [SerializeField] private float timer;
+    public List<WorkLocation> locationsToBeWorked = new List<WorkLocation>();
+
+
     private void Awake()
     {
         parentStructure = GetComponentInParent<Structure>();
@@ -21,14 +25,15 @@ public class WorkAssignment : MonoBehaviour
     private IEnumerator ShortWaitTimer(float timerInput, PawnGeneration thisPawn)
     {
         //Debug.Log(thisPawn.name + " detected, stopping");
-        thisPawn.agent.ResetPath(); //This was the fix that was needed
+        thisPawn.pawnNavigator.agent.ResetPath(); //This was the fix that was needed
         yield return new WaitForSeconds(timerInput);
         foreach (WorkLocation workSite in parentStructure.workSites)
         {
             if (!workSite.isBeingWorked)
             {
                 EventsManager.TriggerEvent("NewDestination_" + thisPawn.name);
-                thisPawn.agent.SetDestination(workSite.transform.position);
+                //Debug.Log("Broadcasting: NewDestination_" + thisPawn.name);
+                thisPawn.pawnNavigator.agent.SetDestination(workSite.transform.position);
                 workSite.isBeingWorked = true;
                 break;
             }

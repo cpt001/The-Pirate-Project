@@ -14,6 +14,7 @@ public class ControllableShip : MonoBehaviour
     [SerializeField] private StarterAssets.ThirdPersonController playerController;
 
     [SerializeField] private bool anchorDropped;
+    private Rigidbody _rb;
 
     [Header("Sail Schematic")]
     [SerializeField] private List<GameObject> DeadSlowSail;
@@ -50,6 +51,11 @@ public class ControllableShip : MonoBehaviour
 
     private bool playerControllingShip;
 
+    private void Awake()
+    {
+        _rb = GetComponent<Rigidbody>();
+    }
+
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.X))
@@ -67,6 +73,7 @@ public class ControllableShip : MonoBehaviour
             if (anchorDropped)
             {
                 boatTarget._engineBias = 0;
+                _rb.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
             }
 
             if (Input.GetKeyDown(KeyCode.W) && sailState != SailState.Full)

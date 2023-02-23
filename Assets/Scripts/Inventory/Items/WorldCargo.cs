@@ -5,24 +5,38 @@ using UnityEngine;
 public class WorldCargo : MonoBehaviour
 {
     [SerializeField] private int decayTimer;
-    [SerializeField] private CargoSO cargoItem;
-    [SerializeField] private Transform destination;
+    public CargoSO.CargoType cargoItem;
+    public Transform destination; //Set this in work location trigger field
     [SerializeField] private int value;
+    private MeshRenderer meshRend;
+    private PawnNavigation attachedPawn;
 
     private void Start()
     {
-        if (cargoItem != null)
+        meshRend = GetComponent<MeshRenderer>();
+        CargoStateChange();
+        attachedPawn = GetComponentInParent<PawnNavigation>();
+        if (attachedPawn)
         {
-            transform.name = "Cargo: " + cargoItem.cargoType.ToString();
-            if (cargoItem.cargoType == CargoSO.CargoType._undefined)
+            EventsManager.StartListening("AdjustCargo_" + attachedPawn.name, CargoStateChange);
+        }
+    }
+
+    private void CargoStateChange()
+    {
+        if (cargoItem != CargoSO.CargoType._undefined)
+        {
+            meshRend.enabled = true;
+            transform.name = "Cargo: " + cargoItem.ToString();
+            if (attachedPawn)
             {
-                Debug.Log("Cargo is undefined!");
+                attachedPawn.agent.SetDestination(destination.position);
+                EventsManager.TriggerEvent("NewDestination_" + attachedPawn);
             }
         }
         else
         {
-            gameObject.SetActive(false);
+            meshRend.enabled = false;
         }
-
     }
 }

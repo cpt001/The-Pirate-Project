@@ -49,16 +49,10 @@ public class CombatController : MonoBehaviour
         }
         if (Input.GetKeyDown(disarm))
         {
-            if (hasMeleeEquipped)
+            if (hasMeleeEquipped | hasFirearmEquipped | hasVoodooEquipped)
             {
                 hasMeleeEquipped = false;
-            }
-            if (hasFirearmEquipped)
-            {
                 hasFirearmEquipped = false;
-            }
-            if (hasVoodooEquipped)
-            {
                 hasVoodooEquipped = false;
             }
         }

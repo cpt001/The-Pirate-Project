@@ -10,6 +10,10 @@ public class TimeScalar : MonoBehaviour
     /// -This class will also handle weather events and planning
     /// 
     /// Todo:
+    /// Implement water color change
+    /// -> Procedural skybox colors on ocean material: 
+    /// Day     [Base: 141, 217, 255 | Away from Sun: 39, 56, 136] 
+    /// Night   [Base: 17, 16, 16 | Away from Sun: 12, 12, 12]
     /// Implement seasons, and weather
     /// </summary>
     /// 
@@ -25,6 +29,7 @@ public class TimeScalar : MonoBehaviour
     [SerializeField] private int hoursPassed = 0;
     private int nextHour = 15;
     private float fauxRotValue;
+    [SerializeField] private Light sun;
 
     private enum OverarchingSeason
     {
@@ -97,6 +102,7 @@ public class TimeScalar : MonoBehaviour
     {
         EventsManager.TriggerEvent("NewHour");
         hoursPassed++;
+        LightOverHour();
         if (nextHour < 360)
         {
             nextHour = nextHour + 15;
@@ -129,6 +135,39 @@ public class TimeScalar : MonoBehaviour
         EventsManager.TriggerEvent("NewYear");
         year++;
         dayNumber = 0;
+    }
+
+    void LightOverHour()
+    {
+        switch (hoursPassed)
+        {
+            case 5:
+                {
+                    //Debug.Log("case reached, setting intensity");
+                    StartCoroutine(LerpSun(1.4f));
+                    EventsManager.TriggerEvent("ToggleLights");
+                    break;
+                }
+            case 19:
+                {
+                    StartCoroutine(LerpSun(0));
+                    EventsManager.TriggerEvent("ToggleLights");
+                    break; 
+                }
+        }
+    }
+
+    IEnumerator LerpSun(float targetIntensity)
+    {
+        float time = 0;
+        float startValue = sun.intensity;
+        while (time < 35)
+        {
+            sun.intensity = Mathf.Lerp(sun.intensity, targetIntensity, time / 35);
+            time += Time.deltaTime;
+            yield return null;
+        }
+        sun.intensity = targetIntensity;
     }
 
     void SetDayOfWeek()

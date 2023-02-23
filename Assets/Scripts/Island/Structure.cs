@@ -24,6 +24,7 @@ public class Structure : MonoBehaviour
     private bool isSpecialistStructure;        //Determines whether the building is a specialist
     private bool storageBuilding;           //Determines whether the building idly contains extra resources from and for the island
     private bool producerBuilding = false;  //Determines whether the building can produce with no input
+    private bool isResidence = false;
     private int productionRangeMax = 20;
     private int productionRangeMin = 10;
     private int storageLimit;
@@ -43,7 +44,7 @@ public class Structure : MonoBehaviour
     public List<WorkLocation> workSites = new List<WorkLocation>();
     public Transform assignmentLocation;
 
-    private enum TownStructure
+    public enum TownStructure
     {
         undefined_structure,
 
@@ -118,7 +119,7 @@ public class Structure : MonoBehaviour
         Wig_Maker,      //
 
     }
-    [SerializeField] private TownStructure thisStructure;
+    public TownStructure thisStructure;
 
     private enum FortStructure
     {
@@ -215,7 +216,7 @@ public class Structure : MonoBehaviour
                     if (islandController.unassignedWorkers.Count != 0 && islandController.unassignedWorkers[i] != null)
                     {
                         masterWorkerList.Add(islandController.unassignedWorkers[i]);
-                        islandController.unassignedWorkers[i].workPlace = this;
+                        islandController.unassignedWorkers[i].pawnNavigator.workPlace = this;
                         islandController.unassignedWorkers.RemoveAt(i);
                     }
                 }
@@ -532,7 +533,7 @@ public class Structure : MonoBehaviour
                     }
                 case TownStructure.House:
                     {
-
+                        isResidence = true;
                         break;
                     }
                 case TownStructure.Hunter_Shack:    //Can produce independently
@@ -599,7 +600,7 @@ public class Structure : MonoBehaviour
                     }
                 case TownStructure.Shack:
                     {
-
+                        isResidence = true;
                         break;
                     }
                 case TownStructure.Shipwright:

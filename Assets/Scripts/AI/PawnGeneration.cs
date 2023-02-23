@@ -1,9 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-//using UnityEngine.AI;
 using UnityEngine.Events;
-
+[RequireComponent(typeof(PawnNavigation))]
 public class PawnGeneration : MonoBehaviour
 {
     /// <summary>
@@ -17,12 +16,14 @@ public class PawnGeneration : MonoBehaviour
     /// --Removed seduction and reduced opinion matrix
     /// --Reduced navigation section to planned systems
     /// --Calendar adjustment to 60 days in game. Time now moves ~6x as fast as real time. Avg lifespan: ~4800 days/80 years. 1-3 baby, 4-6/toddler, 7-12/kid, 13-16/teen, 17-55/adult, 56-80/elder
+    /// --Navigation moved to PawnNavigation script for clarity
     /// </summary>
     #region ScriptReferences
     //public GameManager gameManager;
     public TimeScalar timeLord;
     public GameObject currentTaskMaster;
     public NPCNames npcNamer;
+    public PawnNavigation pawnNavigator;
     //[SerializeField] private Transform goingTo;
     #endregion
 
@@ -55,9 +56,7 @@ public class PawnGeneration : MonoBehaviour
     private int sleepStartTime; //9-10p || 12-2p
     private int sleepLength;    //7-10 hours
     //Sundays
-    private int dayOfRest;
-    private bool restingDay;
-    public int timeToWait;
+
     #endregion
 
     /// <summary>
@@ -97,7 +96,7 @@ public class PawnGeneration : MonoBehaviour
     public enum FacialHairType
     {
         Smooth,
-        Oclock, //5oclock shadow
+        Oclock, //5 o'clock shadow
         Bush,
         Beard,
         Goatee,
@@ -151,7 +150,6 @@ public class PawnGeneration : MonoBehaviour
     public int age;   //Age of the character
     public int birthday;    //0 - 100, what day is their birthday?
     public float health = 100.0f;    //General stat, to be updated later
-    public float moveSpeed; //How fast they move, ranged
     public int immuneSystem;  //How frequently they get sick -- 0 - 5 (Sickly, Susceptible, Normal, RarelySick, IronGuard)
     public enum Sickness { Healthy, Sick, Medicated, Bedridden }     //Is the character sick? Healthy = 100%, Sick = 50%, Medicated = 75% of usual stats 
     public Sickness isSick;
@@ -202,13 +200,7 @@ public class PawnGeneration : MonoBehaviour
     public int socialNeed;  //How lonely they are -- affects multiple important stats
     #endregion
 
-    [Header("Navigation")]
-    #region
-    public UnityEngine.AI.NavMeshAgent agent;
-    public Structure homeStructure;
-    public Structure workPlace;
-    private bool enrouteToAnotherLocation;
-    #endregion
+    //[Header("Navigation")]    --Moved to its own script for clarity purposes while programming
 
     [Header("Character")]
     #region
@@ -227,8 +219,6 @@ public class PawnGeneration : MonoBehaviour
     #endregion
 
     #region AffectorVariables
-    private UnityAction hourlyUpdate;
-    private UnityAction dailyUpdate;
     private UnityAction newDestinationAssigned;
     private int currentHourCount = -1;  //Hacky fix to get around an issue created from running days in start
     private int internalDayCount;
@@ -255,7 +245,6 @@ public class PawnGeneration : MonoBehaviour
         age = Random.Range(18, 41);
         birthday = Random.Range(0, 60);
         health = 100.0f;
-        moveSpeed = Random.Range(2.2f, 3.5f);
         isSick = (Sickness)Random.Range(0, 2);
         hungerLevel = Random.Range(65, 100);
         tiredLevel = Random.Range(65, 100);
@@ -322,10 +311,14 @@ public class PawnGeneration : MonoBehaviour
         transform.GetComponent<MeshRenderer>().enabled = false;
         unitBody = Instantiate(unitBody, new Vector3(transform.position.x, transform.position.y - 1, transform.position.z), Quaternion.identity, transform);
         #endregion
+        #region SetHeight
+        float heightScalar = Random.Range(0.9f, 1.1f);
+        unitBody.transform.localScale = new Vector3(heightScalar, heightScalar, heightScalar);
+        #endregion
     }
     void DetermineUniqueCharacteristics()
     {
-        #region Initialization [Gender, time, name]
+        #region Initialization [Gender, time, name, agent move speed]
         characterName = "NullName"; //Name of the character
         genderPrefs = (GenderPreference)Random.Range(0, 2);
         characterName = npcNamer.selectedName;
@@ -334,6 +327,7 @@ public class PawnGeneration : MonoBehaviour
         {
             Debug.Log("Character has no name! " + gameObject);
         }
+
         //Heterochromia determined here
         #endregion
     }
@@ -597,10 +591,8 @@ public class PawnGeneration : MonoBehaviour
 
     private void Awake()
     {
-        hourlyUpdate = new UnityAction(HourToHourIncrementals);
-        dailyUpdate = new UnityAction(DayToDayIncrementals);
         islandController = GetComponentInParent<IslandController>();
-        agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
+        pawnNavigator = GetComponent<PawnNavigation>();
         Init();
     }
 
@@ -637,12 +629,10 @@ public class PawnGeneration : MonoBehaviour
         #endregion
 
         GenerateNewPawn();
-        EventsManager.StartListening("NewHour", hourlyUpdate);
-        EventsManager.StartListening("NewDay", dailyUpdate);
-        EventsManager.StartListening("NewDestination_" + name, DestinationToggle);
-        EventsManager.StartListening("DayOfRest", DayOfRest);
+
         DetermineJob(); //This needs to be called after the structure's awake functions
     }
+
     /// <summary>
     /// Need to build working hours and social hours
     /// current - 8 sleep, 4 social, 8-10 work - leaves 2-4 hours free
@@ -658,48 +648,7 @@ public class PawnGeneration : MonoBehaviour
             //Set destination to home quarters
         }
 
-        if (timeToWait != 0)
-        {
-            Debug.Log(name + " Wait timer: " + timeToWait);
-
-            timeToWait--;
-        }
-        else
-        {
-            enrouteToAnotherLocation = false;
-        }
-
-        if (age >= 15)  //This logic should be moved, possibly into the destination toggle
-        {
-            if (isSick != Sickness.Bedridden)
-            {
-                //Something in this logic is causing issues with changing destination
-                if (workPlace && timeToWait == 0 && enrouteToAnotherLocation == false)
-                {
-                    if (workPlace.assignmentLocation != null)
-                    {
-                        agent.destination = workPlace.assignmentLocation.position;
-                    }
-                    else
-                    {
-                        agent.destination = workPlace.transform.position;
-                    }
-                }
-                //Check distance or collider, then apply agent.stop command
-                //Structure seems okay, though its consistently requesting 1 additional worker
-                //Implement day of rest, and exceptions
-                //Most of the losses seem to be in this script. It's bad, but could be a lot worse
-                if (!restingDay)
-                {
-                    //Workday schedule
-
-                }
-                else
-                {
-                    //Resting day schedule
-                }
-            }
-        }
+        
     }
 
     void DayToDayIncrementals()
@@ -713,14 +662,9 @@ public class PawnGeneration : MonoBehaviour
         }
     }
 
-    void DayOfRest()
-    {
-        Debug.Log("Unit detects day of rest");
-    }
 
-    void DestinationToggle()    //Fix me!
-    {
-        enrouteToAnotherLocation = true;
-        Debug.Log("New location received, route locked");
-    }
+
+    ///Next steps:
+    //Look for cargo, set destination from cargo.
+    //Fix scheduling
 }
