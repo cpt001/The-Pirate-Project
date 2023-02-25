@@ -16,6 +16,7 @@ public class Structure : MonoBehaviour
     [SerializeField] private Structure linkedStructure;
     public bool worksThroughRest;
     private int workerCount;
+    public int maxResidents;
     public List<PawnGeneration> masterWorkerList = new List<PawnGeneration>();
     [SerializeField] private int buildingWorkerLimit;
     private bool isConstructionSite;    //Prevents requests from being made, unless they're construction related
@@ -183,7 +184,6 @@ public class Structure : MonoBehaviour
         }
         CheckForWorkSites();
         dayUpdate = new UnityAction(DayUpdate);
-        //updateWorkerCount = new UnityAction(WorkerCountUpdate);
     }
 
     private void CheckForWorkSites()
@@ -217,6 +217,7 @@ public class Structure : MonoBehaviour
                     {
                         masterWorkerList.Add(islandController.unassignedWorkers[i]);
                         islandController.unassignedWorkers[i].pawnNavigator.workPlace = this;
+                        EventsManager.TriggerEvent("FindHome_" + islandController.unassignedWorkers[i].name);
                         islandController.unassignedWorkers.RemoveAt(i);
                     }
                 }
@@ -534,6 +535,7 @@ public class Structure : MonoBehaviour
                 case TownStructure.House:
                     {
                         isResidence = true;
+                        maxResidents = 4;
                         break;
                     }
                 case TownStructure.Hunter_Shack:    //Can produce independently
@@ -601,6 +603,7 @@ public class Structure : MonoBehaviour
                 case TownStructure.Shack:
                     {
                         isResidence = true;
+                        maxResidents = 3;
                         break;
                     }
                 case TownStructure.Shipwright:

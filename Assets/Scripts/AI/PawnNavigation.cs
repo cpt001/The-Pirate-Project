@@ -23,17 +23,29 @@ public class PawnNavigation : MonoBehaviour
 
     private void Start()    //Reminder: Needs to be start, else the listener looks for the wrong pawn name
     {
-
         Setup();
         EventsManager.StartListening("NewHour", HourToHour);
         EventsManager.StartListening("NewDay", DayToDay);
         EventsManager.StartListening("NewDestination_" + pawn.name, DestinationToggle);
         //Debug.Log("Listening: NewDestination_" + pawn.name);
         EventsManager.StartListening("DayOfRest", DayOfRest);
+        EventsManager.StartListening("FindHome_" + pawn.name, FindHomeStructure);
     }
     //Possible homes will need to be defined by running a raycube?
-    void FindHomeStructure(Transform[] possibleHomes)
+    void FindHomeStructure()
     {
+        //Debug.Log("Looking for home...");
+        List<Transform> possibleHomes = new List<Transform>();
+        RaycastHit[] itemsCasted = Physics.SphereCastAll(workPlace.transform.position, 500.0f, workPlace.transform.forward);
+        foreach (RaycastHit rayHit in itemsCasted)
+        {
+            if (rayHit.transform.GetComponent<Structure>())
+            {
+                Debug.Log("Possible home detected: " + rayHit.transform.name);
+                possibleHomes.Add(rayHit.transform);
+            }
+        }
+
         Transform bestTarget = null;
         float closestDstSq = Mathf.Infinity;
         Vector3 workplacePosition = workPlace.transform.position;
@@ -43,15 +55,33 @@ public class PawnNavigation : MonoBehaviour
             if (potentialTarget.GetComponent<Structure>())
             {
                 Structure tempStructure = potentialTarget.GetComponent<Structure>();
-                if (tempStructure.thisStructure == Structure.TownStructure.House ||
-                    tempStructure.thisStructure == Structure.TownStructure.Shack)
+                if ((tempStructure.thisStructure == Structure.TownStructure.House ||
+                    tempStructure.thisStructure == Structure.TownStructure.Shack))
                 {
-                    //if (tempStructure)
-                    //Spherecast near workplace for list population
-                    //If residence has available work slots, assign worker to them.
+                    if (tempStructure.masterWorkerList.Count < tempStructure.maxResidents)
+                    {
+                        float dsqrToTarget = dirToTarget.sqrMagnitude;
+                        if (dsqrToTarget < closestDstSq)
+                        {
+                            closestDstSq = dsqrToTarget;
+                            bestTarget = potentialTarget;
+                        }
+                    }
+                    else
+                    {
+                        Debug.Log("No unoccupied houses for: " + pawn.name);
+                        //No available houses
+                    }
+                }
+                else
+                {
+                    Debug.Log("No houses or shacks found for " + pawn.name);
                 }
             }
         }
+        bestTarget.GetComponent<Structure>().masterWorkerList.Add(pawn);    //This throws a null ref
+        homeStructure = bestTarget.GetComponent<Structure>();
+        Debug.Log(pawn.name + " Workplace: " + workPlace.gameObject + " || Home: " + homeStructure.gameObject);
     }
 
     void Setup()
@@ -80,7 +110,7 @@ public class PawnNavigation : MonoBehaviour
         {
             if (timeToWait != 0)    //This is the cause. Building a super state for time of day might be the fix
             {
-                Debug.Log(name + " Wait timer: " + timeToWait);
+                //Debug.Log(name + " Wait timer: " + timeToWait);
 
                 timeToWait--;
             }

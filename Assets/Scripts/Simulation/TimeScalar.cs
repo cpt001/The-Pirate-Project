@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using Crest;
 
 public class TimeScalar : MonoBehaviour
 {
@@ -22,6 +23,11 @@ public class TimeScalar : MonoBehaviour
     public int dayToYear = 100;
     public int dayNumber = 0;
     private int dayTracker = 0;
+    [SerializeField] private OceanRenderer oceanObject;
+    private Color32 oceanDay = new Color32(144, 217, 255, 1);
+    private Color32 oceanAwayDay = new Color32(29, 56, 136, 1);
+    private Color32 oceanNight = new Color32(16, 16, 16, 1);
+    private Color32 oceanAwayNight = new Color32(12, 12, 12, 1);
 
     //public bool isDayOfRest;
     private float daylightSpeed = 1.25f;    //Controls how long daylight will last in a day.
@@ -83,6 +89,8 @@ public class TimeScalar : MonoBehaviour
     {
         StartCoroutine(NewDay());
         EventsManager.TriggerEvent("NewHour");
+        Debug.Log("Material: " + oceanObject.OceanMaterial.GetColor("_SkyBase"));
+        Debug.Log("Material: " + oceanObject.OceanMaterial.GetColor("_SkyAwayFromSun"));
     }
 
     void Update()
@@ -94,10 +102,6 @@ public class TimeScalar : MonoBehaviour
             NewHour();
         }
     }
-    /// <summary>
-    /// Hour, day, and year all need to be tied to listener events for other scripts to make better use of them. 
-    /// Might also help clean this section up a bit as well
-    /// </summary>
     void NewHour()
     {
         EventsManager.TriggerEvent("NewHour");
@@ -119,7 +123,6 @@ public class TimeScalar : MonoBehaviour
     IEnumerator NewDay()
     {
         EventsManager.TriggerEvent("NewDay");
-        //Debug.Log("New day triggered!");
         dayNumber++;
         if (dayNumber > dayToYear)
         {
@@ -143,27 +146,30 @@ public class TimeScalar : MonoBehaviour
         {
             case 5:
                 {
-                    //Debug.Log("case reached, setting intensity");
-                    StartCoroutine(LerpSun(1.4f));
+                    StartCoroutine(LerpSun(1.4f, oceanDay, oceanAwayDay, 35.0f));
                     EventsManager.TriggerEvent("ToggleLights");
                     break;
                 }
             case 19:
                 {
-                    StartCoroutine(LerpSun(0));
+                    StartCoroutine(LerpSun(0, oceanNight, oceanAwayNight, 35.0f));
                     EventsManager.TriggerEvent("ToggleLights");
                     break; 
                 }
         }
     }
 
-    IEnumerator LerpSun(float targetIntensity)
+    IEnumerator LerpSun(float targetIntensity, Color32 baseColor, Color32 awayColor, float timeToChange)
     {
         float time = 0;
         float startValue = sun.intensity;
+        Color32 startBaseColor = oceanObject.OceanMaterial.GetColor("_SkyBase");
+        Color32 startAwayColor = oceanObject.OceanMaterial.GetColor("_SkyAwayFromSun");
         while (time < 35)
         {
-            sun.intensity = Mathf.Lerp(sun.intensity, targetIntensity, time / 35);
+            sun.intensity = Mathf.Lerp(sun.intensity, targetIntensity, time / timeToChange);
+            oceanObject.OceanMaterial.SetColor("_SkyBase", Color32.Lerp(startBaseColor, baseColor, timeToChange));  //This lerp function doesnt work sadly, but it's on the right track
+            oceanObject.OceanMaterial.SetColor("_SkyAwayFromSun", Color32.Lerp(startAwayColor, awayColor, timeToChange));
             time += Time.deltaTime;
             yield return null;
         }
