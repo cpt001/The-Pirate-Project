@@ -17,6 +17,7 @@ public class IslandController : MonoBehaviour
 {
     //public List<Structure> structuresOnIsland = new List<Structure>();
     public Dictionary<Structure, bool> structureCheck = new Dictionary<Structure, bool>();
+    public Dictionary<Structure, CargoSO.CargoType> cargoRequests = new Dictionary<Structure, CargoSO.CargoType>();
 
     private bool isSpecialistIsland;
     private enum IslandSpecialization
@@ -28,11 +29,9 @@ public class IslandController : MonoBehaviour
     private int population;
     public List<CargoSO> cargoRequestQueue;
     private List<CargoSO> cargoRequestsSent;
-    private int requestCount;
     //public Dictionary<Structure, CargoSO> structureTracker = new Dictionary<Structure, CargoSO>();
     public List<PawnGeneration> unassignedWorkers = new List<PawnGeneration>();
     public List<PawnGeneration> pawnsOnIsland = new List<PawnGeneration>();
-    private UnityAction pawnJobAssignment;
 
     
 }

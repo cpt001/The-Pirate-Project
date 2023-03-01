@@ -89,8 +89,6 @@ public class TimeScalar : MonoBehaviour
     {
         StartCoroutine(NewDay());
         EventsManager.TriggerEvent("NewHour");
-        Debug.Log("Material: " + oceanObject.OceanMaterial.GetColor("_SkyBase"));
-        Debug.Log("Material: " + oceanObject.OceanMaterial.GetColor("_SkyAwayFromSun"));
     }
 
     void Update()
@@ -161,6 +159,7 @@ public class TimeScalar : MonoBehaviour
 
     IEnumerator LerpSun(float targetIntensity, Color32 baseColor, Color32 awayColor, float timeToChange)
     {
+        //Debug.Log("Sun lerp called");
         float time = 0;
         float startValue = sun.intensity;
         Color32 startBaseColor = oceanObject.OceanMaterial.GetColor("_SkyBase");
@@ -208,6 +207,7 @@ public class TimeScalar : MonoBehaviour
                 }            
             case 5:
                 {
+                    EventsManager.TriggerEvent("DayOfRest");
                     dayTracker = 0;
                     break;
                 }

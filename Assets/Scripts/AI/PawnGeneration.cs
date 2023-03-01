@@ -53,7 +53,7 @@ public class PawnGeneration : MonoBehaviour
     #region
     //Everyday
     private bool nightOwl;
-    private int sleepStartTime; //9-10p || 12-2p
+    public int sleepStartTime; //9-10p || 12-2p
     private int sleepLength;    //7-10 hours
     //Sundays
 
@@ -148,7 +148,7 @@ public class PawnGeneration : MonoBehaviour
     [Header("Health")]
     #region
     public int age;   //Age of the character
-    public int birthday;    //0 - 100, what day is their birthday?
+    private int birthday;    //0 - 100, what day is their birthday?
     public float health = 100.0f;    //General stat, to be updated later
     public int immuneSystem;  //How frequently they get sick -- 0 - 5 (Sickly, Susceptible, Normal, RarelySick, IronGuard)
     public enum Sickness { Healthy, Sick, Medicated, Bedridden }     //Is the character sick? Healthy = 100%, Sick = 50%, Medicated = 75% of usual stats 
@@ -331,18 +331,7 @@ public class PawnGeneration : MonoBehaviour
         //Heterochromia determined here
         #endregion
     }
-    void SleepingHours()
-    {
-        sleepLength = Mathf.RoundToInt(Random.Range(7, 10));
-        if (!nightOwl)
-        {
-            sleepStartTime = 22;
-        }
-        else
-        {
-            sleepStartTime = 14;
-        }
-    }
+
     void DetermineSkinColor()
     {
         #region SkinColor
@@ -569,7 +558,7 @@ public class PawnGeneration : MonoBehaviour
             }
         }
     }   //Bias?
-    void DetermineJob()
+    void SendPawnToIslandController()
     {
         if (islandController)
         {
@@ -594,13 +583,13 @@ public class PawnGeneration : MonoBehaviour
         islandController = GetComponentInParent<IslandController>();
         pawnNavigator = GetComponent<PawnNavigation>();
         Init();
+        EventsManager.StartListening("NewDay", DayToDayIncrementals);
     }
 
     private void Init()
     {
         SetBody();
         DetermineUniqueCharacteristics();
-        SleepingHours();
         //WorkingHours();   //Working hours is being changed. Job location is determined when the pawn enters a structure's premises. When the pawn is at their position, they'll receive wait time, pause commands, and contribute to resource gen speed
         DetermineSkinColor();
         DetermineHair();
@@ -629,8 +618,7 @@ public class PawnGeneration : MonoBehaviour
         #endregion
 
         GenerateNewPawn();
-
-        DetermineJob(); //This needs to be called after the structure's awake functions
+        SendPawnToIslandController(); //This needs to be called after the structure's awake functions
     }
 
     /// <summary>
@@ -639,17 +627,6 @@ public class PawnGeneration : MonoBehaviour
     /// social - 2 before, 2 after?
     /// work - 8-10 hours, stops if production structure is full
     /// </summary>
-    void HourToHourIncrementals()
-    {
-        currentHourCount++;
-        if (currentHourCount >= sleepStartTime)
-        {
-            Debug.Log("Time for bed!");
-            //Set destination to home quarters
-        }
-
-        
-    }
 
     void DayToDayIncrementals()
     {

@@ -3,7 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using System.Linq;
-
+/// <summary>
+/// Changelog:
+/// -Removed producer building system, as it's defunct with the new work location system
+/// Current plan:
+/// -> fix structure crafting to match a selection of items for the player.
+/// -> create list of required items
+/// -> request cargo deliver to building
+/// </summary>
 public class Structure : MonoBehaviour
 {
     private IslandController islandController;
@@ -11,40 +18,46 @@ public class Structure : MonoBehaviour
     [Header("Structure Setup")]
     private string buildingOwner;
     private string buildingName;
-    [Tooltip("Structure does not have local residency, and is attached to a nearby structure for its workers")]
-    [SerializeField] private bool hasLinkedResidence;
-    [SerializeField] private Structure linkedStructure;
-    public bool worksThroughRest;
-    private int workerCount;
-    public int maxResidents;
-    public List<PawnGeneration> masterWorkerList = new List<PawnGeneration>();
-    [SerializeField] private int buildingWorkerLimit;
     private bool isConstructionSite;    //Prevents requests from being made, unless they're construction related
 
-    private bool canSellWaresToPlayer;
-    private bool isSpecialistStructure;        //Determines whether the building is a specialist
-    private bool storageBuilding;           //Determines whether the building idly contains extra resources from and for the island
-    private bool producerBuilding = false;  //Determines whether the building can produce with no input
-    private bool isResidence = false;
-    private int productionRangeMax = 20;
-    private int productionRangeMin = 10;
+    [Header("Job Details")]
+    public int workStartTime;
+    public int workEndTime;
+    public bool worksThroughRest;
+
+    [Header("Workers and Residents")]
+    public int maxResidents;                                                    //Defines max occupancy of a house or shack
+    public List<PawnGeneration> masterWorkerList = new List<PawnGeneration>();  //Controls all pawns assigned to structure
+    [SerializeField] private int buildingWorkerLimit;
+
+    [Header("Structure Inventory")]
+    private bool isStore;        //Determines whether the building is a store for the player
     private int storageLimit;
     [SerializeField] private CargoSO emptyCargoObject;
-
     [SerializeField] private List<CargoSO> itemRequested;    //Items being requested by the structure
-    private List<CargoSO> itemBeingMade;    //Items being made by the store (should prevent the item's prereq from being requested
     [SerializeField] private List<CargoSO> currentStoreInventory;    //This is what's currently in the store
-    private List<Item> currentStoreForPlayerInventory;    //This is what's currently in the store that the player can purchase
+
+    private Dictionary<CargoSO.CargoType, int> cargoRequired = new Dictionary<CargoSO.CargoType, int>();
+    private Dictionary<CargoSO.CargoType, int> cargoAvailable = new Dictionary<CargoSO.CargoType, int>();
+    private Dictionary<CargoSO.CargoType, int> cargoProduced = new Dictionary<CargoSO.CargoType, int>();
+    private List<CargoSO> itemBeingMade;    //Items being made by the store (should prevent the item's prereq from being requested
+
+
+    [Header("Inventory for Player")]
+    private List<Item> currentStoreInventoryForPlayer;    //This is what's currently in the store that the player can purchase
+    [SerializeField] private List<Item> storeInventoryForPlayer;   //This is what the store should have for player purchase
+
+
+
 
     //These are the master lists that control what should be in the store. 
     [Tooltip("Populate this with items the store should maintain for and from the island")]
     [SerializeField] private List<CargoSO> storeToIslandInventory;   //This controls what the store should have on hand at all times.
     [Header("Store saleable items")]
     [Tooltip("Populate this with items the store should sell to the player")] 
-    [SerializeField] private List<Item> storeInventoryForPlayer;   //This controls what the store should have on hand at all times.
     public List<WorkLocation> workSites = new List<WorkLocation>();
     public Transform assignmentLocation;
-
+    #region Structure Enums
     public enum TownStructure
     {
         undefined_structure,
@@ -155,9 +168,7 @@ public class Structure : MonoBehaviour
         Mission,
     }
     [SerializeField] private SpecialistStructure specialistStructure;
-
-    private UnityAction dayUpdate;
-    //private UnityAction updateWorkerCount;
+    #endregion
 
     private void Awake()
     {
@@ -165,27 +176,33 @@ public class Structure : MonoBehaviour
         {
             islandController = GetComponentInParent<IslandController>();
         }
-        if (thisStructure != TownStructure.undefined_structure && islandController != null)
-        {
-            //islandController.structureTracker.Add(this, null);  //This is a simple tracker that defines all the possible buildings on the island
-            BuildingSetup();    //Create initial inventory, and request list
-            islandController.structureCheck.Add(this, false);
-            //Populate workers
-        }
-        else if ((fortStructure != FortStructure.Not_Fort) && islandController != null)
-        {
-            Debug.Log("Fort structure");
-            FortBuildingSetup();
-        }
-        else if ((specialistStructure != SpecialistStructure.Not_Specialist) && islandController != null)
-        {
-            //Debug.Log("Specialist structure");
-            producerBuilding = true;
-        }
-        CheckForWorkSites();
-        dayUpdate = new UnityAction(DayUpdate);
-    }
 
+        SetListeners();
+        SetupStructureClass();
+        CheckForWorkSites();
+
+    }
+    void SetListeners()
+    {
+        EventsManager.StartListening("NewDay", DayUpdate);
+        EventsManager.StartListening("PawnAddedToIsland", WorkerCountUpdate);
+    }
+    void SetupStructureClass ()
+    {
+        if (islandController)
+        {
+            if (thisStructure != TownStructure.undefined_structure)
+            {
+                BuildingSetup();    //Create initial inventory, and request list
+                islandController.structureCheck.Add(this, false);
+                //Populate workers
+            }
+            else if (fortStructure != FortStructure.Not_Fort)
+            {
+                FortBuildingSetup();
+            }
+        }
+    }
     private void CheckForWorkSites()
     {
         foreach (Transform t in transform)
@@ -202,17 +219,18 @@ public class Structure : MonoBehaviour
         }
     }
 
+    //This is called whenever a new pawn is detected on the island. 
+    //It checks against the structure's worker count, then adds workers until sated.
     private void WorkerCountUpdate()
     {
         if (islandController)
         {
-            //Debug.Log("Called");
             if (buildingWorkerLimit > 0 && masterWorkerList.Count <= buildingWorkerLimit)
             {
                 //Debug.Log(thisStructure + " worker limit is not zero; " + buildingWorkerLimit);
                 for (int i = 0; i < buildingWorkerLimit; i++)
                 {
-                    //Debug.Log("Called successfully");
+                    //This communicates with the island controller, and sends a message to the new worker to find a nearby home.
                     if (islandController.unassignedWorkers.Count != 0 && islandController.unassignedWorkers[i] != null)
                     {
                         masterWorkerList.Add(islandController.unassignedWorkers[i]);
@@ -221,8 +239,7 @@ public class Structure : MonoBehaviour
                         islandController.unassignedWorkers.RemoveAt(i);
                     }
                 }
-                workerCount = masterWorkerList.Count; //shift1Workers.Count + shift2Workers.Count + shift3Workers.Count;
-                if (workerCount >= buildingWorkerLimit)
+                if (masterWorkerList.Count >= buildingWorkerLimit)
                 {
                     {
                         islandController.structureCheck[this] = true;
@@ -240,65 +257,50 @@ public class Structure : MonoBehaviour
         }
 
     }
-
-    private void Update()
-    {
-        if (masterWorkerList.Count < 0)
-        {
-            Debug.Log(thisStructure + " has a non-zero pop");
-        }
-    }
-
-    private void OnEnable()
-    {
-        EventsManager.StartListening("NewDay", dayUpdate);
-        EventsManager.StartListening("PawnAddedToIsland", WorkerCountUpdate);
-    }
-    private void OnDisable()
-    {
-        EventsManager.StopListening("NewDay", dayUpdate);
-    }
-
+    //Each day, a request for new materials is sent to the island controller.
+    //These requests are for materials not on the island
     private void DayUpdate()
     {
-        //Debug.Log("Update requested by structure: " + name);
-        if (islandController != null)
+        if (islandController != null && isStore)
         {
-            if (!storageBuilding && !producerBuilding)  //Normal building, converts materials into other materials, or items.
-            {
-                //CommunicateRequestsToIslandController();
-                UpdateInventoryStatus();    //Request
-                CraftNewMaterial();         //Creation/Conversion
-
-            }
-            if (producerBuilding)   //Creates raw materials
-            {
-                CreateRawMaterial();
-
-            }
-            if (storageBuilding)    //Stores all types of materials
-            {
-
-            }
+            UpdateInventoryStatus();    //Request
+            //CraftNewMaterial();         //Creation/Conversion
         }
     }
-
-/*    void CommunicateRequestsToIslandController()
-    {
-        if (itemRequested.Count != 0)
-        {
-            foreach (CargoSO cargoRequest in itemRequested) //Check through each item in the request queue
-            {
-                if (!islandController.structureTracker.ContainsValue(cargoRequest)) //If its not in the structure tracker already
-                {
-                    islandController.structureTracker.Add(this, cargoRequest);  //Add to request list
-                }
-            }
-        }
-    }*/
 
     void UpdateInventoryStatus()
     {
+        //This function creates items for the player
+        if (currentStoreInventoryForPlayer.Count <= storeInventoryForPlayer.Count)
+        {
+            //Compare each cargo value
+            foreach (KeyValuePair<CargoSO.CargoType, int> cargoNeeded in cargoRequired)
+            {
+                foreach (KeyValuePair<CargoSO.CargoType, int> cargoOffered in cargoAvailable)
+                {
+                    //If the cargo key is the same
+                    if (cargoNeeded.Key == cargoOffered.Key)
+                    {
+                        //If the number of cargo is equal or greater than what's needed
+                        if (cargoOffered.Value <= cargoNeeded.Value)
+                        {
+                            //Update work location or work assignment with a new job
+                        }
+                        if (cargoOffered.Value > cargoNeeded.Value)
+                        {
+                            islandController.cargoRequests.Add(this, cargoNeeded.Key);
+                        }
+                    }
+                }
+            }
+        }
+
+
+
+
+
+
+
         if (currentStoreInventory.Count != storeInventoryForPlayer.Count)    //If the list count isnt identical
         {
             if ((currentStoreInventory.Count + itemBeingMade.Count) != storeInventoryForPlayer.Count)    //If the list and the make count isnt identical
@@ -321,16 +323,16 @@ public class Structure : MonoBehaviour
         }
     }
 
-    void CraftNewMaterial()
+    /*void CraftNewMaterial()
     {
         if (storeInventoryForPlayer.Count != 0)
         {
             //Cargo SO consumed to become Item for player.
-            if (currentStoreForPlayerInventory.Count != storeInventoryForPlayer.Count)
+            if (currentStoreInventoryForPlayer.Count != storeInventoryForPlayer.Count)
             {
                 foreach (Item sellableItem in storeInventoryForPlayer)  //Each possible item to be sold
                 {
-                    if (!currentStoreForPlayerInventory.Contains(sellableItem)) //If it does not contain a matching item
+                    if (!currentStoreInventoryForPlayer.Contains(sellableItem)) //If it does not contain a matching item
                     {
                         foreach (CargoSO cargoItem in sellableItem.craftingMaterials)   //Get all of the cargo items required to craft said item
                         {
@@ -344,9 +346,10 @@ public class Structure : MonoBehaviour
         {
             //Cargo SO consumed to create Cargo SO
         }
-    }
+    }*/
 
-    void CreateRawMaterial()
+    //This function is defunct, in favor of work location system. Kept for archival purposes.
+    /*void CreateRawMaterial()
     {
         //Randomize amount per day.
         //Add to list
@@ -367,296 +370,318 @@ public class Structure : MonoBehaviour
                     break;
                 }
         }
-    }
+    }*/
 
 
     void BuildingSetup()
     {
-        if (!isSpecialistStructure)
+        switch (thisStructure)
         {
-            switch (thisStructure)
-            {
-                case TownStructure.undefined_structure:
+            case TownStructure.undefined_structure:
+                {
+                    if ((fortStructure == FortStructure.Not_Fort && specialistStructure == SpecialistStructure.Not_Specialist) 
+                        || (fortStructure == FortStructure.Not_Fort || specialistStructure == SpecialistStructure.Not_Specialist))
                     {
-                        if ((fortStructure == FortStructure.Not_Fort && specialistStructure == SpecialistStructure.Not_Specialist) 
-                            || (fortStructure == FortStructure.Not_Fort || specialistStructure == SpecialistStructure.Not_Specialist))
-                        {
-                            Debug.Log(gameObject + " is undefined! Making inactive!");
-                            gameObject.SetActive(false);
-                            break;
-                        }
-                        else
-                        {
-                            Debug.Log("Structure should be defined as a fort or specialist structure");
-                            break;
-                        }
+                        Debug.Log(gameObject + " is undefined! Making inactive!");
+                        gameObject.SetActive(false);
+                        break;
                     }
-                case TownStructure.Apiary:
+                    else
                     {
-                        //Needs:    Wood, sugar
-                        //Creates:  Honey, wax
-                        //Bonus:    Sugar
-                        //Initial inventory
+                        Debug.Log("Structure should be defined as a fort or specialist structure");
+                        break;
+                    }
+                }
+            case TownStructure.Apiary:
+                {
+                    //Cargo required for bonus production or satisfaction
+                    cargoRequired.Add(CargoSO.CargoType.Wood, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Sugar, 1);
 
-                        //Requested inventory
-                        break;
-                    }
-                case TownStructure.Apothecary:
-                    {
-                        //Needs:    [Recipe Dependent]Roots, animal parts, water, coal, flour, sugar, gold, medical supplies
-                        //Creates:  Roots, animal parts
-                        break;
-                    }
-                case TownStructure.Armorer:
-                    {
+                    //Cargo produced, and initial inventory amount
+                    cargoProduced.Add(CargoSO.CargoType.Honey, Mathf.RoundToInt(Random.Range(0, 10)));
+                    cargoProduced.Add(CargoSO.CargoType.Wax, Mathf.RoundToInt(Random.Range(0, 10)));
+                    break;
+                }
+            case TownStructure.Apothecary:
+                {
+                    cargoRequired.Add(CargoSO.CargoType.Roots, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Animal_Parts, 1);
 
-                        break;
-                    }
-                case TownStructure.Armory:
-                    {
+                    cargoProduced.Add(CargoSO.CargoType.Honey, Mathf.RoundToInt(Random.Range(0, 10)));
+                    cargoProduced.Add(CargoSO.CargoType.Sugar, Mathf.RoundToInt(Random.Range(0, 10)));
+                    cargoProduced.Add(CargoSO.CargoType.Roots, Mathf.RoundToInt(Random.Range(0, 10)));
+                    cargoProduced.Add(CargoSO.CargoType.Animal_Parts, Mathf.RoundToInt(Random.Range(0, 10)));
+                    cargoProduced.Add(CargoSO.CargoType.Water, Mathf.RoundToInt(Random.Range(0, 10)));
+                    cargoProduced.Add(CargoSO.CargoType.Coal, Mathf.RoundToInt(Random.Range(0, 10)));
+                    cargoProduced.Add(CargoSO.CargoType.Flour, Mathf.RoundToInt(Random.Range(0, 10)));
+                    cargoProduced.Add(CargoSO.CargoType.Medical_Supplies, Mathf.RoundToInt(Random.Range(0, 10)));
+                    break;
+                }
+            case TownStructure.Armorer:
+                {
+                    cargoRequired.Add(CargoSO.CargoType.Wood, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Coal, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Tools, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Leather, 1);
+                    break;
+                }
+            case TownStructure.Armory:
+                {
+                    cargoRequired.Add(CargoSO.CargoType.Gunpowder, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Weapons, 1);
+                    break;
+                }
+            case TownStructure.Bakery:
+                {
+                    cargoRequired.Add(CargoSO.CargoType.Honey, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Wood, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Sugar, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Roots, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Water, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Coal, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Flour, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Tools, 1);
 
-                        break;
-                    }
-                case TownStructure.Bakery:
-                    {
+                    cargoProduced.Add(CargoSO.CargoType.Food, Mathf.RoundToInt(Random.Range(0, 10)));
+                    break;
+                }
+            case TownStructure.Bank:
+                {
+                    cargoRequired.Add(CargoSO.CargoType.Gold, 1);
 
-                        break;
-                    }
-                case TownStructure.Bank:
-                    {
+                    cargoProduced.Add(CargoSO.CargoType.Gold, Mathf.RoundToInt(Random.Range(0, 10)));
+                    break;
+                }
+            case TownStructure.Barber:
+                {
+                    cargoRequired.Add(CargoSO.CargoType.Medical_Supplies, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Tools, 1);
+                    break;
+                }
+            case TownStructure.Barn:
+                {
+                    cargoRequired.Add(CargoSO.CargoType.Water, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Flour, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Tools, 1);
 
-                        break;
-                    }
-                case TownStructure.Barber:
-                    {
+                    cargoProduced.Add(CargoSO.CargoType.Wool, Mathf.RoundToInt(Random.Range(0, 10)));
+                    break;
+                }
+            case TownStructure.Bawdy_House:
+                {
 
-                        break;
-                    }
-                case TownStructure.Barn:
-                    {
+                    break;
+                }
+            case TownStructure.Blacksmith:
+                {
 
-                        break;
-                    }
-                case TownStructure.Bawdy_House:
-                    {
+                    break;
+                }
+            case TownStructure.Broker:
+                {
 
-                        break;
-                    }
-                case TownStructure.Blacksmith:
-                    {
+                    break;
+                }
+            case TownStructure.Butcher:
+                {
 
-                        break;
-                    }
-                case TownStructure.Broker:
-                    {
+                    break;
+                }
+            case TownStructure.Candle_Maker:
+                {
 
-                        break;
-                    }
-                case TownStructure.Butcher:
-                    {
+                    break;
+                }
+            case TownStructure.Carpenter:
+                {
 
-                        break;
-                    }
-                case TownStructure.Candle_Maker:
-                    {
+                    break;
+                }
+            case TownStructure.Church:
+                {
 
-                        break;
-                    }
-                case TownStructure.Carpenter:
-                    {
+                    break;
+                }
+            case TownStructure.Clocktower:
+                {
 
-                        break;
-                    }
-                case TownStructure.Church:
-                    {
+                    break;
+                }
+            case TownStructure.Cobbler:
+                {
 
-                        break;
-                    }
-                case TownStructure.Clocktower:
-                    {
+                    break;
+                }
+            case TownStructure.Courthouse:
+                {
 
-                        break;
-                    }
-                case TownStructure.Cobbler:
-                    {
+                    break;
+                }
+            case TownStructure.Distillery:
+                {
 
-                        break;
-                    }
-                case TownStructure.Courthouse:
-                    {
+                    break;
+                }
+            case TownStructure.Dock:
+                {
 
-                        break;
-                    }
-                case TownStructure.Distillery:
-                    {
+                    break;
+                }
+            case TownStructure.Drydock:
+                {
 
-                        break;
-                    }
-                case TownStructure.Dock:
-                    {
+                    break;
+                }
+            case TownStructure.Fishing_Hut:
+                {
 
-                        break;
-                    }
-                case TownStructure.Drydock:
-                    {
+                    break;
+                }
+            case TownStructure.Forge:
+                {
 
-                        break;
-                    }
-                case TownStructure.Fishing_Hut:
-                    {
+                    break;
+                }
+            case TownStructure.Garrison:
+                {
 
-                        break;
-                    }
-                case TownStructure.Forge:
-                    {
+                    break;
+                }
+            case TownStructure.Governors_Mansion:
+                {
 
-                        break;
-                    }
-                case TownStructure.Garrison:
-                    {
+                    break;
+                }
+            case TownStructure.Graveyard:
+                {
 
-                        break;
-                    }
-                case TownStructure.Governors_Mansion:
-                    {
+                    break;
+                }
+            case TownStructure.Gypsy_Wagon:
+                {
 
-                        break;
-                    }
-                case TownStructure.Graveyard:
-                    {
+                    break;
+                }
+            case TownStructure.House:
+                {
+                    maxResidents = 4;
+                    break;
+                }
+            case TownStructure.Hunter_Shack:    //Can produce independently
+                {
+                    //Creates animal parts, raw meat, skins, animal fat  
+                    break;
+                }
+            case TownStructure.Jeweler_Parlor:
+                {
 
-                        break;
-                    }
-                case TownStructure.Gypsy_Wagon:
-                    {
+                    break;
+                }
+            case TownStructure.Leathersmith:
+                {
 
-                        break;
-                    }
-                case TownStructure.House:
-                    {
-                        isResidence = true;
-                        maxResidents = 4;
-                        break;
-                    }
-                case TownStructure.Hunter_Shack:    //Can produce independently
-                    {
-                        //Creates animal parts, raw meat, skins, animal fat
-                        producerBuilding = true;    
-                        break;
-                    }
-                case TownStructure.Jeweler_Parlor:
-                    {
+                    break;
+                }
+            case TownStructure.Logging_Camp:
+                {
+                    //Creates logs and charcoal
+                    break;
+                }
+            case TownStructure.Library:
+                {
 
-                        break;
-                    }
-                case TownStructure.Leathersmith:
-                    {
+                    break;
+                }
+            case TownStructure.Lighthouse:
+                {
 
-                        break;
-                    }
-                case TownStructure.Logging_Camp:
-                    {
-                        //Creates logs and charcoal
-                        producerBuilding = true;
-                        break;
-                    }
-                case TownStructure.Library:
-                    {
+                    break;
+                }
+            case TownStructure.Market_Stall:
+                {
 
-                        break;
-                    }
-                case TownStructure.Lighthouse:
-                    {
+                    break;
+                }
+            case TownStructure.Mill:
+                {
 
-                        break;
-                    }
-                case TownStructure.Market_Stall:
-                    {
+                    break;
+                }
+            case TownStructure.Pawn_Shop:
+                {
 
-                        break;
-                    }
-                case TownStructure.Mill:
-                    {
+                    break;
+                }
+            case TownStructure.Prison:
+                {
 
-                        break;
-                    }
-                case TownStructure.Pawn_Shop:
-                    {
+                    break;
+                }
+            case TownStructure.Public_Square:
+                {
 
-                        break;
-                    }
-                case TownStructure.Prison:
-                    {
+                    break;
+                }
+            case TownStructure.Saw_Mill:    //Can produce independently
+                {
+                    break;
+                }
+            case TownStructure.Shack:
+                {
+                    maxResidents = 3;
+                    break;
+                }
+            case TownStructure.Shipwright:
+                {
 
-                        break;
-                    }
-                case TownStructure.Public_Square:
-                    {
+                    break;
+                }
+            case TownStructure.Tailor:
+                {
 
-                        break;
-                    }
-                case TownStructure.Saw_Mill:    //Can produce independently
-                    {
-                        producerBuilding = true;    //Creates wood
-                        break;
-                    }
-                case TownStructure.Shack:
-                    {
-                        isResidence = true;
-                        maxResidents = 3;
-                        break;
-                    }
-                case TownStructure.Shipwright:
-                    {
+                    break;
+                }
+            case TownStructure.Tar_Kiln:
+                {
 
-                        break;
-                    }
-                case TownStructure.Tailor:
-                    {
+                    break;
+                }
+            case TownStructure.Tavern:
+                {
 
-                        break;
-                    }
-                case TownStructure.Tar_Kiln:
-                    {
+                    break;
+                }
+            case TownStructure.Tattoo_Parlor:
+                {
 
-                        break;
-                    }
-                case TownStructure.Tavern:
-                    {
+                    break;
+                }
+            case TownStructure.Town_Hall:
+                {
 
-                        break;
-                    }
-                case TownStructure.Tattoo_Parlor:
-                    {
+                    break;
+                }
+            case TownStructure.Warehouse:
+                {
 
-                        break;
-                    }
-                case TownStructure.Town_Hall:
-                    {
+                    break;
+                }
+            case TownStructure.Watchtower:
+                {
 
-                        break;
-                    }
-                case TownStructure.Warehouse:
-                    {
+                    break;
+                }
+            case TownStructure.Water_Well:  //Can produce independently
+                {
 
-                        break;
-                    }
-                case TownStructure.Watchtower:
-                    {
+                    break;
+                }
+            case TownStructure.Wig_Maker:
+                {
 
-                        break;
-                    }
-                case TownStructure.Water_Well:  //Can produce independently
-                    {
-
-                        break;
-                    }
-                case TownStructure.Wig_Maker:
-                    {
-
-                        break;
-                    }
-            }
+                    break;
+                }
         }
     }
 

@@ -4,11 +4,12 @@ using UnityEngine;
 
 public class Cannon : MonoBehaviour
 {
-    private bool isOperable;
-    private bool loaded;
-    private int numCrewManning;
-    private bool temp_allowedToManuallyFire;
+    private bool isOperable = true;
+    private bool loaded = true;
+    private int numCrewManning = 4;
     [SerializeField] private GameObject barrel;
+    [SerializeField] private GameObject fireParticle;
+    private float particleResetTime = 1.7f;
 
     private enum CannonType
     {
@@ -31,43 +32,51 @@ public class Cannon : MonoBehaviour
     }
     [SerializeField] private ShotLoaded shotLoaded;
 
-    private void Update()
+    private void Awake()
     {
-        if (loaded)
+        //Debug.Log("Cannon root: " + gameObject.transform.root.name);
+        if (transform.parent.name == "BroadsidePort")
         {
-            barrel.GetComponent<Renderer>().material.color = Color.red;
+            EventsManager.StartListening("Broadside_Port_" + gameObject.transform.root.name, Fire);
         }
-        else
+        if (transform.parent.name == "BroadsideStarboard")
         {
-            barrel.GetComponent<Renderer>().material.color = Color.gray;
-        }
-
-        if (temp_allowedToManuallyFire)
-        {
-            if (Input.GetKeyDown(KeyCode.R))
-            {
-                Fire(1);
-            }
+            EventsManager.StartListening("Broadside_Starboard_" + gameObject.transform.root.name, Fire);
         }
     }
-    void Fire(float fireDelay)
+
+    void Fire()
     {
-        if (loaded)
+        if (loaded && isOperable)
         {
+            float fireDelay = Random.Range(1f, 3f);
             StartCoroutine(FireWeapon(fireDelay));
         }
     }
 
     private IEnumerator FireWeapon(float fireDelay)
     {
+        loaded = false;
         yield return new WaitForSeconds(fireDelay * (numCrewManning * 0.25f));  //Fire delay is increased if >4 crew man cannon
-
+        StartCoroutine(EffectController());
         GameObject cannonBall = ShotPool.shotInstance.GetPooledObject();
         if (cannonBall != null)
         {
-            cannonBall.transform.position = this.transform.position;
-            cannonBall.transform.rotation = this.transform.rotation;
+            cannonBall.transform.position = barrel.transform.position;
+            cannonBall.transform.localEulerAngles = barrel.transform.localEulerAngles;  //There's still some odd issues being caused by this. Might be related to how things are parented?
             cannonBall.SetActive(true);
         }
+        StartCoroutine(ReloadTime(60.0f));  //Minute and a half between shots theoretically
+    }
+    private IEnumerator EffectController()
+    {
+        fireParticle.SetActive(true);
+        yield return new WaitForSeconds(particleResetTime);
+        fireParticle.SetActive(false);
+    }
+    private IEnumerator ReloadTime(float delay)
+    {
+        yield return new WaitForSeconds(delay * (numCrewManning * 0.25f));
+        loaded = true;
     }
 }

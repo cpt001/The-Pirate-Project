@@ -4,6 +4,9 @@ using UnityEngine.InputSystem;
 #endif
 
 /* Note: animations are called via the controller for both the character and capsule using animator null checks
+ * 
+ * Collision detection is still not great.
+ * Probably need to rethink how controllers are swapped, since movement when on ships causes controller to freeze at height when jumping
  */
 
 namespace StarterAssets
@@ -196,7 +199,7 @@ namespace StarterAssets
                 //Debug.Log("Raycast hit " + rayHit.transform.name);
                 if (rayHit.transform.tag == "Ship" || rayHit.transform.tag =="Structure")
                 {
-                    Debug.Log("raycast hitting object: " + rayHit.transform.name);
+                    //Debug.Log("raycast hitting object: " + rayHit.transform.name);
 
                     gameObject.transform.SetParent(rayHit.transform);
                     playerOnWalkableSurface = true;

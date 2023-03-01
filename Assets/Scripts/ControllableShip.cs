@@ -33,7 +33,9 @@ public class ControllableShip : MonoBehaviour
         ForeToStern,
         SternToFore,
         Random,
+        reset,
     }
+    private FireMode firingOrder;
 
     private int setSail;
 
@@ -54,6 +56,20 @@ public class ControllableShip : MonoBehaviour
     private void Awake()
     {
         _rb = GetComponent<Rigidbody>();
+        foreach (Transform t in transform.Find("BroadsidePort"))
+        {
+            if (t.gameObject.GetComponent<Cannon>())
+            {
+                portBroadside.Add(t.GetComponent<Cannon>());
+            }
+        }
+        foreach (Transform t in transform.Find("BroadsideStarboard"))
+        {
+            if (t.gameObject.GetComponent<Cannon>())
+            {
+                starboardBroadside.Add(t.GetComponent<Cannon>());
+            }
+        }
     }
 
     private void Update()
@@ -89,6 +105,23 @@ public class ControllableShip : MonoBehaviour
                 sailState = (SailState)setSail;
 
             }
+
+            if (Input.GetKeyDown(KeyCode.Alpha1))
+            {
+                EventsManager.TriggerEvent("Broadside_Port_" + gameObject.transform.name);
+            }
+            if (Input.GetKeyDown(KeyCode.Alpha2))
+            {
+                EventsManager.TriggerEvent("Broadside_Starboard_" + gameObject.transform.name);
+            }
+            /*if (Input.GetKeyDown(KeyCode.V))
+            {
+                firingOrder++;
+                if (firingOrder == FireMode.reset)
+                {
+                    firingOrder = FireMode.ForeToStern;
+                }
+            }*/
         }
         else
         {
@@ -98,6 +131,13 @@ public class ControllableShip : MonoBehaviour
         }
 
         ShipSailCaseUpdate();
+    }
+
+    void UpdateFiringMode()
+    {
+        //https://forum.unity.com/threads/sorting-a-list-of-vector3-by-x-values.126237/
+        //IEnumerable<Vector3> sorted = portBroadside.OrderBy<>
+        //smods.OrderBy(bastard => Vector3.Distance(transform.position, sm.transform.position));
     }
 
     void ShipSailCaseUpdate()
@@ -306,5 +346,10 @@ public class ControllableShip : MonoBehaviour
                 }
             #endregion
         }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        Debug.Log("Collision with ship detected: " + collision.transform.name);
     }
 }
