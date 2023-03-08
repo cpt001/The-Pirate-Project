@@ -62,12 +62,8 @@ public class CargoSO : ScriptableObject
             //Consumer: Distillery
         Grapes,             //Producer: Plantation
             //Consumer: Market Stall, Distillery
-        Rum,                //Producer: Distillery
-            //Consumer: Tavern
-        Ale,                //Producer: Distillery
-            //Consumer: Tavern
-        Wine,               //Producer: Distillery
-            //Consumer: Tavern, Church
+        Alcohol,
+        Clothing,
         Tar,                //Producer: Tar Kiln
             //Consumer: Shipwright, Drydock
         Rope,               //Producer: Shack, Tailor, Shipwright, Pawn Shop, 

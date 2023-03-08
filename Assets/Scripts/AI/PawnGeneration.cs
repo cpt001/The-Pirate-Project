@@ -33,6 +33,7 @@ public class PawnGeneration : MonoBehaviour
     public Dictionary<PawnGeneration, int> opinionMatrix;   //This won't appear in the inspector anyway, might as well keep it here -- Opinion of other pawns that have been met
     private int moneyOnHand;
     private IslandController islandController = null;
+    public string workTitle = null;
 
     /// <summary>
     /// This section determines the unit's external gender, sexual preference, and time of day preference

@@ -12,12 +12,15 @@ using UnityEngine.Events;
 /// If the item is unavailable at nearby aligned islands, it sends a request to a neighboring nation that is friendly.
 /// If the call is answered negatively, the controller will look through the game manifest, to see if it's available on any island.
 /// If not, the resource is requested from off-map *the host countries continent*, at an exorbetant price
+/// 
+/// 
 /// </summary>
 public class IslandController : MonoBehaviour
 {
     //public List<Structure> structuresOnIsland = new List<Structure>();
     public Dictionary<Structure, bool> structureCheck = new Dictionary<Structure, bool>();
     public Dictionary<Structure, CargoSO.CargoType> cargoRequests = new Dictionary<Structure, CargoSO.CargoType>();
+    public Dictionary<Structure, CargoSO.CargoType> currentCargoOnIsland = new Dictionary<Structure, CargoSO.CargoType>();
 
     private bool isSpecialistIsland;
     private enum IslandSpecialization

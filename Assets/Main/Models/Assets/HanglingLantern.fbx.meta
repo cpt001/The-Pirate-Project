@@ -7,8 +7,14 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: phong1
+      name: CandleBlinn
     second: {fileID: 2100000, guid: 6dcc283e8b433f3408732ea88431f610, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: phong1
+    second: {fileID: -4597107667637640440, guid: 0e482e185a774184cb29d09430aed4e3,
+      type: 3}
   materials:
     materialImportMode: 2
     materialName: 0

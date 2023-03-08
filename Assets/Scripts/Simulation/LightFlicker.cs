@@ -11,7 +11,7 @@ public class LightFlicker : MonoBehaviour
 {
     [Tooltip("External light to flicker; you can leave this null if you attach script to a light")]
     [SerializeField] private new Light light;
-    private MeshRenderer meshRend;
+    [SerializeField] private MeshRenderer meshRend;
     [Tooltip("Minimum random light intensity")]
     [SerializeField] private float minIntensity = 0f;
     [Tooltip("Maximum random light intensity")]
@@ -22,6 +22,7 @@ public class LightFlicker : MonoBehaviour
     private bool lanternBool;
     public bool lanternOverride;
     [SerializeField] private bool playerLantern = false;
+    [SerializeField] private bool environmentLighting = false;
 
 
     // Continuous average calculation via FIFO queue
@@ -44,22 +45,31 @@ public class LightFlicker : MonoBehaviour
     void Start()
     {
         EventsManager.StartListening("ToggleLights", ToggleLights);
-        ToggleLights();
+        ToggleLightsImmediate();
         smoothQueue = new Queue<float>(smoothing);
         // External or internal light?
         if (light == null)
         {
             light = GetComponent<Light>();
-            meshRend = GetComponent<MeshRenderer>();
+            if (GetComponent<MeshRenderer>() && meshRend == null)
+            {
+                meshRend = GetComponent<MeshRenderer>();
+            }
             if (!playerLantern)
             {
                 light.enabled = false;
-                meshRend.enabled = false;
+                if (meshRend)
+                {
+                    meshRend.enabled = false;
+                }
             }
             else
             {
                 light.enabled = true;
-                meshRend.enabled = true;
+                if (meshRend)
+                {
+                    meshRend.enabled = true;
+                }
             }
         }
     }
@@ -68,22 +78,39 @@ public class LightFlicker : MonoBehaviour
     { 
         if (!lanternOverride)
         {
-            StartCoroutine(ToggleLightsAt());
+            StartCoroutine(ToggleLightsAt(60));
+            EventsManager.StartListening("ToggleLights", ToggleLights);
+        }
+        if (environmentLighting)
+        {
+            StartCoroutine(ToggleLightsAt(5));
         }
         else if (lanternOverride)
         {
-            {
-                EventsManager.StopListening("ToggleLights", ToggleLights);
-            }
+            EventsManager.StopListening("ToggleLights", ToggleLights);
+            lanternBool = true;
+            SetLights(lanternBool);
         }
     }
-    IEnumerator ToggleLightsAt()
+    void ToggleLightsImmediate()
     {
-        float randomTimeToLights = Random.Range(0, 60);
+        StartCoroutine(ToggleLightsAt(0));
+    }
+    IEnumerator ToggleLightsAt(float waitTime)
+    {
+        float randomTimeToLights = Random.Range(0, waitTime);
         yield return new WaitForSeconds(randomTimeToLights);
         lanternBool = !lanternBool;
-        meshRend.enabled = lanternBool;
-        light.enabled = lanternBool;
+        SetLights(lanternBool);
+    }
+
+    public void SetLights(bool lightToggle)
+    {
+        if (meshRend)
+        {
+            meshRend.enabled = lightToggle;
+        }
+        light.enabled = lightToggle;
     }
 
     void Update()

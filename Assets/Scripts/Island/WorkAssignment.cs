@@ -5,9 +5,9 @@ using UnityEngine;
 public class WorkAssignment : MonoBehaviour
 {
     private Structure parentStructure;
-    [SerializeField] private bool isMultiTask;
+    [SerializeField] private bool isMultiTask;  //Sets whether a location should only assign locations based on whats available to work
     [SerializeField] private float timer;
-    public List<WorkLocation> locationsToBeWorked = new List<WorkLocation>();
+    public List<WorkLocation> locationsToBeWorked = new List<WorkLocation>();   //Whats available to work
 
 
     private void Awake()
@@ -18,25 +18,40 @@ public class WorkAssignment : MonoBehaviour
     {
         if (other.GetComponent<PawnGeneration>())
         {
-            StartCoroutine(ShortWaitTimer(timer, other.GetComponent<PawnGeneration>()));            
+            StartCoroutine(ShortWaitTimer(timer, other.GetComponent<PawnNavigation>()));            
         }
     }
 
-    private IEnumerator ShortWaitTimer(float timerInput, PawnGeneration thisPawn)
+    private IEnumerator ShortWaitTimer(float timerInput, PawnNavigation thisPawn)
     {
         //Debug.Log(thisPawn.name + " detected, stopping");
-        thisPawn.pawnNavigator.agent.ResetPath(); //This was the fix that was needed
+        thisPawn.agent.ResetPath(); //This was the fix that was needed
         yield return new WaitForSeconds(timerInput);
-        foreach (WorkLocation workSite in parentStructure.workSites)
+        if (!isMultiTask) 
         {
-            if (!workSite.isBeingWorked)
+            foreach (WorkLocation workSite in parentStructure.workSites)
             {
-                EventsManager.TriggerEvent("NewDestination_" + thisPawn.name);
-                //Debug.Log("Broadcasting: NewDestination_" + thisPawn.name);
-                thisPawn.pawnNavigator.agent.SetDestination(workSite.transform.position);
-                workSite.isBeingWorked = true;
-                break;
+                if (!workSite.isBeingWorked)
+                {
+                    EventsManager.TriggerEvent("NewDestination_" + thisPawn.name);
+                    thisPawn.agent.SetDestination(workSite.transform.position);
+                    workSite.isBeingWorked = true;
+                    break;
+                }
             }
         }
+        else
+        {
+            foreach(WorkLocation workSite in locationsToBeWorked)
+            {
+                if (!workSite.isBeingWorked)
+                {
+                    EventsManager.TriggerEvent("NewDestination_" + thisPawn.name);
+                    thisPawn.agent.SetDestination(workSite.transform.position);
+                    workSite.isBeingWorked = true;
+                    break;
+                }
+            }
+        }                                                                                                                                                                                                                                                       
     }
 }

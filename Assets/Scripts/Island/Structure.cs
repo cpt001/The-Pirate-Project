@@ -33,14 +33,14 @@ public class Structure : MonoBehaviour
     [Header("Structure Inventory")]
     private bool isStore;        //Determines whether the building is a store for the player
     private int storageLimit;
+    private bool canOperateWithNoInput;
     [SerializeField] private CargoSO emptyCargoObject;
     [SerializeField] private List<CargoSO> itemRequested;    //Items being requested by the structure
     [SerializeField] private List<CargoSO> currentStoreInventory;    //This is what's currently in the store
 
-    private Dictionary<CargoSO.CargoType, int> cargoRequired = new Dictionary<CargoSO.CargoType, int>();
-    private Dictionary<CargoSO.CargoType, int> cargoAvailable = new Dictionary<CargoSO.CargoType, int>();
-    private Dictionary<CargoSO.CargoType, int> cargoProduced = new Dictionary<CargoSO.CargoType, int>();
-    private List<CargoSO> itemBeingMade;    //Items being made by the store (should prevent the item's prereq from being requested
+    private Dictionary<CargoSO.CargoType, int> cargoRequired = new Dictionary<CargoSO.CargoType, int>();    //Whats needed to make items here
+    private Dictionary<CargoSO.CargoType, int> cargoAvailable = new Dictionary<CargoSO.CargoType, int>();   //This should be considered 'spares'
+    public Dictionary<CargoSO.CargoType, int> cargoProduced = new Dictionary<CargoSO.CargoType, int>();     //What's made here
 
 
     [Header("Inventory for Player")]
@@ -116,6 +116,8 @@ public class Structure : MonoBehaviour
         Prison,         //Self explanatory.
         Public_Square,  //Moreso a location marker than anything else.
 
+        Room,           //Serves as a rented room within a larger structure
+
         Saw_Mill,       //Refines wood.        ||Creates: planks
         Shack,          //Simple single house.
         Shipwright,     //Sells available ships to the player, and allows light refit, and medium repairs.
@@ -132,33 +134,33 @@ public class Structure : MonoBehaviour
         Water_Well,     //
         Wig_Maker,      //
 
+        Plantation,
+        Mineshaft,
+        Quarry,
     }
     public TownStructure thisStructure;
 
     private enum FortStructure
     {
         Not_Fort,
+        Fort_Armory,
         Fort_Barracks,
-        Fort_OfficerQuarters,
-        Fort_Stocks,
+        Fort_Battlement,
         Fort_Gallows,
         Fort_Kitchen,
         Fort_MessHall,
-        Fort_Armory,
         Fort_MunitionStore,
-        Fort_Watchtower,
-        Fort_Battlement,
+        Fort_OfficerQuarters,
+        Fort_Stocks,
         Fort_Vault,
+        Fort_Watchtower,
     }
     [SerializeField] private FortStructure fortStructure;
 
     private enum SpecialistStructure
     {
         Not_Specialist,
-        Plantation,
         Trading_Post,
-        Mineshaft,
-        Quarry,
         Smugglers_Hideout,
         Guardian_Fort,
         Cannibal_Island,
@@ -270,6 +272,14 @@ public class Structure : MonoBehaviour
 
     void UpdateInventoryStatus()
     {
+        foreach (KeyValuePair<CargoSO.CargoType, int> itemAndAmount in cargoAvailable)
+        {
+            for (int i = 0; i > itemAndAmount.Value; i++)
+            {
+                islandController.currentCargoOnIsland.Add(this, itemAndAmount.Key);
+            }
+        }
+
         //This function creates items for the player
         if (currentStoreInventoryForPlayer.Count <= storeInventoryForPlayer.Count)
         {
@@ -285,9 +295,19 @@ public class Structure : MonoBehaviour
                         if (cargoOffered.Value <= cargoNeeded.Value)
                         {
                             //Update work location or work assignment with a new job
+                            EventsManager.TriggerEvent("PlayerObjectReadyToCraft_" + name);
                         }
                         if (cargoOffered.Value > cargoNeeded.Value)
                         {
+                            //Check the island's inventory for existing cargo
+                            if (islandController.currentCargoOnIsland.ContainsValue(cargoNeeded.Key))
+                            {
+                                //Set cargo's destination to this structure
+                                //Remove cargo from current cargo on island dictionary in IC (prevents double claims)
+                                //Check structure inventory for object
+                                //
+                            }
+
                             islandController.cargoRequests.Add(this, cargoNeeded.Key);
                         }
                     }
@@ -301,7 +321,7 @@ public class Structure : MonoBehaviour
 
 
 
-        if (currentStoreInventory.Count != storeInventoryForPlayer.Count)    //If the list count isnt identical
+        /*if (currentStoreInventory.Count != storeInventoryForPlayer.Count)    //If the list count isnt identical
         {
             if ((currentStoreInventory.Count + itemBeingMade.Count) != storeInventoryForPlayer.Count)    //If the list and the make count isnt identical
             {
@@ -320,7 +340,7 @@ public class Structure : MonoBehaviour
                     }
                 }
             }
-        }
+        }*/
     }
 
     /*void CraftNewMaterial()
@@ -375,6 +395,15 @@ public class Structure : MonoBehaviour
 
     void BuildingSetup()
     {
+        if (isConstructionSite)
+        {
+            cargoRequired.Add(CargoSO.CargoType.Tools, 1);
+            cargoRequired.Add(CargoSO.CargoType.Bricks, 1);
+            cargoRequired.Add(CargoSO.CargoType.Rope, 1);
+            cargoRequired.Add(CargoSO.CargoType.Planks, 1);
+            cargoRequired.Add(CargoSO.CargoType.Tar, 1);
+        }
+
         switch (thisStructure)
         {
             case TownStructure.undefined_structure:
@@ -398,9 +427,13 @@ public class Structure : MonoBehaviour
                     cargoRequired.Add(CargoSO.CargoType.Wood, 1);
                     cargoRequired.Add(CargoSO.CargoType.Sugar, 1);
 
-                    //Cargo produced, and initial inventory amount
-                    cargoProduced.Add(CargoSO.CargoType.Honey, Mathf.RoundToInt(Random.Range(0, 10)));
-                    cargoProduced.Add(CargoSO.CargoType.Wax, Mathf.RoundToInt(Random.Range(0, 10)));
+                    //Cargo available when building first generates -- Moved to function below
+                    //cargoAvailable.Add(CargoSO.CargoType.Wood, Mathf.RoundToInt(Random.Range(0, 3)));
+                    //cargoAvailable.Add(CargoSO.CargoType.Sugar, Mathf.RoundToInt(Random.Range(0, 3)));
+
+                    //Cargo produced, and how much should be produced per round
+                    cargoProduced.Add(CargoSO.CargoType.Honey, Mathf.RoundToInt(Random.Range(0, 3)));
+                    cargoProduced.Add(CargoSO.CargoType.Wax, Mathf.RoundToInt(Random.Range(0, 3)));
                     break;
                 }
             case TownStructure.Apothecary:
@@ -408,14 +441,14 @@ public class Structure : MonoBehaviour
                     cargoRequired.Add(CargoSO.CargoType.Roots, 1);
                     cargoRequired.Add(CargoSO.CargoType.Animal_Parts, 1);
 
-                    cargoProduced.Add(CargoSO.CargoType.Honey, Mathf.RoundToInt(Random.Range(0, 10)));
-                    cargoProduced.Add(CargoSO.CargoType.Sugar, Mathf.RoundToInt(Random.Range(0, 10)));
-                    cargoProduced.Add(CargoSO.CargoType.Roots, Mathf.RoundToInt(Random.Range(0, 10)));
-                    cargoProduced.Add(CargoSO.CargoType.Animal_Parts, Mathf.RoundToInt(Random.Range(0, 10)));
-                    cargoProduced.Add(CargoSO.CargoType.Water, Mathf.RoundToInt(Random.Range(0, 10)));
-                    cargoProduced.Add(CargoSO.CargoType.Coal, Mathf.RoundToInt(Random.Range(0, 10)));
-                    cargoProduced.Add(CargoSO.CargoType.Flour, Mathf.RoundToInt(Random.Range(0, 10)));
-                    cargoProduced.Add(CargoSO.CargoType.Medical_Supplies, Mathf.RoundToInt(Random.Range(0, 10)));
+                    cargoProduced.Add(CargoSO.CargoType.Honey, Mathf.RoundToInt(Random.Range(0, 3)));
+                    cargoProduced.Add(CargoSO.CargoType.Sugar, Mathf.RoundToInt(Random.Range(0, 3)));
+                    cargoProduced.Add(CargoSO.CargoType.Roots, Mathf.RoundToInt(Random.Range(0, 3)));
+                    cargoProduced.Add(CargoSO.CargoType.Animal_Parts, Mathf.RoundToInt(Random.Range(0, 3)));
+                    cargoProduced.Add(CargoSO.CargoType.Water, Mathf.RoundToInt(Random.Range(0, 3)));
+                    cargoProduced.Add(CargoSO.CargoType.Coal, Mathf.RoundToInt(Random.Range(0, 3)));
+                    cargoProduced.Add(CargoSO.CargoType.Flour, Mathf.RoundToInt(Random.Range(0, 3)));
+                    cargoProduced.Add(CargoSO.CargoType.Medical_Supplies, Mathf.RoundToInt(Random.Range(0, 3)));
                     break;
                 }
             case TownStructure.Armorer:
@@ -443,14 +476,14 @@ public class Structure : MonoBehaviour
                     cargoRequired.Add(CargoSO.CargoType.Flour, 1);
                     cargoRequired.Add(CargoSO.CargoType.Tools, 1);
 
-                    cargoProduced.Add(CargoSO.CargoType.Food, Mathf.RoundToInt(Random.Range(0, 10)));
+                    cargoProduced.Add(CargoSO.CargoType.Food, Mathf.RoundToInt(Random.Range(0, 3)));
                     break;
                 }
             case TownStructure.Bank:
                 {
                     cargoRequired.Add(CargoSO.CargoType.Gold, 1);
 
-                    cargoProduced.Add(CargoSO.CargoType.Gold, Mathf.RoundToInt(Random.Range(0, 10)));
+                    cargoProduced.Add(CargoSO.CargoType.Gold, Mathf.RoundToInt(Random.Range(0, 3)));
                     break;
                 }
             case TownStructure.Barber:
@@ -465,223 +498,420 @@ public class Structure : MonoBehaviour
                     cargoRequired.Add(CargoSO.CargoType.Flour, 1);
                     cargoRequired.Add(CargoSO.CargoType.Tools, 1);
 
-                    cargoProduced.Add(CargoSO.CargoType.Wool, Mathf.RoundToInt(Random.Range(0, 10)));
+                    cargoProduced.Add(CargoSO.CargoType.Wool, Mathf.RoundToInt(Random.Range(0, 3)));
                     break;
                 }
             case TownStructure.Bawdy_House:
                 {
-
+                    cargoRequired.Add(CargoSO.CargoType.Roots, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Water, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Food, 1);
                     break;
                 }
             case TownStructure.Blacksmith:
                 {
+                    cargoRequired.Add(CargoSO.CargoType.Wood, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Water, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Coal, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Tools, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Leather, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Steel_Ingot, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Ore, 1);
 
+                    cargoProduced.Add(CargoSO.CargoType.Tools, Mathf.RoundToInt(Random.Range(0, 3)));
+                    cargoProduced.Add(CargoSO.CargoType.Steel_Ingot, Mathf.RoundToInt(Random.Range(0, 3)));
                     break;
                 }
             case TownStructure.Broker:
                 {
-
+                    //This structure sells warehouse space to the player
                     break;
                 }
             case TownStructure.Butcher:
                 {
+                    cargoRequired.Add(CargoSO.CargoType.Wood, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Water, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Tools, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Raw_Meat, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Fish, 1);
 
+                    cargoProduced.Add(CargoSO.CargoType.Animal_Parts, Mathf.RoundToInt(Random.Range(0, 3)));
+                    cargoProduced.Add(CargoSO.CargoType.Food, Mathf.RoundToInt(Random.Range(0, 3)));
                     break;
                 }
             case TownStructure.Candle_Maker:
                 {
-
+                    cargoRequired.Add(CargoSO.CargoType.Wax, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Coal, 1);
                     break;
                 }
             case TownStructure.Carpenter:
                 {
-
+                    cargoRequired.Add(CargoSO.CargoType.Wood, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Tools, 1);
                     break;
                 }
             case TownStructure.Church:
                 {
+                    cargoRequired.Add(CargoSO.CargoType.Gold, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Books, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Alcohol, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Jewelry, 1);
+                    break;
+                }
+            case TownStructure.Clay_Pit:
+                {
+                    cargoRequired.Add(CargoSO.CargoType.Coal, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Tools, 1);
 
+                    cargoProduced.Add(CargoSO.CargoType.Bricks, Mathf.RoundToInt(Random.Range(0, 3)));
                     break;
                 }
             case TownStructure.Clocktower:
                 {
-
+                    //Provides a mood boost in bigger cities
                     break;
                 }
             case TownStructure.Cobbler:
                 {
+                    cargoRequired.Add(CargoSO.CargoType.Tools, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Leather, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Skins, 1);
 
+                    cargoProduced.Add(CargoSO.CargoType.Clothing, Mathf.RoundToInt(Random.Range(0, 3)));
                     break;
                 }
             case TownStructure.Courthouse:
                 {
-
+                    //Provides a mood boost in bigger cities
                     break;
                 }
             case TownStructure.Distillery:
                 {
+                    cargoRequired.Add(CargoSO.CargoType.Sugar, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Water, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Wheat, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Grapes, 1);
 
+                    cargoProduced.Add(CargoSO.CargoType.Alcohol, Mathf.RoundToInt(Random.Range(0, 3)));
                     break;
                 }
             case TownStructure.Dock:
                 {
-
+                    cargoProduced.Add(CargoSO.CargoType.Fish, Mathf.RoundToInt(Random.Range(0, 3)));
                     break;
                 }
             case TownStructure.Drydock:
                 {
+                    cargoRequired.Add(CargoSO.CargoType.Coal, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Rope, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Planks, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Tar, 1);
 
                     break;
                 }
             case TownStructure.Fishing_Hut:
                 {
+                    cargoRequired.Add(CargoSO.CargoType.Wood, 1);
 
+                    cargoProduced.Add(CargoSO.CargoType.Fish, Mathf.RoundToInt(Random.Range(0, 3)));
                     break;
                 }
             case TownStructure.Forge:
                 {
+                    cargoRequired.Add(CargoSO.CargoType.Water, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Gold, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Steel_Ingot, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Ore, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Coal, 1);
 
+                    cargoProduced.Add(CargoSO.CargoType.Gold, Mathf.RoundToInt(Random.Range(0, 3)));
+                    cargoProduced.Add(CargoSO.CargoType.Tools, Mathf.RoundToInt(Random.Range(0, 3)));
+                    cargoProduced.Add(CargoSO.CargoType.Steel_Ingot, Mathf.RoundToInt(Random.Range(0, 3)));
                     break;
                 }
             case TownStructure.Garrison:
                 {
+                    cargoRequired.Add(CargoSO.CargoType.Gunpowder, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Weapons, 1);
 
                     break;
                 }
             case TownStructure.Governors_Mansion:
                 {
-
+                    //Provides a player service, and a mood boost
                     break;
                 }
             case TownStructure.Graveyard:
                 {
+                    cargoRequired.Add(CargoSO.CargoType.Bricks, 1);
 
                     break;
                 }
             case TownStructure.Gypsy_Wagon:
                 {
+                    cargoRequired.Add(CargoSO.CargoType.Roots, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Animal_Parts, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Water, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Coal, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Gold, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Medical_Supplies, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Leather, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Raw_Meat, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Fish, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Skins, 1);
 
+                    cargoProduced.Add(CargoSO.CargoType.Roots, Mathf.RoundToInt(Random.Range(0, 3)));
+                    cargoProduced.Add(CargoSO.CargoType.Animal_Parts, Mathf.RoundToInt(Random.Range(0, 3)));
+                    cargoProduced.Add(CargoSO.CargoType.Gold, Mathf.RoundToInt(Random.Range(0, 3)));
+                    cargoProduced.Add(CargoSO.CargoType.Medical_Supplies, Mathf.RoundToInt(Random.Range(0, 3)));
+                    cargoProduced.Add(CargoSO.CargoType.Food, Mathf.RoundToInt(Random.Range(0, 3)));
                     break;
                 }
             case TownStructure.House:
                 {
                     maxResidents = 4;
+
+                    cargoRequired.Add(CargoSO.CargoType.Honey, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Sugar, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Roots, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Water, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Flour, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Wool, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Raw_Meat, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Fish, 1);
+
+                    cargoProduced.Add(CargoSO.CargoType.Food, Mathf.RoundToInt(Random.Range(0, 3)));
                     break;
                 }
-            case TownStructure.Hunter_Shack:    //Can produce independently
+            case TownStructure.Hunter_Shack:
                 {
-                    //Creates animal parts, raw meat, skins, animal fat  
+                    cargoRequired.Add(CargoSO.CargoType.Animal_Parts, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Medical_Supplies, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Gunpowder, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Weapons, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Rope, 1);
+
+                    cargoProduced.Add(CargoSO.CargoType.Honey, Mathf.RoundToInt(Random.Range(0, 3)));
+                    cargoProduced.Add(CargoSO.CargoType.Animal_Parts, Mathf.RoundToInt(Random.Range(0, 3)));
+                    cargoProduced.Add(CargoSO.CargoType.Leather, Mathf.RoundToInt(Random.Range(0, 3)));
+                    cargoProduced.Add(CargoSO.CargoType.Raw_Meat, Mathf.RoundToInt(Random.Range(0, 3)));
+                    cargoProduced.Add(CargoSO.CargoType.Skins, Mathf.RoundToInt(Random.Range(0, 3)));
                     break;
                 }
             case TownStructure.Jeweler_Parlor:
                 {
+                    cargoRequired.Add(CargoSO.CargoType.Steel_Ingot, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Water, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Coal, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Gold, 1);
 
+                    cargoProduced.Add(CargoSO.CargoType.Jewelry, Mathf.RoundToInt(Random.Range(0, 3)));
                     break;
                 }
             case TownStructure.Leathersmith:
                 {
+                    cargoRequired.Add(CargoSO.CargoType.Skins, 1);
 
-                    break;
-                }
-            case TownStructure.Logging_Camp:
-                {
-                    //Creates logs and charcoal
+                    cargoProduced.Add(CargoSO.CargoType.Leather, Mathf.RoundToInt(Random.Range(0, 3)));
                     break;
                 }
             case TownStructure.Library:
                 {
+                    cargoRequired.Add(CargoSO.CargoType.Books, 1);
 
                     break;
                 }
             case TownStructure.Lighthouse:
                 {
+                    //Provides a mood boost
+                    break;
+                }
+            case TownStructure.Logging_Camp:
+                {
+                    cargoRequired.Add(CargoSO.CargoType.Wood, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Coal, 1);
 
                     break;
                 }
             case TownStructure.Market_Stall:
                 {
+                    cargoRequired.Add(CargoSO.CargoType.Honey, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Sugar, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Food, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Raw_Meat, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Fish, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Grapes, 1);
 
+                    cargoProduced.Add(CargoSO.CargoType.Food, Mathf.RoundToInt(Random.Range(0, 3)));
                     break;
                 }
             case TownStructure.Mill:
                 {
+                    cargoRequired.Add(CargoSO.CargoType.Water, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Wheat, 1);
 
+                    cargoProduced.Add(CargoSO.CargoType.Flour, Mathf.RoundToInt(Random.Range(0, 3)));
+                    break;
+                }
+            case TownStructure.Mineshaft:
+                {
+                    cargoRequired.Add(CargoSO.CargoType.Wood, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Tools, 1);
+
+                    cargoProduced.Add(CargoSO.CargoType.Ore, Mathf.RoundToInt(Random.Range(0, 3)));
                     break;
                 }
             case TownStructure.Pawn_Shop:
                 {
+                    cargoProduced.Add(CargoSO.CargoType.Rope, Mathf.RoundToInt(Random.Range(0, 3)));
+                    cargoProduced.Add(CargoSO.CargoType.Jewelry, Mathf.RoundToInt(Random.Range(0, 3)));
+                    break;
+                }
+            case TownStructure.Plantation:
+                {
+                    cargoRequired.Add(CargoSO.CargoType.Wood, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Tools, 1);
 
+                    cargoProduced.Add(CargoSO.CargoType.Wheat, Mathf.RoundToInt(Random.Range(0, 3)));
+                    cargoProduced.Add(CargoSO.CargoType.Grapes, Mathf.RoundToInt(Random.Range(0, 3)));
+                    cargoProduced.Add(CargoSO.CargoType.Sugar, Mathf.RoundToInt(Random.Range(0, 3)));
+                    cargoProduced.Add(CargoSO.CargoType.Roots, Mathf.RoundToInt(Random.Range(0, 3)));
                     break;
                 }
             case TownStructure.Prison:
                 {
+                    cargoRequired.Add(CargoSO.CargoType.Animal_Parts, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Water, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Rope, 1);
 
                     break;
                 }
             case TownStructure.Public_Square:
                 {
-
+                    //Provides a mood boost
                     break;
                 }
-            case TownStructure.Saw_Mill:    //Can produce independently
+            case TownStructure.Quarry:
                 {
+                    cargoRequired.Add(CargoSO.CargoType.Wood, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Tools, 1);
+
+                    cargoProduced.Add(CargoSO.CargoType.Ore, Mathf.RoundToInt(Random.Range(0, 3)));
+                    cargoProduced.Add(CargoSO.CargoType.Bricks, Mathf.RoundToInt(Random.Range(0, 3)));
+                    break;
+                }
+            case TownStructure.Room:
+                {
+                    //Special structure
+                    maxResidents = 1;
+                    break;
+                }
+            case TownStructure.Saw_Mill:
+                {
+                    cargoRequired.Add(CargoSO.CargoType.Wood, 1);
+
+                    cargoProduced.Add(CargoSO.CargoType.Planks, Mathf.RoundToInt(Random.Range(0, 3)));
                     break;
                 }
             case TownStructure.Shack:
                 {
                     maxResidents = 3;
+                    cargoRequired.Add(CargoSO.CargoType.Wax, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Roots, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Water, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Flour, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Wool, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Raw_Meat, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Fish, 1);
+
+                    cargoProduced.Add(CargoSO.CargoType.Wood, Mathf.RoundToInt(Random.Range(0, 3)));
+                    cargoProduced.Add(CargoSO.CargoType.Roots, Mathf.RoundToInt(Random.Range(0, 3)));
+                    cargoProduced.Add(CargoSO.CargoType.Coal, Mathf.RoundToInt(Random.Range(0, 3)));
+                    cargoProduced.Add(CargoSO.CargoType.Food, Mathf.RoundToInt(Random.Range(0, 3)));
+                    cargoProduced.Add(CargoSO.CargoType.Wool, Mathf.RoundToInt(Random.Range(0, 3)));
+                    cargoProduced.Add(CargoSO.CargoType.Raw_Meat, Mathf.RoundToInt(Random.Range(0, 3)));
+                    cargoProduced.Add(CargoSO.CargoType.Skins, Mathf.RoundToInt(Random.Range(0, 3)));
+                    cargoProduced.Add(CargoSO.CargoType.Rope, Mathf.RoundToInt(Random.Range(0, 3)));
                     break;
                 }
             case TownStructure.Shipwright:
                 {
+                    cargoRequired.Add(CargoSO.CargoType.Gunpowder, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Weapons, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Rope, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Planks, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Tar, 1);
 
+                    cargoProduced.Add(CargoSO.CargoType.Rope, Mathf.RoundToInt(Random.Range(0, 3)));
                     break;
                 }
             case TownStructure.Tailor:
                 {
+                    cargoRequired.Add(CargoSO.CargoType.Wool, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Clothing, 1);
 
+                    cargoProduced.Add(CargoSO.CargoType.Leather, Mathf.RoundToInt(Random.Range(0, 3)));
+                    cargoProduced.Add(CargoSO.CargoType.Clothing, Mathf.RoundToInt(Random.Range(0, 3)));
+                    cargoProduced.Add(CargoSO.CargoType.Rope, Mathf.RoundToInt(Random.Range(0, 3)));
                     break;
                 }
             case TownStructure.Tar_Kiln:
                 {
+                    cargoRequired.Add(CargoSO.CargoType.Water, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Coal, 1);
 
-                    break;
-                }
-            case TownStructure.Tavern:
-                {
-
+                    cargoProduced.Add(CargoSO.CargoType.Tar, Mathf.RoundToInt(Random.Range(0, 3)));
                     break;
                 }
             case TownStructure.Tattoo_Parlor:
                 {
+                    //Mood boost
+                    break;
+                }
+            case TownStructure.Tavern:
+                {
+                    cargoRequired.Add(CargoSO.CargoType.Water, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Food, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Raw_Meat, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Fish, 1);
+                    cargoRequired.Add(CargoSO.CargoType.Alcohol, 1);
 
                     break;
                 }
+
             case TownStructure.Town_Hall:
                 {
-
+                    //Mood boost
                     break;
                 }
             case TownStructure.Warehouse:
                 {
-
+                    //Service
                     break;
                 }
             case TownStructure.Watchtower:
                 {
-
+                    //Mood boost
                     break;
                 }
             case TownStructure.Water_Well:  //Can produce independently
                 {
+                    cargoProduced.Add(CargoSO.CargoType.Water, Mathf.RoundToInt(Random.Range(0, 3)));
 
                     break;
                 }
             case TownStructure.Wig_Maker:
                 {
-
+                    cargoRequired.Add(CargoSO.CargoType.Wool, 1);
                     break;
                 }
+        }
+        
+        //Gets each type of cargo thats required, and generates a random amount to the available inventory when the structure finishes setup
+        foreach (KeyValuePair<CargoSO.CargoType, int> cargoAndType in cargoRequired)
+        {
+            cargoAvailable.Add(cargoAndType.Key, Mathf.RoundToInt(Random.Range(0, 10)));
         }
     }
 
@@ -696,11 +926,58 @@ public class Structure : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter(Collider other)
+    //Removed. While it should work, I think this is overcomplicating the way things work. Adding a work assignment (something that already works) is pretty minor
+    /*private void OnTriggerEnter (Collider other)
     {
-        if (other.GetComponent<PawnGeneration>())
+        if (other.GetComponent<PawnNavigation>())
         {
-            //Assign other to worksite, if assigned to building
+            Debug.Log("Pawn spotted entering " + this.name);
+            PawnNavigation tempPawn = other.GetComponent<PawnNavigation>();
+            if (!assignmentLocation)
+            {
+                //If the pawn's working here
+                if (tempPawn.workPlace = this)
+                {
+                    foreach(WorkLocation w in workSites)
+                    {
+                        //If the worksite's permanent worker field is null
+                        if (w.permanentWorker == null)
+                        {
+                            //If there's no title for the worker, set it, rename pawn, and send pawn to worksite location
+                            if (tempPawn.pawn.workTitle == null)
+                            {
+                                w.permanentWorker = tempPawn;
+                                tempPawn.pawn.workTitle = this.name;
+                                tempPawn.pawn.name = tempPawn.pawn.name + " {" + this.name + "}";
+                                EventsManager.TriggerEvent("NewDestination_" + tempPawn.name);
+                                tempPawn.agent.SetDestination(w.transform.position);
+                            }
+                            //Otherwise, just send the pawn to their workplace
+                            else if (tempPawn.pawn.workTitle == this.name)
+                            {
+                                EventsManager.TriggerEvent("NewDestination_" + tempPawn.name);
+                                tempPawn.agent.SetDestination(w.transform.position);
+                            }
+                        }
+                        //it needs to ignore otherwise
+                        else
+                        {
+                            
+                        }
+                    }
+                }
+                else if (tempPawn.homeStructure = this)
+                {
+
+                }
+                else
+                {
+                    //Deliveries
+                    //Shoppers
+                    //Visitors
+                    //
+                }
+            }
         }
-    }
+    }*/
 }

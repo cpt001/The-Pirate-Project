@@ -36,6 +36,7 @@ public class TimeScalar : MonoBehaviour
     private int nextHour = 15;
     private float fauxRotValue;
     [SerializeField] private Light sun;
+    [SerializeField] private TMPro.TextMeshProUGUI HUDClock;
 
     private enum OverarchingSeason
     {
@@ -89,12 +90,16 @@ public class TimeScalar : MonoBehaviour
     {
         StartCoroutine(NewDay());
         EventsManager.TriggerEvent("NewHour");
+        oceanObject.OceanMaterial.SetColor("_SkyBase", oceanNight);
+        oceanObject.OceanMaterial.SetColor("_SkyAwayFromSun", oceanAwayNight);
     }
 
     void Update()
     {
         transform.Rotate(Vector3.left * (daylightSpeed * Time.deltaTime));
         fauxRotValue += timeSpeed * Time.deltaTime;
+        HUDClock.text = "Time: " + hoursPassed.ToString();
+
         if (fauxRotValue >= (nextHour - 0.2f) && fauxRotValue <= (nextHour + 0.2f))
         {
             NewHour();

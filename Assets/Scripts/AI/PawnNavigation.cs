@@ -2,11 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using System.Linq;
 
 [RequireComponent(typeof(PawnGeneration))]
 public class PawnNavigation : MonoBehaviour
 {
-    private PawnGeneration pawn;
+    public PawnGeneration pawn;
     public float moveSpeed; //How fast they move, ranged
     private bool isSprinting;
 
@@ -19,6 +20,8 @@ public class PawnNavigation : MonoBehaviour
     {
         Tavern,
         Sleep,
+        ShoreFishing,
+
     }
     private OffDutyActivities pawnLookingForwardTo;
     private bool onDuty;
@@ -31,6 +34,8 @@ public class PawnNavigation : MonoBehaviour
     private int internalHour = -1;
     private int sleepStartTime;
     private int sleepLength;
+    [SerializeField] private List<Transform> possibleHomes = new List<Transform>();
+
 
     private void Awake()
     {
@@ -46,63 +51,82 @@ public class PawnNavigation : MonoBehaviour
         EventsManager.StartListening("DayOfRest", DayOfRest);
         EventsManager.StartListening("FindHome_" + pawn.name, FindHomeStructure);
     }
+
     void FindHomeStructure()
     {
-        List<Transform> possibleHomes = new List<Transform>();
+        if (!homeStructure)
+        {
+            if (workPlace.thisStructure == Structure.TownStructure.Governors_Mansion)
+            {
+                foreach (Transform t in workPlace.transform)
+                {
+                    if (t.GetComponent<Structure>())
+                    {
+                        Structure tempStructure = t.GetComponent<Structure>();
+                        if (tempStructure.maxResidents > tempStructure.masterWorkerList.Count)
+                        {
+                            tempStructure.masterWorkerList.Add(pawn);
+                            homeStructure = tempStructure;
+                            break;
+                        }
+                        else
+                        {
+                            WorkStructureCast();
+                        }
+                    }
+                }
+                if (homeStructure == null)
+                {
+                    Debug.Log("No home found for " + pawn.name + " on structure " + workPlace.name);
+                }
+            }
+            //This work structure has no local rooms, and needs to find one elsewhere
+            else
+            {
+                WorkStructureCast();
+            }
+
+            //Sort homes by distance from work place
+            possibleHomes = possibleHomes.OrderBy((d) => (d.position - workPlace.transform.position).sqrMagnitude).ToList();
+
+            //Sorts through all available homes, and assigns a free one to the pawn
+            foreach (Transform potentialHome in possibleHomes)
+            {
+                Structure currentTarget = potentialHome.GetComponent<Structure>();
+                if (currentTarget.masterWorkerList.Count < currentTarget.maxResidents)
+                {
+                    currentTarget.masterWorkerList.Add(pawn);
+                    homeStructure = currentTarget;
+                    break;
+                }
+                else
+                {
+                    //Debug.Log("No free homes found for: " + pawn.gameObject);
+                }
+            }
+        
+            sleepLength = Mathf.RoundToInt(Random.Range(7, 10));
+            sleepStartTime = workPlace.workStartTime - sleepLength;
+            //Debug.Log("Sleep Start " + sleepStartTime);
+            HourToHour();
+        }
+    }
+
+    void WorkStructureCast()
+    {
+        //This finds possible homes around the pawn's worker structure
         RaycastHit[] itemsCasted = Physics.SphereCastAll(workPlace.transform.position, 500.0f, workPlace.transform.forward);
         foreach (RaycastHit rayHit in itemsCasted)
         {
             if (rayHit.transform.GetComponent<Structure>())
             {
-                //Debug.Log("Possible home detected: " + rayHit.transform.name);
-                possibleHomes.Add(rayHit.transform);
-            }
-        }
-
-        Transform bestTarget = null;
-        float closestDstSq = Mathf.Infinity;
-        Vector3 workplacePosition = workPlace.transform.position;
-        foreach (Transform potentialTarget in possibleHomes)
-        {
-            if (!homeStructure)
-            {
-                Vector3 dirToTarget = potentialTarget.position - workplacePosition;
-                if (potentialTarget.GetComponent<Structure>())
+                if (rayHit.transform.GetComponent<Structure>().thisStructure == Structure.TownStructure.House ||
+                    rayHit.transform.GetComponent<Structure>().thisStructure == Structure.TownStructure.Shack)
                 {
-                    Structure tempStructure = potentialTarget.GetComponent<Structure>();
-                    if ((tempStructure.thisStructure == Structure.TownStructure.House ||
-                        tempStructure.thisStructure == Structure.TownStructure.Shack))
-                    {
-                        if (tempStructure.masterWorkerList.Count < tempStructure.maxResidents)
-                        {
-                            float dsqrToTarget = dirToTarget.sqrMagnitude;
-                            if (dsqrToTarget < closestDstSq)
-                            {
-                                closestDstSq = dsqrToTarget;
-                                bestTarget = potentialTarget;
-                            }
-                        }
-                        else
-                        {
-                            //Debug.Log("No unoccupied houses for: " + pawn.name);
-                            //No available houses
-                        }
-                    }
-                    else
-                    {
-                        //I think some type of error is preventing some pawns from finding homes, even when there are some available
-                        //Debug.Log("No houses or shacks found for " + pawn.name);
-                    }
+                    possibleHomes.Add(rayHit.transform);
                 }
             }
-            sleepLength = Mathf.RoundToInt(Random.Range(7, 10));
-            sleepStartTime = workPlace.workStartTime - sleepLength;
-            Debug.Log("Sleep Start " + sleepStartTime);
-            HourToHour();
         }
-        bestTarget.GetComponent<Structure>().masterWorkerList.Add(pawn);    //This throws a null ref
-        homeStructure = bestTarget.GetComponent<Structure>();
-        //Debug.Log(pawn.name + " Workplace: " + workPlace.gameObject + " || Home: " + homeStructure.gameObject);
     }
 
     void Setup()
@@ -161,13 +185,14 @@ public class PawnNavigation : MonoBehaviour
                 }
                 else if (internalHour == pawn.sleepStartTime)
                 {
-                    if (homeStructure)
+                    if (homeStructure != null)
                     {
                         agent.SetDestination(homeStructure.transform.position);
                     }
                     else
                     {
-                        //Debug.Log(pawn.name + " has no home!");
+                        agent.SetDestination(GameObject.Find("Tavern").transform.position);
+                        //Debug.Log(pawn.name + " has no home, and is going to tavern; originated from: " + transform.position);
                     }
                 }
             }
@@ -193,6 +218,7 @@ public class PawnNavigation : MonoBehaviour
         //Structure seems okay, though its consistently requesting 1 additional worker
         //Implement day of rest, and exceptions
         //Most of the losses seem to be in this script. It's bad, but could be a lot worse
+        enrouteToAnotherLocation = true;
         if (internalHour == workPlace.workStartTime)
         {
             if (workPlace.assignmentLocation != null)
@@ -239,20 +265,20 @@ public class PawnNavigation : MonoBehaviour
 
     void BedriddenSickness()
     {
-        Debug.Log(pawn.name + " is bedridden");
+        //Debug.Log(pawn.name + " is bedridden");
         agent.SetDestination(homeStructure.transform.position);
     }
 
     void DayToDay()
     {
         pawnLookingForwardTo = (OffDutyActivities)Random.Range(0, System.Enum.GetValues(typeof(OffDutyActivities)).Length);
-        Debug.Log("After work " + pawn.name + " is going to: " + pawnLookingForwardTo);
+        //Debug.Log("After work " + pawn.name + " is going to: " + pawnLookingForwardTo);
     }
 
     void DestinationToggle()
     {
         enrouteToAnotherLocation = true;
-        Debug.Log("New location received, route locked, enroute status: " + enrouteToAnotherLocation);
+        //Debug.Log("New location received, route locked, enroute status: " + enrouteToAnotherLocation);
     }
     void DayOfRest()
     {
