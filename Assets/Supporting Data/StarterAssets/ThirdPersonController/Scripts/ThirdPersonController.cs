@@ -191,8 +191,37 @@ namespace StarterAssets
                 transform.position.z);
             Grounded = Physics.CheckSphere(spherePosition, GroundedRadius, GroundLayers,
                 QueryTriggerInteraction.Ignore);
-
+            
+            //This stops firing after the player's moved
             RaycastHit rayHit;
+            if (Grounded)
+            {
+                if (Physics.Raycast(transform.position, Vector3.down, out rayHit, rayDistance, GroundLayers))
+                {
+                    if (rayHit.transform.CompareTag("Ship") ||
+                        rayHit.transform.CompareTag("Structure"))
+                    {
+                        Debug.Log("Raycasting...");
+
+                        playerOnWalkableSurface = true;
+                        gameObject.GetComponentInParent<Transform>().transform.SetParent(rayHit.transform);
+                    }
+                }
+                else
+                {
+                    gameObject.GetComponentInParent<Transform>().transform.SetParent(null);
+                    playerOnWalkableSurface = false;
+                }
+            }
+            //It feels like this isnt being called as update should be
+            else
+            {
+                gameObject.GetComponentInParent<Transform>().transform.SetParent(null);
+                playerOnWalkableSurface = false;
+            }
+
+
+            /*
             //Debug.Log("Grounded check is firing!");
             if (Physics.Raycast(transform.position, Vector3.down, out rayHit, rayDistance, GroundLayers, QueryTriggerInteraction.Ignore))
             {
@@ -221,7 +250,7 @@ namespace StarterAssets
                 }
             }
             Debug.DrawRay(transform.position, Vector3.down, Color.red, 1f);
-
+            */
             // update animator if using character
             if (_hasAnimator)
             {

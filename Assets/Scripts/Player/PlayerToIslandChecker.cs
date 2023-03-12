@@ -8,8 +8,8 @@ public class PlayerToIslandChecker : MonoBehaviour
 
     [SerializeField] private Transform closestIsland = null;   //Replace with island director script later
 
-    private float oceanStrengthMinValue;
-    private float oceanStrengthMaxValue;
+    private float oceanStrengthMinValue = 16.5f;
+    private float oceanStrengthMaxValue = 120.0f;
     private float playerDistanceFromIsland;
     private float ignoreRadius; //Anything outside this radius is ignored logic wise
 
@@ -17,9 +17,12 @@ public class PlayerToIslandChecker : MonoBehaviour
 
     private void Awake()
     {
-        foreach (Transform t in GameObject.FindWithTag("Island").transform)
+        foreach (Transform t in transform.root)
         {
-            islandList.Add(t);
+            if (t.GetComponent<IslandController>())
+            {
+                islandList.Add(t);
+            }
         }
     }
 

@@ -31,6 +31,7 @@ public class WorkLocation : MonoBehaviour
     private bool creatingItemForPlayerShop;
     private bool isTemporaryContainer;  //A temporary storage block for items in transit
     private bool isStorageItem;
+    public bool isSalePoint;
 
     //Moved froms Awake -> Start; work locations were missing key data passed from structure awake
     private void Start()
@@ -69,6 +70,7 @@ public class WorkLocation : MonoBehaviour
     {
         if (other.GetComponent<PawnNavigation>())
         {
+            //Need customer slot. Allows for pawns to be assigned to locations that aren't part of their work cycle freely
             if (permanentWorker && !isBeingWorked && permedPawn == null)
             {
                 isBeingWorked = true;
@@ -108,6 +110,11 @@ public class WorkLocation : MonoBehaviour
                 {
                     //
                 }
+            }
+
+            if (isSalePoint)
+            {
+                isBeingWorked = true;
             }
         }
 

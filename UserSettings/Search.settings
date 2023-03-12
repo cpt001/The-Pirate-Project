@@ -7,6 +7,9 @@ onBoardingDoNotAskAgain = true
 showPackageIndexes = false
 showStatusBar = false
 scopes = {
+	"last_search.83F126EB" = "register an"
+	"InspectorPreview.83F126EB" = "0"
+	"currentGroup.83F126EB" = "asset"
 }
 providers = {
 	asset = {
@@ -46,6 +49,7 @@ providers = {
 	}
 }
 recentSearches = [
+	"register an"
 ]
 searchItemFavorites = [
 ]

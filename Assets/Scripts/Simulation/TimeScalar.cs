@@ -172,8 +172,8 @@ public class TimeScalar : MonoBehaviour
         while (time < 35)
         {
             sun.intensity = Mathf.Lerp(sun.intensity, targetIntensity, time / timeToChange);
-            oceanObject.OceanMaterial.SetColor("_SkyBase", Color32.Lerp(startBaseColor, baseColor, timeToChange));  //This lerp function doesnt work sadly, but it's on the right track
-            oceanObject.OceanMaterial.SetColor("_SkyAwayFromSun", Color32.Lerp(startAwayColor, awayColor, timeToChange));
+            oceanObject.OceanMaterial.SetColor("_SkyBase", Color32.Lerp(startBaseColor, baseColor, time / timeToChange));  //This lerp function doesnt work sadly, but it's on the right track
+            oceanObject.OceanMaterial.SetColor("_SkyAwayFromSun", Color32.Lerp(startAwayColor, awayColor, time / timeToChange));
             time += Time.deltaTime;
             yield return null;
         }

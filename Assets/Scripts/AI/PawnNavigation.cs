@@ -56,59 +56,66 @@ public class PawnNavigation : MonoBehaviour
     {
         if (!homeStructure)
         {
-            if (workPlace.thisStructure == Structure.TownStructure.Governors_Mansion)
+            if (workPlace != null)
             {
-                foreach (Transform t in workPlace.transform)
+                if (workPlace.thisStructure == Structure.TownStructure.Governors_Mansion)
                 {
-                    if (t.GetComponent<Structure>())
+                    foreach (Transform t in workPlace.transform)
                     {
-                        Structure tempStructure = t.GetComponent<Structure>();
-                        if (tempStructure.maxResidents > tempStructure.masterWorkerList.Count)
+                        if (t.GetComponent<Structure>())
                         {
-                            tempStructure.masterWorkerList.Add(pawn);
-                            homeStructure = tempStructure;
-                            break;
-                        }
-                        else
-                        {
-                            WorkStructureCast();
+                            Structure tempStructure = t.GetComponent<Structure>();
+                            if (tempStructure.maxResidents > tempStructure.masterWorkerList.Count)
+                            {
+                                tempStructure.masterWorkerList.Add(pawn);
+                                homeStructure = tempStructure;
+                                break;
+                            }
+                            else
+                            {
+                                WorkStructureCast();
+                            }
                         }
                     }
+                    if (homeStructure == null)
+                    {
+                        Debug.Log("No home found for " + pawn.name + " on structure " + workPlace.name);
+                    }
                 }
-                if (homeStructure == null)
-                {
-                    Debug.Log("No home found for " + pawn.name + " on structure " + workPlace.name);
-                }
-            }
-            //This work structure has no local rooms, and needs to find one elsewhere
-            else
-            {
-                WorkStructureCast();
-            }
-
-            //Sort homes by distance from work place
-            possibleHomes = possibleHomes.OrderBy((d) => (d.position - workPlace.transform.position).sqrMagnitude).ToList();
-
-            //Sorts through all available homes, and assigns a free one to the pawn
-            foreach (Transform potentialHome in possibleHomes)
-            {
-                Structure currentTarget = potentialHome.GetComponent<Structure>();
-                if (currentTarget.masterWorkerList.Count < currentTarget.maxResidents)
-                {
-                    currentTarget.masterWorkerList.Add(pawn);
-                    homeStructure = currentTarget;
-                    break;
-                }
+                //This work structure has no local rooms, and needs to find one elsewhere
                 else
                 {
-                    //Debug.Log("No free homes found for: " + pawn.gameObject);
+                    WorkStructureCast();
                 }
+
+                //Sort homes by distance from work place
+                possibleHomes = possibleHomes.OrderBy((d) => (d.position - workPlace.transform.position).sqrMagnitude).ToList();
+
+                //Sorts through all available homes, and assigns a free one to the pawn
+                foreach (Transform potentialHome in possibleHomes)
+                {
+                    Structure currentTarget = potentialHome.GetComponent<Structure>();
+                    if (currentTarget.masterWorkerList.Count < currentTarget.maxResidents)
+                    {
+                        currentTarget.masterWorkerList.Add(pawn);
+                        homeStructure = currentTarget;
+                        break;
+                    }
+                    else
+                    {
+                        //Debug.Log("No free homes found for: " + pawn.gameObject);
+                    }
+                }
+
+                sleepLength = Mathf.RoundToInt(Random.Range(7, 10));
+                sleepStartTime = workPlace.workStartTime - sleepLength;
+                //Debug.Log("Sleep Start " + sleepStartTime);
+                HourToHour();
             }
-        
-            sleepLength = Mathf.RoundToInt(Random.Range(7, 10));
-            sleepStartTime = workPlace.workStartTime - sleepLength;
-            //Debug.Log("Sleep Start " + sleepStartTime);
-            HourToHour();
+            else
+            {
+                Debug.Log("Workplace is null on: " + gameObject.name);
+            }
         }
     }
 

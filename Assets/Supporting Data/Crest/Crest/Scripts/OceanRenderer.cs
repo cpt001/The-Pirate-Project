@@ -40,7 +40,7 @@ namespace Crest
         int _version = 0;
 #pragma warning restore 414
 
-        [Tooltip("Base wind speed in km/h. Controls wave conditions. Can be overridden on ShapeGerstner components. \n Ideal speed for calm sea: 150"), Range(0, 1500f, power: 2f)]
+        [Tooltip("Base wind speed in km/h. Controls wave conditions. Can be overridden on ShapeGerstner components. \n Ideal speed for calm sea: 150"), Range(0, 120f, power: 2f)]
         public float _globalWindSpeed = 10f;
 
         [Tooltip("The viewpoint which drives the ocean detail. Defaults to the camera."), SerializeField]

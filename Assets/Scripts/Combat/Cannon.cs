@@ -10,6 +10,7 @@ public class Cannon : MonoBehaviour
     [SerializeField] private GameObject barrel;
     [SerializeField] private GameObject fireParticle;
     private float particleResetTime = 1.7f;
+    private float spread = 0.2f;
 
     private enum CannonType
     {
@@ -59,13 +60,36 @@ public class Cannon : MonoBehaviour
         loaded = false;
         yield return new WaitForSeconds(fireDelay * (numCrewManning * 0.25f));  //Fire delay is increased if >4 crew man cannon
         StartCoroutine(EffectController());
-        GameObject cannonBall = ShotPool.shotInstance.GetPooledObject();
-        if (cannonBall != null)
+        //Raycast checks for combat targets that are too close
+        RaycastHit rayHit;
+        if (Physics.Raycast(barrel.transform.position, barrel.transform.forward, out rayHit, 5.0f))
         {
-            cannonBall.transform.position = barrel.transform.position;
-            cannonBall.transform.localEulerAngles = barrel.transform.localEulerAngles;  //There's still some odd issues being caused by this. Might be related to how things are parented?
-            cannonBall.SetActive(true);
+            //Debug.Log(this.name + " raycast hit: " + rayHit.transform.name);
+            if (rayHit.transform.CompareTag("Ship"))
+            {
+
+            }
+            if (rayHit.transform.CompareTag("ShipInteractable"))
+            {
+
+            }
         }
+        //Otherwise, a projectile fires
+        else
+        {
+            GameObject cannonBall = ShotPool.shotInstance.GetPooledObject();
+            if (cannonBall != null)
+            {
+                //Vector3 originalRotation = barrel.transform.localEulerAngles;
+                //Vector3 shotWithSpread = new Vector3(originalRotation.x + (Random.Range(-spread, spread)), originalRotation.y + (Random.Range(-spread, spread)), originalRotation.z);
+                //barrel.transform.rotation = Quaternion.Euler(shotWithSpread);
+                cannonBall.SetActive(true);
+                cannonBall.transform.position = barrel.transform.position;
+                //This worked fine the entire time. Never trust add relative force
+                cannonBall.transform.rotation = barrel.transform.rotation;
+            }
+        }
+
         StartCoroutine(ReloadTime(60.0f));  //Minute and a half between shots theoretically
     }
     private IEnumerator EffectController()

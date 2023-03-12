@@ -39,7 +39,7 @@ public class Structure : MonoBehaviour
     [SerializeField] private List<CargoSO> currentStoreInventory;    //This is what's currently in the store
 
     private Dictionary<CargoSO.CargoType, int> cargoRequired = new Dictionary<CargoSO.CargoType, int>();    //Whats needed to make items here
-    private Dictionary<CargoSO.CargoType, int> cargoAvailable = new Dictionary<CargoSO.CargoType, int>();   //This should be considered 'spares'
+    public Dictionary<CargoSO.CargoType, int> cargoAvailable = new Dictionary<CargoSO.CargoType, int>();   //This should be considered 'spares' - anything not requested by the island is kept here
     public Dictionary<CargoSO.CargoType, int> cargoProduced = new Dictionary<CargoSO.CargoType, int>();     //What's made here
 
 
@@ -56,7 +56,10 @@ public class Structure : MonoBehaviour
     [Header("Store saleable items")]
     [Tooltip("Populate this with items the store should sell to the player")] 
     public List<WorkLocation> workSites = new List<WorkLocation>();
+    public List<CustomerInteraction> customerInteractionSites = new List<CustomerInteraction>();
     public Transform assignmentLocation;
+    public Transform salePoint;
+
     #region Structure Enums
     public enum TownStructure
     {
@@ -188,6 +191,7 @@ public class Structure : MonoBehaviour
     {
         EventsManager.StartListening("NewDay", DayUpdate);
         EventsManager.StartListening("PawnAddedToIsland", WorkerCountUpdate);
+        EventsManager.StartListening("SummonClerk_" + this.name, SendClerkToCounter);
     }
     void SetupStructureClass ()
     {
@@ -212,7 +216,14 @@ public class Structure : MonoBehaviour
             if (t.GetComponent<WorkLocation>())
             {
                 workSites.Add(t.GetComponent<WorkLocation>());
-                buildingWorkerLimit++;
+                if (!t.GetComponent<WorkLocation>().isSalePoint)
+                {
+                    buildingWorkerLimit++;
+                }
+            }
+            if (t.GetComponent<CustomerInteraction>())
+            {
+                customerInteractionSites.Add(t.GetComponent<CustomerInteraction>());
             }
             if (t.name == "AssignmentLocation")
             {
@@ -241,7 +252,7 @@ public class Structure : MonoBehaviour
                         islandController.unassignedWorkers.RemoveAt(i);
                     }
                 }
-                if (masterWorkerList.Count >= buildingWorkerLimit)
+                if (masterWorkerList.Count == buildingWorkerLimit)
                 {
                     {
                         islandController.structureCheck[this] = true;
@@ -270,8 +281,10 @@ public class Structure : MonoBehaviour
         }
     }
 
+    //This function manages all inventories in this structure.
     void UpdateInventoryStatus()
     {
+        //
         foreach (KeyValuePair<CargoSO.CargoType, int> itemAndAmount in cargoAvailable)
         {
             for (int i = 0; i > itemAndAmount.Value; i++)
@@ -341,6 +354,13 @@ public class Structure : MonoBehaviour
                 }
             }
         }*/
+    }
+
+    void SendClerkToCounter()
+    {
+        masterWorkerList = masterWorkerList.OrderBy((d) => (d.transform.position - salePoint.position).sqrMagnitude).ToList();
+        masterWorkerList[0].pawnNavigator.agent.SetDestination(salePoint.position);
+        EventsManager.TriggerEvent("NewDestination_" + masterWorkerList[0].name);
     }
 
     /*void CraftNewMaterial()

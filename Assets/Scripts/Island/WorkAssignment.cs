@@ -1,13 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+/// <summary>
+/// This is responsible for assigning a local position to the pawn when they arrive at a structure
+/// -Can handle worker assignment
+/// -Can handle customer assignment
+/// </summary>
 public class WorkAssignment : MonoBehaviour
 {
     private Structure parentStructure;
     [SerializeField] private bool isMultiTask;  //Sets whether a location should only assign locations based on whats available to work
     [SerializeField] private float timer;
     public List<WorkLocation> locationsToBeWorked = new List<WorkLocation>();   //Whats available to work
+    public List<CustomerInteraction> locationsToBeShopped = new List<CustomerInteraction>();    //Where to send customers
 
 
     private void Awake()
@@ -18,40 +23,70 @@ public class WorkAssignment : MonoBehaviour
     {
         if (other.GetComponent<PawnGeneration>())
         {
-            StartCoroutine(ShortWaitTimer(timer, other.GetComponent<PawnNavigation>()));            
+            //If the other object works at this location
+            if (parentStructure.masterWorkerList.Contains(other.GetComponent<PawnGeneration>()))
+            {
+                StartCoroutine(ShortWaitTimer(timer, other.GetComponent<PawnNavigation>()));
+            }
+            else
+            {
+                StartCoroutine(ShortWaitTimer(0, other.GetComponent<PawnNavigation>()));
+                //Send customers to interaction locations;
+            }
         }
     }
 
     private IEnumerator ShortWaitTimer(float timerInput, PawnNavigation thisPawn)
     {
-        //Debug.Log(thisPawn.name + " detected, stopping");
         thisPawn.agent.ResetPath(); //This was the fix that was needed
         yield return new WaitForSeconds(timerInput);
-        if (!isMultiTask) 
+        //If the pawn is a worker at this location
+        if (parentStructure.masterWorkerList.Contains(thisPawn.pawn))
         {
-            foreach (WorkLocation workSite in parentStructure.workSites)
+            if (!isMultiTask)
             {
-                if (!workSite.isBeingWorked)
+                foreach (WorkLocation workSite in parentStructure.workSites)
                 {
-                    EventsManager.TriggerEvent("NewDestination_" + thisPawn.name);
-                    thisPawn.agent.SetDestination(workSite.transform.position);
-                    workSite.isBeingWorked = true;
-                    break;
+                    if (!workSite.isBeingWorked)
+                    {
+                        EventsManager.TriggerEvent("NewDestination_" + thisPawn.name);
+                        thisPawn.agent.SetDestination(workSite.transform.position);
+                        workSite.isBeingWorked = true;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                foreach (WorkLocation workSite in locationsToBeWorked)
+                {
+                    if (!workSite.isBeingWorked)
+                    {
+                        EventsManager.TriggerEvent("NewDestination_" + thisPawn.name);
+                        thisPawn.agent.SetDestination(workSite.transform.position);
+                        workSite.isBeingWorked = true;
+                        break;
+                    }
                 }
             }
         }
         else
         {
-            foreach(WorkLocation workSite in locationsToBeWorked)
+            foreach (CustomerInteraction interactSpot in locationsToBeShopped)
             {
-                if (!workSite.isBeingWorked)
+                if (!interactSpot.isOccupied)
                 {
                     EventsManager.TriggerEvent("NewDestination_" + thisPawn.name);
-                    thisPawn.agent.SetDestination(workSite.transform.position);
-                    workSite.isBeingWorked = true;
+                    thisPawn.agent.SetDestination(interactSpot.transform.position);
+                    interactSpot.isOccupied = true;
                     break;
                 }
+                else
+                {
+                    break;
+                    //Its occupied. Ignore
+                }
             }
-        }                                                                                                                                                                                                                                                       
+        }                                                                                                                                                                                                                       
     }
 }

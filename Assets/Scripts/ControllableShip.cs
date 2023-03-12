@@ -15,6 +15,7 @@ public class ControllableShip : MonoBehaviour
 
     [SerializeField] private bool anchorDropped;
     private Rigidbody _rb;
+    [SerializeField] private Transform bowSprit;
 
     [Header("Sail Schematic")]
     [SerializeField] private List<GameObject> DeadSlowSail;
@@ -114,14 +115,15 @@ public class ControllableShip : MonoBehaviour
             {
                 EventsManager.TriggerEvent("Broadside_Starboard_" + gameObject.transform.name);
             }
-            /*if (Input.GetKeyDown(KeyCode.V))
+            if (Input.GetKeyDown(KeyCode.V))
             {
                 firingOrder++;
+                UpdateFiringMode();
                 if (firingOrder == FireMode.reset)
                 {
                     firingOrder = FireMode.ForeToStern;
                 }
-            }*/
+            }
         }
         else
         {
@@ -138,6 +140,39 @@ public class ControllableShip : MonoBehaviour
         //https://forum.unity.com/threads/sorting-a-list-of-vector3-by-x-values.126237/
         //IEnumerable<Vector3> sorted = portBroadside.OrderBy<>
         //smods.OrderBy(bastard => Vector3.Distance(transform.position, sm.transform.position));
+        switch (firingOrder)
+        {
+            case FireMode.ForeToStern:
+                {
+                    portBroadside = portBroadside.OrderBy((d) => (d.transform.position - bowSprit.position).sqrMagnitude).ToList();
+                    starboardBroadside = starboardBroadside.OrderBy((d) => (d.transform.position - bowSprit.position).sqrMagnitude).ToList();
+                    break;
+                }
+            case FireMode.SternToFore:
+                {
+                    portBroadside = portBroadside.OrderBy((d) => (d.transform.position + bowSprit.position).sqrMagnitude).ToList();
+                    starboardBroadside = starboardBroadside.OrderBy((d) => (d.transform.position + bowSprit.position).sqrMagnitude).ToList();
+                    break;
+                }
+            case FireMode.Random:
+                {
+                    for (int i = 0; i < portBroadside.Count - 1; i++)
+                    {
+                        int rand = Random.Range(i, portBroadside.Count);
+                        Cannon tempCannon = portBroadside[rand];
+                        portBroadside[rand] = portBroadside[i];
+                        portBroadside[i] = tempCannon;
+                    }                    
+                    for (int i = 0; i < starboardBroadside.Count - 1; i++)
+                    {
+                        int rand = Random.Range(i, starboardBroadside.Count);
+                        Cannon tempCannon = starboardBroadside[rand];
+                        starboardBroadside[rand] = starboardBroadside[i];
+                        starboardBroadside[i] = tempCannon;
+                    }
+                    break;
+                }
+        }
     }
 
     void ShipSailCaseUpdate()
