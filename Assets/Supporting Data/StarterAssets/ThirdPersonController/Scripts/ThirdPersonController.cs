@@ -182,8 +182,10 @@ namespace StarterAssets
         }
 
         //Added a raycast function that checks if there's a ship below the player; to allow tracking while aboard.
+        //The player simply moving around doesn't cause the sphere to update. 
+        //If the player jumps, and lands on the object, then the sphere updates.
+
         [SerializeField] private float rayDistance;
-        private bool nullRay;
         private void GroundedCheck()
         {
             // set sphere position, with offset
@@ -194,14 +196,15 @@ namespace StarterAssets
             
             //This stops firing after the player's moved
             RaycastHit rayHit;
-            if (Grounded)
+            /*if (Grounded)
             {
+                Debug.Log("Grounded");
+
                 if (Physics.Raycast(transform.position, Vector3.down, out rayHit, rayDistance, GroundLayers))
                 {
                     if (rayHit.transform.CompareTag("Ship") ||
                         rayHit.transform.CompareTag("Structure"))
                     {
-                        Debug.Log("Raycasting...");
 
                         playerOnWalkableSurface = true;
                         gameObject.GetComponentInParent<Transform>().transform.SetParent(rayHit.transform);
@@ -213,44 +216,35 @@ namespace StarterAssets
                     playerOnWalkableSurface = false;
                 }
             }
-            //It feels like this isnt being called as update should be
             else
             {
                 gameObject.GetComponentInParent<Transform>().transform.SetParent(null);
                 playerOnWalkableSurface = false;
-            }
+            }*/
 
 
-            /*
+            
             //Debug.Log("Grounded check is firing!");
+            //This function produces better results when moving on the ship, but doesn't jump, or provide fall physics.
             if (Physics.Raycast(transform.position, Vector3.down, out rayHit, rayDistance, GroundLayers, QueryTriggerInteraction.Ignore))
             {
                 //Debug.Log("Raycast hit " + rayHit.transform.name);
-                if (rayHit.transform.tag == "Ship" || rayHit.transform.tag =="Structure")
+                if (rayHit.transform.CompareTag("Ship") || rayHit.transform.CompareTag("Structure"))
                 {
                     //Debug.Log("raycast hitting object: " + rayHit.transform.name);
 
                     gameObject.transform.SetParent(rayHit.transform);
                     playerOnWalkableSurface = true;
-                    nullRay = false;
                 }
-                else if (rayHit.transform.tag != "Ship" || rayHit.transform.tag != "Structure")
-                {
-                    //Debug.Log("raycast not hitting ship");
-                    gameObject.transform.SetParent(null);
-                    playerOnWalkableSurface = false;
-                    nullRay = false;
-                }
-                else if (rayHit.transform == null)
+                else if (!rayHit.transform.CompareTag("Ship") || rayHit.transform.CompareTag("Structure"))
                 {
                     Debug.Log("Found nothing!");
                     gameObject.transform.SetParent(null);
                     playerOnWalkableSurface = false;
-                    nullRay = true;
                 }
             }
             Debug.DrawRay(transform.position, Vector3.down, Color.red, 1f);
-            */
+            
             // update animator if using character
             if (_hasAnimator)
             {
@@ -301,25 +295,36 @@ namespace StarterAssets
                 if (_input.move == Vector2.zero)
                 {
                     targetSpeed = 0.0f;
+                    GetComponent<CharacterController>().enabled = true;
                 }
             }
+            //Players on a ship or structure
             else if (playerOnWalkableSurface)
             {
                 if (_input.move == Vector2.zero)  //Solution is in this statement, not sure how to go about it though
                 {
-                    //Debug.Log("Rigidbody should be taking movement!");
-                    //targetSpeed = 0;
-                    GetComponent<Rigidbody>().velocity = Vector3.zero;
-                    targetSpeed = 0;    //Order of operations
-                    if (!nullRay)
+                    if (!Grounded)
                     {
-                        GetComponent<CharacterController>().enabled = false;    //If that raycast isnt null, then do this
+                        GetComponent<CharacterController>().enabled = true;
+                    }
+                    else
+                    {
+                        RaycastHit rayHit;
+                        if (Physics.Raycast(transform.position, Vector3.down, out rayHit, rayDistance, GroundLayers, QueryTriggerInteraction.Ignore))
+                        {
+                            if (rayHit.transform.CompareTag("Ship") || rayHit.transform.CompareTag("Structure"))
+                            {
+                                GetComponent<Rigidbody>().velocity = Vector3.zero;
+                            }
+                        }
+                        targetSpeed = 0;    //Order of operations
+                        GetComponent<CharacterController>().enabled = false;    //Disable the charcon if not moving, and on a walkable surface
                     }
                 }
-                else if (_input.move == Vector2.zero && nullRay == true)
+                /*else if (_input.move == Vector2.zero && nullRay == true)
                 {
                     GetComponent<CharacterController>().enabled = true  ;    //If that raycast isnt null, then do this
-                }
+                }*/
                 else if (_input.move != Vector2.zero)
                 {
                     GetComponent<CharacterController>().enabled = true;
@@ -406,6 +411,7 @@ namespace StarterAssets
                 // Jump
                 if (_input.jump && _jumpTimeoutDelta <= 0.0f)
                 {
+                    Grounded = false;
                     // the square root of H * -2 * G = how much velocity needed to reach desired height
                     _verticalVelocity = Mathf.Sqrt(JumpHeight * -2f * Gravity);
 

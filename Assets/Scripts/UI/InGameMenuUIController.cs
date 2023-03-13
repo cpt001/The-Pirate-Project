@@ -86,7 +86,7 @@ public class InGameMenuUIController : MonoBehaviour
             ToggleMainUIDisplay();
             //Inventory
         }
-        if (Input.GetKeyDown(KeyCode.L))
+        if (Input.GetKeyDown(KeyCode.O))
         {
             if (menuToDisplay != CurrentlyDisplayedMenu.Ledger)
             {
