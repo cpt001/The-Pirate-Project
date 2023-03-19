@@ -10,6 +10,8 @@ using System.Linq;
 /// -> fix structure crafting to match a selection of items for the player.
 /// -> create list of required items
 /// -> request cargo deliver to building
+/// 
+/// Separating structure and residential structures into separate scripts for clarity of purpose
 /// </summary>
 public class Structure : MonoBehaviour
 {

@@ -238,7 +238,7 @@ namespace StarterAssets
                 }
                 else if (!rayHit.transform.CompareTag("Ship") || rayHit.transform.CompareTag("Structure"))
                 {
-                    Debug.Log("Found nothing!");
+                    //Debug.Log("Found nothing!");
                     gameObject.transform.SetParent(null);
                     playerOnWalkableSurface = false;
                 }

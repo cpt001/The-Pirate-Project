@@ -115,6 +115,7 @@ public class PawnNavigation : MonoBehaviour
             else
             {
                 Debug.Log("Workplace is null on: " + gameObject.name);
+                homeStructure = GameObject.Find("Tavern").GetComponent<Structure>();
             }
         }
     }
@@ -148,6 +149,20 @@ public class PawnNavigation : MonoBehaviour
 
     void HourToHour()
     {
+        if (homeStructure == null && workPlace == null)
+        {
+            Debug.Log(pawn.name + " Both structures are null!");
+            Destroy(gameObject);
+        }
+        else if (!homeStructure)
+        {
+            Debug.Log(pawn.name + " Home is null!");
+        }
+        if (!workPlace)
+        {
+            Debug.Log(pawn.name + " Workplace is null!");
+
+        }
         #region ResetInternalHours
         internalHour++;
         if (internalHour == 24)

@@ -29,7 +29,8 @@ public class PawnGeneration : MonoBehaviour
 
     [Header("Special Cases")]
     //public bool isPlayerPawn;   //This simply determines if this setup is automated, or if the variables are exposed during char creation
-    private bool hasPartner;
+    public bool hasPartner;
+    public PawnGeneration partner;
     public Dictionary<PawnGeneration, int> opinionMatrix;   //This won't appear in the inspector anyway, might as well keep it here -- Opinion of other pawns that have been met
     private int moneyOnHand;
     private IslandController islandController = null;

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using Cinemachine;
 
 /// <summary>
 /// Bottom H can be manipulated to create a sinking effect.
@@ -12,6 +13,7 @@ public class ControllableShip : MonoBehaviour
 {
     [SerializeField] private Crest.BoatProbes boatTarget;
     [SerializeField] private StarterAssets.ThirdPersonController playerController;
+    //[SerializeField] private CinemachineBrain cameraBrain;
 
     [SerializeField] private bool anchorDropped;
     private Rigidbody _rb;
@@ -78,6 +80,7 @@ public class ControllableShip : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.X))
         {
             playerControllingShip = playerControllingShip ? false : true;
+            //Camera.main
         }
 
         if (playerControllingShip)
