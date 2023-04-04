@@ -151,16 +151,16 @@ public class PawnNavigation : MonoBehaviour
     {
         if (homeStructure == null && workPlace == null)
         {
-            Debug.Log(pawn.name + " Both structures are null!");
+            //Debug.Log(pawn.name + " Both structures are null!");
             Destroy(gameObject);
         }
         else if (!homeStructure)
         {
-            Debug.Log(pawn.name + " Home is null!");
+            //Debug.Log(pawn.name + " Home is null!");
         }
         if (!workPlace)
         {
-            Debug.Log(pawn.name + " Workplace is null!");
+            //Debug.Log(pawn.name + " Workplace is null!");
 
         }
         #region ResetInternalHours
@@ -173,17 +173,52 @@ public class PawnNavigation : MonoBehaviour
 
         if (internalHour == 0)
         {
+            //Fall back for game start, teleports pawn to home
             if (homeStructure)
             {
-                agent.SetDestination(homeStructure.transform.position);
-                //Debug.Log(pawn.name + " going to home structure");
-
+                //Debug.Log("Pawn teleporting!");
+                agent.Warp(homeStructure.transform.position);
             }
             else
             {
-
+                //Debug.Log("No home structure found for " + pawn.name);
+                agent.Warp(GameObject.Find("Tavern").transform.position);
             }
         }
+        if (internalHour == pawn.sleepStartTime)
+        {
+            if (homeStructure)
+            {
+                agent.SetDestination(homeStructure.transform.position);
+            }
+            else
+            {
+                agent.SetDestination(GameObject.Find("Tavern").transform.position);
+            }
+        }
+        /*if (workPlace)
+        {
+            if (pawn.age >= 14)
+            {
+                if (pawn.isSick != PawnGeneration.Sickness.Bedridden)
+                {
+                    if (internalHour == workPlace.workStartTime)
+                    {
+                        if (workPlace.assignmentLocation)
+                        {
+                            agent.SetDestination(workPlace.assignmentLocation.position);
+                        }
+                        else
+                        {
+                            agent.SetDestination(workPlace.transform.position);
+                        }
+                    }
+                }
+            }
+        }*/
+
+
+        //This locks the pawn from walking somewhere else
         if (!enrouteToAnotherLocation)
         {
             if (timeToWait != 0)
@@ -240,12 +275,16 @@ public class PawnNavigation : MonoBehaviour
         //Structure seems okay, though its consistently requesting 1 additional worker
         //Implement day of rest, and exceptions
         //Most of the losses seem to be in this script. It's bad, but could be a lot worse
-        enrouteToAnotherLocation = true;
         if (internalHour == workPlace.workStartTime)
         {
+            enrouteToAnotherLocation = true;
+
+            //Debug.Log("Work Time");
+
             if (workPlace.assignmentLocation != null)
             {
                 onDuty = true;
+                //Debug.Log("Workplace: " + workPlace.name);
                 agent.SetDestination(workPlace.assignmentLocation.position);
             }
             else

@@ -22,7 +22,7 @@ public class TimeOfDayCheck : MonoBehaviour
     {
         if (other.GetComponent<LightFlicker>())
         {
-            Debug.Log("Light detected");
+            //Debug.Log("Light detected");
             LightFlicker tempItem = other.GetComponent<LightFlicker>();
             if (occupants.Contains(tempItem))   //If the object is in the list, it's exiting
             {

@@ -30,8 +30,15 @@ public class WorkAssignment : MonoBehaviour
             }
             else
             {
-                StartCoroutine(ShortWaitTimer(0, other.GetComponent<PawnNavigation>()));
                 //Send customers to interaction locations;
+                if (other.GetComponent<PawnNavigation>().agent.destination == this.transform.position)
+                {
+                    StartCoroutine(ShortWaitTimer(0, other.GetComponent<PawnNavigation>()));
+                }
+                else
+                {
+                    //Ignore, the pawn is just passing through
+                }
             }
         }
     }
