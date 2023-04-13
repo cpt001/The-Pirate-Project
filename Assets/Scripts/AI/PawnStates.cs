@@ -5,6 +5,7 @@ using UnityEngine;
 public class PawnStates : MonoBehaviour
 {
     //Okay. This is an exploratory implementation of overall states. 
+    //Not implemented yet
     /// <summary>
     /// It should help to a degree with setting up idle states, and giving the pawns more ability to explore beyond home/work cycle
     /// </summary>

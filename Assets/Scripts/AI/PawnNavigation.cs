@@ -149,20 +149,6 @@ public class PawnNavigation : MonoBehaviour
 
     void HourToHour()
     {
-        if (homeStructure == null && workPlace == null)
-        {
-            //Debug.Log(pawn.name + " Both structures are null!");
-            Destroy(gameObject);
-        }
-        else if (!homeStructure)
-        {
-            //Debug.Log(pawn.name + " Home is null!");
-        }
-        if (!workPlace)
-        {
-            //Debug.Log(pawn.name + " Workplace is null!");
-
-        }
         #region ResetInternalHours
         internalHour++;
         if (internalHour == 24)
@@ -177,7 +163,10 @@ public class PawnNavigation : MonoBehaviour
             if (homeStructure)
             {
                 //Debug.Log("Pawn teleporting!");
-                agent.Warp(homeStructure.transform.position);
+                if (agent.destination != homeStructure.transform.position)
+                {
+                    agent.Warp(homeStructure.transform.position);
+                }
             }
             else
             {
@@ -191,8 +180,9 @@ public class PawnNavigation : MonoBehaviour
             {
                 agent.SetDestination(homeStructure.transform.position);
             }
-            else
+            else if (homeStructure == null)
             {
+                //Debug.Log(pawn.name + " seeking tavern");
                 agent.SetDestination(GameObject.Find("Tavern").transform.position);
             }
         }
@@ -266,6 +256,23 @@ public class PawnNavigation : MonoBehaviour
         {
             Debug.Log("Pawn is toddler");
             agent.SetDestination(homeStructure.transform.position);
+        }
+
+
+        //Had to move this down. Objects are destroyed at the end of an update cycle; prevents a repeated error
+        if (homeStructure == null && workPlace == null)
+        {
+            //Debug.Log(pawn.name + " Both structures are null!");
+            Destroy(gameObject);
+        }
+        else if (!homeStructure)
+        {
+            //Debug.Log(pawn.name + " Home is null!");
+        }
+        if (!workPlace)
+        {
+            //Debug.Log(pawn.name + " Workplace is null!");
+
         }
     }
 

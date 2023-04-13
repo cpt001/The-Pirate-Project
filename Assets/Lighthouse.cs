@@ -9,7 +9,7 @@ public class Lighthouse : MonoBehaviour
     public Vector3 rotationEulers;
     public float speed;
 
-    private Light light;
+    private Light lightComponent;
     private GameObject beam;
     private bool currentStatus = true;
 
@@ -17,7 +17,7 @@ public class Lighthouse : MonoBehaviour
     {
         cachedTransform = this.transform;
         EventsManager.StartListening("ToggleLights", LighthouseToggle);
-        light = gameObject.GetComponent<Light>();
+        lightComponent = gameObject.GetComponent<Light>();
         beam = gameObject.GetComponentInChildren<Transform>().gameObject;
     }
 
@@ -30,7 +30,7 @@ public class Lighthouse : MonoBehaviour
     {
         //Debug.Log("Lighthouse toggling");
         currentStatus = !currentStatus;
-        light.enabled = currentStatus;
+        lightComponent.enabled = currentStatus;
         beam.SetActive(currentStatus);
     }
 }
