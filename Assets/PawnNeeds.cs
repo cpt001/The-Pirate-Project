@@ -7,19 +7,30 @@ using UnityEngine;
 /// Create stacked ordering of priority needs.
 /// Look for local smart objects that fulfill the need the best
 /// Set destination, check work/sleep condition before
+/// 
+/// ToDo:
+/// Script is still fully non-functional.
+/// -Needs will decrement with time on a log scale
+/// -Needs will affect mood
+/// -Low needs assign priority, allowing pawn to check for smart objects
+/// -Needs to communicate with new navigation script. 
 /// </summary>
 
 public class PawnNeeds : MonoBehaviour
 {
     ////Each of these stats goes from 0-100 based on fulfillment
     [Range(0, 100)]
-    public float happiness, fun, hunger, exhaustion, love, peace, drunkenness, adventure, cleanliness, health;     //Overall stat
+    public float happiness, fun, hunger, exhaustion, love, peace, drunkenness, adventure, cleanliness, health, social;     //Overall stat
     //Restroom?
+    private Dictionary<string, float> stats = new Dictionary<string, float>();
 
     private bool sleepObligation;   //Prevents the worker from going anywhere when asleep
     private bool workObligation;    //Prevents the worker from going anywhere when working
 
     public Transform prioritizedDestination;
+
+    private int hourCount;
+    public PawnNeeds partner;
 
     private void Awake()
     {
@@ -33,33 +44,64 @@ public class PawnNeeds : MonoBehaviour
         adventure = Random.Range(0, 100);
         cleanliness = Random.Range(0, 100);
         health = Random.Range(0, 100);
+
+        stats.Add("Fun", fun);
+        stats.Add("Hunger", hunger);
+        stats.Add("Exhaustion", exhaustion);
+        stats.Add("Love", love);
+        stats.Add("Peace", peace);
+        stats.Add("Drunkenness", drunkenness);
+        stats.Add("Adventure", adventure);
+        stats.Add("Cleanliness", cleanliness);
+        stats.Add("Health", health);
+
         CalculateHappiness();
     }
 
     private void HourToHour()
     {
-        CalculateHappiness();
+        if (hourCount < 24)
+        {
+            hourCount++;
+        }
+        else
+        {
+            hourCount = 0;
+        }
+        //CalculateHappiness();
 
 
-        CalculateFunImpact(fun);
-        CalculateHungerImpact(hunger);
+        /*CalculateFunImpact(fun);
+        /*CalculateHungerImpact(hunger);
         CalculateExhaustionImpact(exhaustion);
         CalculateLoveImpact(love);
         CalculatePeaceImpact(peace);
         CalculateDrunkennessImpact(drunkenness);
         CalculateAdventureImpact(adventure);
         CalculateCleanlinessImpact(cleanliness);
-        CalculateHealthImpact(health);
+        CalculateHealthImpact(health);*/
     }
 
+    /*void HourlyDecrement()
+    {
+        foreach (KeyValuePair<string, float> kvp in stats)
+        {
+            if (kvp.Key == "Fun" || kvp.Key == "Exhaustion"|| kvp.Key == "Love"|| kvp.Key == || kvp.Key == || kvp.Key == || kvp.Key == )
+            {
 
+            }
+            else if(kvp.Key == "Hunger" || kvp.Key == "")
+            {
+
+            }
+        }
+    }*/
 
 
     void CalculateHappiness()
     {
-        happiness = happiness + (CalculateFunImpact(fun) + CalculateHungerImpact(hunger) + CalculateHungerImpact(hunger) + CalculateExhaustionImpact(exhaustion) + CalculateLoveImpact(love) 
-            + CalculatePeaceImpact(peace) + CalculateDrunkennessImpact(drunkenness) + CalculateAdventureImpact(adventure) + CalculateCleanlinessImpact(cleanliness) + CalculateHealthImpact(health));
-        happiness = happiness / 9;
+        happiness = happiness + ((fun + hunger + exhaustion + love + peace + drunkenness + adventure + cleanliness + health) / 9);
+        //happiness = happiness / 9;
     }
 
     //Calculates the effect that hunger has on happiness non-linearly

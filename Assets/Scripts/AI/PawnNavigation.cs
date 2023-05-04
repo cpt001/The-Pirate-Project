@@ -109,6 +109,11 @@ public class PawnNavigation : MonoBehaviour
 
                 sleepLength = Mathf.RoundToInt(Random.Range(7, 10));
                 sleepStartTime = workPlace.workStartTime - sleepLength;
+                if (sleepStartTime < 0)
+                {
+                    Debug.Log(pawn.name + " sleep start time is outside parameters at: " + sleepStartTime);
+                    //sleepStartTime = 24 - 
+                }
                 //Debug.Log("Sleep Start " + sleepStartTime);
                 HourToHour();
             }
