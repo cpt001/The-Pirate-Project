@@ -1,0 +1,300 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 337831424, guid: 6a10b2909283487f913b00d94cd3faf5, type: 3}
+  m_Name: DryingTimeline
+  m_EditorClassIdentifier: 
+  m_NextId: 0
+  m_Tracks:
+  - {fileID: 114131281151383964}
+  m_FixedDuration: 0
+  m_EditorSettings:
+    m_Framerate: 60
+  m_DurationMode: 0
+  m_Version: 0
+--- !u!114 &114131281151383964
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e5769e8b6049a94abf53f39f4f15d68, type: 3}
+  m_Name: Decal Settings Track
+  m_EditorClassIdentifier: 
+  m_Locked: 0
+  m_Muted: 0
+  m_CustomPlayableFullTypename: 
+  m_AnimClip: {fileID: 0}
+  m_Parent: {fileID: 11400000}
+  m_Children: []
+  m_Clips:
+  - m_Start: 0
+    m_ClipIn: 0
+    m_Asset: {fileID: 114452704240451680}
+    m_Duration: 30.166666666666668
+    m_TimeScale: 1
+    m_ParentTrack: {fileID: 114131281151383964}
+    m_EaseInDuration: 0
+    m_EaseOutDuration: 0
+    m_BlendInDuration: -1
+    m_BlendOutDuration: 28.150000000000002
+    m_MixInCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_MixOutCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 1
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_BlendInCurveMode: 0
+    m_BlendOutCurveMode: 0
+    m_ExposedParameterNames: []
+    m_AnimationCurves: {fileID: 0}
+    m_Recordable: 0
+    m_PostExtrapolationMode: 0
+    m_PreExtrapolationMode: 0
+    m_PostExtrapolationTime: 0
+    m_PreExtrapolationTime: 0
+    m_DisplayName: DecalSettingsClip
+    m_Version: 1
+  - m_Start: 2.0166666666666666
+    m_ClipIn: 0
+    m_Asset: {fileID: 114465347688529192}
+    m_Duration: 38.05
+    m_TimeScale: 1
+    m_ParentTrack: {fileID: 114131281151383964}
+    m_EaseInDuration: 0
+    m_EaseOutDuration: 0
+    m_BlendInDuration: 28.150000000000002
+    m_BlendOutDuration: -1
+    m_MixInCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_MixOutCurve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_BlendInCurveMode: 0
+    m_BlendOutCurveMode: 0
+    m_ExposedParameterNames: []
+    m_AnimationCurves: {fileID: 0}
+    m_Recordable: 0
+    m_PostExtrapolationMode: 0
+    m_PreExtrapolationMode: 0
+    m_PostExtrapolationTime: 0
+    m_PreExtrapolationTime: 0
+    m_DisplayName: DecalSettingsClip
+    m_Version: 1
+  m_Version: 2
+--- !u!114 &114452704240451680
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 287a42a968350964fbde0ec0e2f7a337, type: 3}
+  m_Name: DecalSettingsClip
+  m_EditorClassIdentifier: 
+  Template:
+    Data:
+      Saturation: 1
+      XLayer:
+        Channel1:
+          InputRangeThreshold: 0
+          InputRangeSoftness: 0
+          OutputRange: {x: 0, y: 0}
+        Channel2:
+          InputRangeThreshold: 0
+          InputRangeSoftness: 0
+          OutputRange: {x: 0, y: 0}
+        Channel3:
+          InputRangeThreshold: 0
+          InputRangeSoftness: 0
+          OutputRange: {x: 0, y: 0}
+        Channel4:
+          InputRangeThreshold: 0
+          InputRangeSoftness: 0
+          OutputRange: {x: 0, y: 0}
+        _editorSectionFoldout: 0
+      YLayer:
+        Channel1:
+          InputRangeThreshold: 0.804
+          InputRangeSoftness: 0.4
+          OutputRange: {x: 0, y: 0.7777504}
+        Channel2:
+          InputRangeThreshold: 0
+          InputRangeSoftness: 0
+          OutputRange: {x: 0, y: 0}
+        Channel3:
+          InputRangeThreshold: 0.736
+          InputRangeSoftness: 0.099
+          OutputRange: {x: 0.62970734, y: 0.99999994}
+        Channel4:
+          InputRangeThreshold: 0
+          InputRangeSoftness: 0
+          OutputRange: {x: 0, y: 0}
+        _editorSectionFoldout: 1
+      ZLayer:
+        Channel1:
+          InputRangeThreshold: 0
+          InputRangeSoftness: 0
+          OutputRange: {x: 0, y: 0}
+        Channel2:
+          InputRangeThreshold: 0
+          InputRangeSoftness: 0
+          OutputRange: {x: 0, y: 0}
+        Channel3:
+          InputRangeThreshold: 0
+          InputRangeSoftness: 0
+          OutputRange: {x: 0, y: 0}
+        Channel4:
+          InputRangeThreshold: 0
+          InputRangeSoftness: 0
+          OutputRange: {x: 0, y: 0}
+        _editorSectionFoldout: 0
+--- !u!114 &114465347688529192
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 287a42a968350964fbde0ec0e2f7a337, type: 3}
+  m_Name: DecalSettingsClip
+  m_EditorClassIdentifier: 
+  Template:
+    Data:
+      Saturation: 1
+      XLayer:
+        Channel1:
+          InputRangeThreshold: 0
+          InputRangeSoftness: 0
+          OutputRange: {x: 0, y: 0}
+        Channel2:
+          InputRangeThreshold: 0
+          InputRangeSoftness: 0
+          OutputRange: {x: 0, y: 0}
+        Channel3:
+          InputRangeThreshold: 0
+          InputRangeSoftness: 0
+          OutputRange: {x: 0, y: 0}
+        Channel4:
+          InputRangeThreshold: 0
+          InputRangeSoftness: 0
+          OutputRange: {x: 0, y: 0}
+        _editorSectionFoldout: 0
+      YLayer:
+        Channel1:
+          InputRangeThreshold: 0
+          InputRangeSoftness: 0.02
+          OutputRange: {x: 0, y: 0.7777504}
+        Channel2:
+          InputRangeThreshold: 0
+          InputRangeSoftness: 0
+          OutputRange: {x: 0, y: 0}
+        Channel3:
+          InputRangeThreshold: 0.247
+          InputRangeSoftness: 0.133
+          OutputRange: {x: 0, y: 0}
+        Channel4:
+          InputRangeThreshold: 0
+          InputRangeSoftness: 0
+          OutputRange: {x: 0, y: 0}
+        _editorSectionFoldout: 1
+      ZLayer:
+        Channel1:
+          InputRangeThreshold: 0
+          InputRangeSoftness: 0
+          OutputRange: {x: 0, y: 0}
+        Channel2:
+          InputRangeThreshold: 0
+          InputRangeSoftness: 0
+          OutputRange: {x: 0, y: 0}
+        Channel3:
+          InputRangeThreshold: 0
+          InputRangeSoftness: 0
+          OutputRange: {x: 0, y: 0}
+        Channel4:
+          InputRangeThreshold: 0
+          InputRangeSoftness: 0
+          OutputRange: {x: 0, y: 0}
+        _editorSectionFoldout: 0

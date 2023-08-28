@@ -24,7 +24,7 @@ public class WorkAssignment : MonoBehaviour
         if (other.GetComponent<PawnGeneration>())
         {
             //If the other object works at this location
-            if (parentStructure.masterWorkerList.Contains(other.GetComponent<PawnGeneration>()))
+            if (parentStructure.masterWorkerList.Contains(other.GetComponent<GameObject>()))
             {
                 StartCoroutine(ShortWaitTimer(timer, other.GetComponent<PawnNavigation>()));
             }
@@ -48,7 +48,7 @@ public class WorkAssignment : MonoBehaviour
         thisPawn.agent.ResetPath(); //This was the fix that was needed
         yield return new WaitForSeconds(timerInput);
         //If the pawn is a worker at this location
-        if (parentStructure.masterWorkerList.Contains(thisPawn.pawn))
+        if (parentStructure.masterWorkerList.Contains(thisPawn.gameObject))
         {
             if (!isMultiTask)
             {

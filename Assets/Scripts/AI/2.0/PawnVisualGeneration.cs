@@ -6,16 +6,17 @@ using UnityEngine.Events;
 public class PawnVisualGeneration : MonoBehaviour
 {
     /// <summary>
-    /// This is a new, paired down version of the Pawn Generation script, focused entirely on the visual generation
+    /// This is a new, paired down version of the Pawn Generation script, focused entirely on the visual generation of a new pawn.
+    /// 
+    /// Nuked NPC namer script. It started irritating me, and was functionally unnecessary
     /// 
     /// ToDo:
-    /// -Finish implementing missing cases -- Female body shape, preferred partner stats(?), heterochromia
+    /// -Finish implementing missing cases -- Female body shape, preferred partner stats(?)
     /// -Implement new cases -- Clothing preference
     /// -Move personality segment into needs?
     /// -Player character creator exception -- Generate a random character to start, then allow customization from there
     /// </summary>
     #region Script References and Containers
-    public NPCNames npcNamer;
     public GameObject maleBody;
     public GameObject femaleBody;
     public GameObject unitBody = null;
@@ -30,6 +31,7 @@ public class PawnVisualGeneration : MonoBehaviour
     /// </summary>
     [Header("Initialization")]
     #region
+    private string selectedName;
     public string characterName;                                                    //Name of the character
     public enum PawnSex { Male, Female };
     public PawnSex pawnGender;                                                       //Initializes, will be randomized for NPCs
@@ -43,10 +45,12 @@ public class PawnVisualGeneration : MonoBehaviour
     /// </summary>
     [Header("Looks")]
     #region
-    private EyeColor eyeColor;
+    private EyeColor eyeColorRight;
+    private EyeColor eyeColorLeft;
     private enum EyeColor { Gray, Blue, Green, Brown, Red };
-    private Color eyeColorToApply;
-    public bool heterochromatic_NYI;  //NYI, allows for heterochromatic eye options
+    private Color eyeColorRToApply;
+    private Color eyeColorLToApply;
+    private bool heterochromatic;
     public enum HairColor { White, Silver, Blonde, DirtyBlonde, Auburn, Brunette, Dark, Reddish, Red, Ginger };
     public HairColor hairColor;
     private Color hairColorToApply;
@@ -165,13 +169,13 @@ public class PawnVisualGeneration : MonoBehaviour
             case PawnSex.Male:
                 {
                     unitBody = maleBody;
-                    npcNamer.GetRandomMaleName();
+                    GetRandomMaleName();
                     break;
                 }
             case PawnSex.Female:
                 {
                     unitBody = femaleBody;
-                    npcNamer.GetRandomFemaleName();
+                    GetRandomFemaleName();
                     break;
                 }
 
@@ -190,8 +194,7 @@ public class PawnVisualGeneration : MonoBehaviour
         #region Initialization [Gender, time, name, agent move speed]
         characterName = "NullName"; //Name of the character
         genderPrefs = (PawnPreferredPartner)Random.Range(0, 2);
-        characterName = npcNamer.selectedName;
-        gameObject.name = "Pawn_" + npcNamer.selectedName + " [" + pawnGender + "]";
+        gameObject.name = "Pawn_" + selectedName + " [" + pawnGender + "]";
         if (characterName == "NullName")
         {
             Debug.Log("Character has no name! " + gameObject);
@@ -362,49 +365,89 @@ public class PawnVisualGeneration : MonoBehaviour
     void DetermineEyeColor()
     {
         #region EyeColor
-        eyeColor = (EyeColor)Random.Range(0, System.Enum.GetValues(typeof(EyeColor)).Length);
-        switch (eyeColor)
+        eyeColorRight = (EyeColor)Random.Range(0, System.Enum.GetValues(typeof(EyeColor)).Length);
+        if (heterochromatic)
+        {
+            eyeColorLeft = (EyeColor)Random.Range(0, System.Enum.GetValues(typeof(EyeColor)).Length);
+        }
+        else
+        {
+            eyeColorLeft = eyeColorRight;
+        }
+        switch (eyeColorRight)
         {
             case EyeColor.Gray:
                 {
-                    eyeColorToApply = Color.gray;
+                    eyeColorRToApply = Color.gray;
                     break;
                 }
             case EyeColor.Blue:
                 {
-                    eyeColorToApply = Color.blue;
+                    eyeColorRToApply = Color.blue;
                     break;
                 }
             case EyeColor.Green:
                 {
-                    eyeColorToApply = Color.green;
+                    eyeColorRToApply = Color.green;
                     break;
                 }
             case EyeColor.Brown:
                 {
-                    eyeColorToApply = new Color(0, 0.5f, 1, 0.6f);
+                    eyeColorRToApply = new Color(0, 0.5f, 1, 0.6f);
                     break;
                 }
             case EyeColor.Red:
                 {
-                    eyeColorToApply = Color.red;
+                    eyeColorRToApply = Color.red;
+                    break;
+                }
+        }        
+        switch (eyeColorLeft)
+        {
+            case EyeColor.Gray:
+                {
+                    eyeColorLToApply = Color.gray;
+                    break;
+                }
+            case EyeColor.Blue:
+                {
+                    eyeColorLToApply = Color.blue;
+                    break;
+                }
+            case EyeColor.Green:
+                {
+                    eyeColorLToApply = Color.green;
+                    break;
+                }
+            case EyeColor.Brown:
+                {
+                    eyeColorLToApply = new Color(0, 0.5f, 1, 0.6f);
+                    break;
+                }
+            case EyeColor.Red:
+                {
+                    eyeColorLToApply = Color.red;
                     break;
                 }
         }
 
         foreach (Transform t in unitBody.transform)
         {
-            //Debug.Log(t.name);
-            if (!heterochromatic_NYI)
+            if (t.name == "Eyeball")
             {
-                if (t.name == "Eyeball")
+                foreach (Transform u in t.transform)
                 {
-                    t.GetComponent<Renderer>().material.color = eyeColorToApply;
+                    if (u.Find("Pupil (R)"))
+                    {
+                        Debug.Log(u.name + " on AI tester");
+
+                        u.GetComponent<Renderer>().material.color = eyeColorRToApply;
+                    }
+                    if (u.Find("Pupil (L)"))
+                    {
+                        u.GetComponent<Renderer>().material.color = eyeColorLToApply;
+                    }
                 }
-            }
-            if (heterochromatic_NYI)
-            {
-                //Foreach loop for each eyeball
             }
         }
         #endregion
@@ -429,8 +472,9 @@ public class PawnVisualGeneration : MonoBehaviour
     }   //Bias?
 
 
-    private void Awake()
+    /*protected override*/ void Awake()
     {
+        //base.Awake();
         Init();
     }
 
@@ -446,8 +490,425 @@ public class PawnVisualGeneration : MonoBehaviour
         //Job determination here, i think. 
     }
 
-    private void Start()
+    /*protected override*/ void Start()
     {
+        //base.Start();
         GenerateNewPawn();
+    }
+
+
+    private string[] namesMale = new string[]
+{
+        "Noah",
+        "Liam",
+        "Jacob",
+        "William",
+        "Mason",
+        "Ethan",
+        "Michael",
+        "Alexander",
+        "James",
+        "Elijah",
+        "Benjamin",
+        "Daniel",
+        "Aiden",
+        "Logan",
+        "Jayden",
+        "Matthew",
+        "Lucas",
+        "David",
+        "Jackson",
+        "Joseph",
+        "Anthony",
+        "Samuel",
+        "Joshua",
+        "Gabriel",
+        "Andrew",
+        "John",
+        "Christopher",
+        "Oliver",
+        "Dylan",
+        "Carter",
+        "Isaac",
+        "Luke",
+        "Henry",
+        "Owen",
+        "Ryan",
+        "Nathan",
+        "Wyatt",
+        "Caleb",
+        "Sebastian",
+        "Jack",
+        "Christian",
+        "Jonathan",
+        "Julian",
+        "Landon",
+        "Levi",
+        "Isaiah",
+        "Hunter",
+        "Aaron",
+        "Charles",
+        "Thomas",
+        "Eli",
+        "Jaxon",
+        "Connor",
+        "Nicholas",
+        "Jeremiah",
+        "Grayson",
+        "Cameron",
+        "Brayden",
+        "Adrian",
+        "Evan",
+        "Jordan",
+        "Josiah",
+        "Angel",
+        "Robert",
+        "Gavin",
+        "Tyler",
+        "Austin",
+        "Colton",
+        "Jose",
+        "Dominic",
+        "Brandon",
+        "Ian",
+        "Lincoln",
+        "Hudson",
+        "Kevin",
+        "Zachary",
+        "Adam",
+        "Mateo",
+        "Jason",
+        "Chase",
+        "Nolan",
+        "Ayden",
+        "Cooper",
+        "Parker",
+        "Xavier",
+        "Asher",
+        "Carson",
+        "Jace",
+        "Easton",
+        "Justin",
+        "Leon",
+        "Bentley",
+        "Jaxson",
+        "Nathaniel",
+        "Blake",
+        "Elias",
+        "Theodore",
+        "Kayden",
+        "Luis",
+        "Tristan",
+        "Ezra",
+        "Bryson",
+        "Juan",
+        "Brody",
+        "Vincent",
+        "Micah",
+        "Miles",
+        "Santiago",
+        "Cole",
+        "Ryder",
+        "Carlos",
+        "Damian",
+        "Leonardo",
+        "Roman",
+        "Max",
+        "Sawyer",
+        "Jesus",
+        "Diego",
+        "Greyson",
+        "Alex",
+        "Maxwell",
+        "Axel",
+        "Eric",
+        "Wesley",
+        "Declan",
+        "Giovanni",
+        "Ezekiel",
+        "Braxton",
+        "Ashton",
+        "Ivan",
+        "Harden",
+        "Camden",
+        "Silas",
+        "Bryce",
+        "Weston",
+        "Harrison",
+        "Jameson",
+        "George",
+        "Antonio",
+        "Timothy",
+        "Kaiden",
+        "Jonah",
+        "Everett",
+        "Miguel",
+        "Steven",
+        "Richard",
+        "Emmett",
+        "Victor",
+        "Kaleb",
+        "Kai",
+        "Maverick",
+        "Joel",
+        "Bryan",
+        "Maddox",
+        "Kingston",
+        "Aidan",
+        "Patrick",
+        "Edward",
+        "Emmanuel",
+        "Jude",
+        "Alejandro",
+        "Preston",
+        "Luca",
+        "Bennett",
+        "Jesse",
+        "Colin",
+        "Jaden",
+        "Malachi",
+        "Kaden",
+        "Jayce",
+        "Alan",
+        "Kyle",
+        "Marcus",
+        "Brian",
+        "Ryker",
+        "Grant",
+        "Jeremy",
+        "Abel",
+        "Riley",
+        "Calvin",
+        "Brantley",
+        "Caden",
+        "Oscar",
+        "Abraham",
+        "Brady",
+        "Sean",
+        "Jake",
+        "Tucker",
+        "Nicolas",
+        "Mark",
+        "Amir",
+        "Avery",
+        "King",
+        "Gael",
+        "Kenneth",
+        "Bradley",
+        "Cayden",
+        "Xander",
+        "Graham",
+        "Rowan",
+};
+    public void GetRandomMaleName()
+    {
+        selectedName = namesMale[Random.Range(0, namesMale.Length)];
+    }
+    private string[] namesFemale = new string[]
+    {
+        "Emma",
+        "Olivia",
+        "Sophia",
+        "Isabella",
+        "Ava",
+        "Mia",
+        "Abigail",
+        "Emily",
+        "Charlotte",
+        "Madison",
+        "Elizabeth",
+        "Amelia",
+        "Evelyn",
+        "Ella",
+        "Chloe",
+        "Harper",
+        "Avery",
+        "Sofia",
+        "Grace",
+        "Addison",
+        "Victoria",
+        "Lily",
+        "Natalie",
+        "Aubrey",
+        "Lillian",
+        "Zoey",
+        "Hannah",
+        "Layla",
+        "Brooklyn",
+        "Scarlett",
+        "Zoe",
+        "Camila",
+        "Samantha",
+        "Riley",
+        "Leah",
+        "Aria",
+        "Savannah",
+        "Audrey",
+        "Anna",
+        "Allison",
+        "Gabriella",
+        "Claire",
+        "Hailey",
+        "Penelope",
+        "Aaliyah",
+        "Sarah",
+        "Nevaeh",
+        "Kaylee",
+        "Stella",
+        "Mila",
+        "Nora",
+        "Ellie",
+        "Bella",
+        "Alexa",
+        "Lucy",
+        "Arianna",
+        "Violet",
+        "Ariana",
+        "Genesis",
+        "Alexis",
+        "Eleanor",
+        "Maya",
+        "Caroline",
+        "Payton",
+        "Skylar",
+        "Madelyn",
+        "Serenity",
+        "Kennedy",
+        "Taylor",
+        "Alyssa",
+        "Autumn",
+        "Paisley",
+        "Ashley",
+        "Brianna",
+        "Sadie",
+        "Naomi",
+        "Kylie",
+        "Julia",
+        "Sophie",
+        "Mackenzie",
+        "Eva",
+        "Gianna",
+        "Luna",
+        "Katherine",
+        "Hazel",
+        "Khloe",
+        "Ruby",
+        "Melanie",
+        "Piper",
+        "Lydia",
+        "Aubree",
+        "Madeline",
+        "Aurora",
+        "Faith",
+        "Alexandra",
+        "Alice",
+        "Kayla",
+        "Jasmine",
+        "Maria",
+        "Annabelle",
+        "Lauren",
+        "Reagan",
+        "Elena",
+        "Rylee",
+        "Isabelle",
+        "Bailey",
+        "Eliana",
+        "Sydney",
+        "Makayla",
+        "Cora",
+        "Morgan",
+        "Natalia",
+        "Kimberly",
+        "Vivian",
+        "Quinn",
+        "Valentina",
+        "Andrea",
+        "Willow",
+        "Clara",
+        "London",
+        "Jade",
+        "Liliana",
+        "Jocelyn",
+        "Kinsley",
+        "Trinity",
+        "Brielle",
+        "Mary",
+        "Molly",
+        "Hadley",
+        "Delilah",
+        "Emilia",
+        "Josephine",
+        "Brooke",
+        "Ivy",
+        "Lilly",
+        "Adeline",
+        "Payton",
+        "Lyla",
+        "Isla",
+        "Jordyn",
+        "Paige",
+        "Isabel",
+        "Mariah",
+        "Mya",
+        "Nicole",
+        "Valeria",
+        "Destiny",
+        "Rachel",
+        "Ximena",
+        "Emery",
+        "Everly",
+        "Sara",
+        "Angelina",
+        "Adalynn",
+        "Kendall",
+        "Reese",
+        "Aliyah",
+        "Margaret",
+        "Juliana",
+        "Melody",
+        "Amy",
+        "Eden",
+        "Mckenzie",
+        "Laila",
+        "Vanessa",
+        "Ariel",
+        "Gracie",
+        "Valerie",
+        "Adalyn",
+        "Brooklynn",
+        "Gabrielle",
+        "Kaitlyn",
+        "Athena",
+        "Elise",
+        "Jessica",
+        "Adriana",
+        "Leilani",
+        "Ryleigh",
+        "Daisy",
+        "Nova",
+        "Norah",
+        "Eliza",
+        "Rose",
+        "Rebecca",
+        "Michelle",
+        "Alaina",
+        "Catherine",
+        "Londyn",
+        "Summer",
+        "Lila",
+        "Jayla",
+        "Katelyn",
+        "Daniela",
+        "Harmony",
+        "Alana",
+        "Amaya",
+        "Emerson",
+        "Julianna",
+        "Cecilia",
+        "Izabella",
+};
+    public void GetRandomFemaleName()
+    {
+        selectedName = namesFemale[Random.Range(0, namesFemale.Length)];
     }
 }

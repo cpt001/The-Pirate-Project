@@ -1,0 +1,332 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!200 &20000000
+ShaderVariantCollection:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: WetSurfaceShaderVariants
+  m_Shaders:
+  - first: {fileID: 4800000, guid: ab3588f19d8002641974d63c8bbc772a, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 8b63f882f55d4af479c2734f0c7cc453, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+      - keywords: INSTANCING_ON
+        passType: 0
+      - keywords: LAYERS_SINGLE
+        passType: 0
+      - keywords: INSTANCING_ON LAYERS_SINGLE
+        passType: 0
+      - keywords: LAYERS_TRIPLANAR
+        passType: 0
+      - keywords: INSTANCING_ON LAYERS_TRIPLANAR
+        passType: 0
+      - keywords: LAYER_PROJECTION_WORLD
+        passType: 0
+      - keywords: INSTANCING_ON LAYER_PROJECTION_WORLD
+        passType: 0
+      - keywords: LAYERS_SINGLE LAYER_PROJECTION_WORLD
+        passType: 0
+      - keywords: INSTANCING_ON LAYERS_SINGLE LAYER_PROJECTION_WORLD
+        passType: 0
+      - keywords: LAYERS_TRIPLANAR LAYER_PROJECTION_WORLD
+        passType: 0
+      - keywords: INSTANCING_ON LAYERS_TRIPLANAR LAYER_PROJECTION_WORLD
+        passType: 0
+      - keywords: JITTER_LAYERS
+        passType: 0
+      - keywords: INSTANCING_ON JITTER_LAYERS
+        passType: 0
+      - keywords: JITTER_LAYERS LAYERS_SINGLE
+        passType: 0
+      - keywords: INSTANCING_ON JITTER_LAYERS LAYERS_SINGLE
+        passType: 0
+      - keywords: JITTER_LAYERS LAYERS_TRIPLANAR
+        passType: 0
+      - keywords: INSTANCING_ON JITTER_LAYERS LAYERS_TRIPLANAR
+        passType: 0
+      - keywords: JITTER_LAYERS LAYER_PROJECTION_WORLD
+        passType: 0
+      - keywords: INSTANCING_ON JITTER_LAYERS LAYER_PROJECTION_WORLD
+        passType: 0
+      - keywords: JITTER_LAYERS LAYERS_SINGLE LAYER_PROJECTION_WORLD
+        passType: 0
+      - keywords: INSTANCING_ON JITTER_LAYERS LAYERS_SINGLE LAYER_PROJECTION_WORLD
+        passType: 0
+      - keywords: JITTER_LAYERS LAYERS_TRIPLANAR LAYER_PROJECTION_WORLD
+        passType: 0
+      - keywords: INSTANCING_ON JITTER_LAYERS LAYERS_TRIPLANAR LAYER_PROJECTION_WORLD
+        passType: 0
+      - keywords: SHAPE_CIRCLE
+        passType: 0
+      - keywords: INSTANCING_ON SHAPE_CIRCLE
+        passType: 0
+      - keywords: LAYERS_SINGLE SHAPE_CIRCLE
+        passType: 0
+      - keywords: INSTANCING_ON LAYERS_SINGLE SHAPE_CIRCLE
+        passType: 0
+      - keywords: LAYERS_TRIPLANAR SHAPE_CIRCLE
+        passType: 0
+      - keywords: INSTANCING_ON LAYERS_TRIPLANAR SHAPE_CIRCLE
+        passType: 0
+      - keywords: LAYER_PROJECTION_WORLD SHAPE_CIRCLE
+        passType: 0
+      - keywords: INSTANCING_ON LAYER_PROJECTION_WORLD SHAPE_CIRCLE
+        passType: 0
+      - keywords: LAYERS_SINGLE LAYER_PROJECTION_WORLD SHAPE_CIRCLE
+        passType: 0
+      - keywords: INSTANCING_ON LAYERS_SINGLE LAYER_PROJECTION_WORLD SHAPE_CIRCLE
+        passType: 0
+      - keywords: LAYERS_TRIPLANAR LAYER_PROJECTION_WORLD SHAPE_CIRCLE
+        passType: 0
+      - keywords: INSTANCING_ON LAYERS_TRIPLANAR LAYER_PROJECTION_WORLD SHAPE_CIRCLE
+        passType: 0
+      - keywords: JITTER_LAYERS SHAPE_CIRCLE
+        passType: 0
+      - keywords: INSTANCING_ON JITTER_LAYERS SHAPE_CIRCLE
+        passType: 0
+      - keywords: JITTER_LAYERS LAYERS_SINGLE SHAPE_CIRCLE
+        passType: 0
+      - keywords: INSTANCING_ON JITTER_LAYERS LAYERS_SINGLE SHAPE_CIRCLE
+        passType: 0
+      - keywords: JITTER_LAYERS LAYERS_TRIPLANAR SHAPE_CIRCLE
+        passType: 0
+      - keywords: INSTANCING_ON JITTER_LAYERS LAYERS_TRIPLANAR SHAPE_CIRCLE
+        passType: 0
+      - keywords: JITTER_LAYERS LAYER_PROJECTION_WORLD SHAPE_CIRCLE
+        passType: 0
+      - keywords: INSTANCING_ON JITTER_LAYERS LAYER_PROJECTION_WORLD SHAPE_CIRCLE
+        passType: 0
+      - keywords: JITTER_LAYERS LAYERS_SINGLE LAYER_PROJECTION_WORLD SHAPE_CIRCLE
+        passType: 0
+      - keywords: INSTANCING_ON JITTER_LAYERS LAYERS_SINGLE LAYER_PROJECTION_WORLD
+          SHAPE_CIRCLE
+        passType: 0
+      - keywords: JITTER_LAYERS LAYERS_TRIPLANAR LAYER_PROJECTION_WORLD SHAPE_CIRCLE
+        passType: 0
+      - keywords: INSTANCING_ON JITTER_LAYERS LAYERS_TRIPLANAR LAYER_PROJECTION_WORLD
+          SHAPE_CIRCLE
+        passType: 0
+      - keywords: SHAPE_SQUARE
+        passType: 0
+      - keywords: INSTANCING_ON SHAPE_SQUARE
+        passType: 0
+      - keywords: LAYERS_SINGLE SHAPE_SQUARE
+        passType: 0
+      - keywords: INSTANCING_ON LAYERS_SINGLE SHAPE_SQUARE
+        passType: 0
+      - keywords: LAYERS_TRIPLANAR SHAPE_SQUARE
+        passType: 0
+      - keywords: INSTANCING_ON LAYERS_TRIPLANAR SHAPE_SQUARE
+        passType: 0
+      - keywords: LAYER_PROJECTION_WORLD SHAPE_SQUARE
+        passType: 0
+      - keywords: INSTANCING_ON LAYER_PROJECTION_WORLD SHAPE_SQUARE
+        passType: 0
+      - keywords: LAYERS_SINGLE LAYER_PROJECTION_WORLD SHAPE_SQUARE
+        passType: 0
+      - keywords: INSTANCING_ON LAYERS_SINGLE LAYER_PROJECTION_WORLD SHAPE_SQUARE
+        passType: 0
+      - keywords: LAYERS_TRIPLANAR LAYER_PROJECTION_WORLD SHAPE_SQUARE
+        passType: 0
+      - keywords: INSTANCING_ON LAYERS_TRIPLANAR LAYER_PROJECTION_WORLD SHAPE_SQUARE
+        passType: 0
+      - keywords: JITTER_LAYERS SHAPE_SQUARE
+        passType: 0
+      - keywords: INSTANCING_ON JITTER_LAYERS SHAPE_SQUARE
+        passType: 0
+      - keywords: JITTER_LAYERS LAYERS_SINGLE SHAPE_SQUARE
+        passType: 0
+      - keywords: INSTANCING_ON JITTER_LAYERS LAYERS_SINGLE SHAPE_SQUARE
+        passType: 0
+      - keywords: JITTER_LAYERS LAYERS_TRIPLANAR SHAPE_SQUARE
+        passType: 0
+      - keywords: INSTANCING_ON JITTER_LAYERS LAYERS_TRIPLANAR SHAPE_SQUARE
+        passType: 0
+      - keywords: JITTER_LAYERS LAYER_PROJECTION_WORLD SHAPE_SQUARE
+        passType: 0
+      - keywords: INSTANCING_ON JITTER_LAYERS LAYER_PROJECTION_WORLD SHAPE_SQUARE
+        passType: 0
+      - keywords: JITTER_LAYERS LAYERS_SINGLE LAYER_PROJECTION_WORLD SHAPE_SQUARE
+        passType: 0
+      - keywords: INSTANCING_ON JITTER_LAYERS LAYERS_SINGLE LAYER_PROJECTION_WORLD
+          SHAPE_SQUARE
+        passType: 0
+      - keywords: JITTER_LAYERS LAYERS_TRIPLANAR LAYER_PROJECTION_WORLD SHAPE_SQUARE
+        passType: 0
+      - keywords: INSTANCING_ON JITTER_LAYERS LAYERS_TRIPLANAR LAYER_PROJECTION_WORLD
+          SHAPE_SQUARE
+        passType: 0
+  - first: {fileID: 4800000, guid: 930f5d6a29d99df43882acd34c7a692f, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: ba744abc992b3d84ba11eb6c2981c540, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 1b8f75bd135e0fa4ca574b6017edba2c, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 5c88e33fac824d347a4076f86373e466, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+      - keywords: INSTANCING_ON
+        passType: 0
+      - keywords: LAYERS_SINGLE
+        passType: 0
+      - keywords: INSTANCING_ON LAYERS_SINGLE
+        passType: 0
+      - keywords: LAYERS_TRIPLANAR
+        passType: 0
+      - keywords: INSTANCING_ON LAYERS_TRIPLANAR
+        passType: 0
+      - keywords: LAYER_PROJECTION_WORLD
+        passType: 0
+      - keywords: INSTANCING_ON LAYER_PROJECTION_WORLD
+        passType: 0
+      - keywords: LAYERS_SINGLE LAYER_PROJECTION_WORLD
+        passType: 0
+      - keywords: INSTANCING_ON LAYERS_SINGLE LAYER_PROJECTION_WORLD
+        passType: 0
+      - keywords: LAYERS_TRIPLANAR LAYER_PROJECTION_WORLD
+        passType: 0
+      - keywords: INSTANCING_ON LAYERS_TRIPLANAR LAYER_PROJECTION_WORLD
+        passType: 0
+      - keywords: JITTER_LAYERS
+        passType: 0
+      - keywords: INSTANCING_ON JITTER_LAYERS
+        passType: 0
+      - keywords: JITTER_LAYERS LAYERS_SINGLE
+        passType: 0
+      - keywords: INSTANCING_ON JITTER_LAYERS LAYERS_SINGLE
+        passType: 0
+      - keywords: JITTER_LAYERS LAYERS_TRIPLANAR
+        passType: 0
+      - keywords: INSTANCING_ON JITTER_LAYERS LAYERS_TRIPLANAR
+        passType: 0
+      - keywords: JITTER_LAYERS LAYER_PROJECTION_WORLD
+        passType: 0
+      - keywords: INSTANCING_ON JITTER_LAYERS LAYER_PROJECTION_WORLD
+        passType: 0
+      - keywords: JITTER_LAYERS LAYERS_SINGLE LAYER_PROJECTION_WORLD
+        passType: 0
+      - keywords: INSTANCING_ON JITTER_LAYERS LAYERS_SINGLE LAYER_PROJECTION_WORLD
+        passType: 0
+      - keywords: JITTER_LAYERS LAYERS_TRIPLANAR LAYER_PROJECTION_WORLD
+        passType: 0
+      - keywords: INSTANCING_ON JITTER_LAYERS LAYERS_TRIPLANAR LAYER_PROJECTION_WORLD
+        passType: 0
+      - keywords: SHAPE_CIRCLE
+        passType: 0
+      - keywords: INSTANCING_ON SHAPE_CIRCLE
+        passType: 0
+      - keywords: LAYERS_SINGLE SHAPE_CIRCLE
+        passType: 0
+      - keywords: INSTANCING_ON LAYERS_SINGLE SHAPE_CIRCLE
+        passType: 0
+      - keywords: LAYERS_TRIPLANAR SHAPE_CIRCLE
+        passType: 0
+      - keywords: INSTANCING_ON LAYERS_TRIPLANAR SHAPE_CIRCLE
+        passType: 0
+      - keywords: LAYER_PROJECTION_WORLD SHAPE_CIRCLE
+        passType: 0
+      - keywords: INSTANCING_ON LAYER_PROJECTION_WORLD SHAPE_CIRCLE
+        passType: 0
+      - keywords: LAYERS_SINGLE LAYER_PROJECTION_WORLD SHAPE_CIRCLE
+        passType: 0
+      - keywords: INSTANCING_ON LAYERS_SINGLE LAYER_PROJECTION_WORLD SHAPE_CIRCLE
+        passType: 0
+      - keywords: LAYERS_TRIPLANAR LAYER_PROJECTION_WORLD SHAPE_CIRCLE
+        passType: 0
+      - keywords: INSTANCING_ON LAYERS_TRIPLANAR LAYER_PROJECTION_WORLD SHAPE_CIRCLE
+        passType: 0
+      - keywords: JITTER_LAYERS SHAPE_CIRCLE
+        passType: 0
+      - keywords: INSTANCING_ON JITTER_LAYERS SHAPE_CIRCLE
+        passType: 0
+      - keywords: JITTER_LAYERS LAYERS_SINGLE SHAPE_CIRCLE
+        passType: 0
+      - keywords: INSTANCING_ON JITTER_LAYERS LAYERS_SINGLE SHAPE_CIRCLE
+        passType: 0
+      - keywords: JITTER_LAYERS LAYERS_TRIPLANAR SHAPE_CIRCLE
+        passType: 0
+      - keywords: INSTANCING_ON JITTER_LAYERS LAYERS_TRIPLANAR SHAPE_CIRCLE
+        passType: 0
+      - keywords: JITTER_LAYERS LAYER_PROJECTION_WORLD SHAPE_CIRCLE
+        passType: 0
+      - keywords: INSTANCING_ON JITTER_LAYERS LAYER_PROJECTION_WORLD SHAPE_CIRCLE
+        passType: 0
+      - keywords: JITTER_LAYERS LAYERS_SINGLE LAYER_PROJECTION_WORLD SHAPE_CIRCLE
+        passType: 0
+      - keywords: INSTANCING_ON JITTER_LAYERS LAYERS_SINGLE LAYER_PROJECTION_WORLD
+          SHAPE_CIRCLE
+        passType: 0
+      - keywords: JITTER_LAYERS LAYERS_TRIPLANAR LAYER_PROJECTION_WORLD SHAPE_CIRCLE
+        passType: 0
+      - keywords: INSTANCING_ON JITTER_LAYERS LAYERS_TRIPLANAR LAYER_PROJECTION_WORLD
+          SHAPE_CIRCLE
+        passType: 0
+      - keywords: SHAPE_SQUARE
+        passType: 0
+      - keywords: INSTANCING_ON SHAPE_SQUARE
+        passType: 0
+      - keywords: LAYERS_SINGLE SHAPE_SQUARE
+        passType: 0
+      - keywords: INSTANCING_ON LAYERS_SINGLE SHAPE_SQUARE
+        passType: 0
+      - keywords: LAYERS_TRIPLANAR SHAPE_SQUARE
+        passType: 0
+      - keywords: INSTANCING_ON LAYERS_TRIPLANAR SHAPE_SQUARE
+        passType: 0
+      - keywords: LAYER_PROJECTION_WORLD SHAPE_SQUARE
+        passType: 0
+      - keywords: INSTANCING_ON LAYER_PROJECTION_WORLD SHAPE_SQUARE
+        passType: 0
+      - keywords: LAYERS_SINGLE LAYER_PROJECTION_WORLD SHAPE_SQUARE
+        passType: 0
+      - keywords: INSTANCING_ON LAYERS_SINGLE LAYER_PROJECTION_WORLD SHAPE_SQUARE
+        passType: 0
+      - keywords: LAYERS_TRIPLANAR LAYER_PROJECTION_WORLD SHAPE_SQUARE
+        passType: 0
+      - keywords: INSTANCING_ON LAYERS_TRIPLANAR LAYER_PROJECTION_WORLD SHAPE_SQUARE
+        passType: 0
+      - keywords: JITTER_LAYERS SHAPE_SQUARE
+        passType: 0
+      - keywords: INSTANCING_ON JITTER_LAYERS SHAPE_SQUARE
+        passType: 0
+      - keywords: JITTER_LAYERS LAYERS_SINGLE SHAPE_SQUARE
+        passType: 0
+      - keywords: INSTANCING_ON JITTER_LAYERS LAYERS_SINGLE SHAPE_SQUARE
+        passType: 0
+      - keywords: JITTER_LAYERS LAYERS_TRIPLANAR SHAPE_SQUARE
+        passType: 0
+      - keywords: INSTANCING_ON JITTER_LAYERS LAYERS_TRIPLANAR SHAPE_SQUARE
+        passType: 0
+      - keywords: JITTER_LAYERS LAYER_PROJECTION_WORLD SHAPE_SQUARE
+        passType: 0
+      - keywords: INSTANCING_ON JITTER_LAYERS LAYER_PROJECTION_WORLD SHAPE_SQUARE
+        passType: 0
+      - keywords: JITTER_LAYERS LAYERS_SINGLE LAYER_PROJECTION_WORLD SHAPE_SQUARE
+        passType: 0
+      - keywords: INSTANCING_ON JITTER_LAYERS LAYERS_SINGLE LAYER_PROJECTION_WORLD
+          SHAPE_SQUARE
+        passType: 0
+      - keywords: JITTER_LAYERS LAYERS_TRIPLANAR LAYER_PROJECTION_WORLD SHAPE_SQUARE
+        passType: 0
+      - keywords: INSTANCING_ON JITTER_LAYERS LAYERS_TRIPLANAR LAYER_PROJECTION_WORLD
+          SHAPE_SQUARE
+        passType: 0

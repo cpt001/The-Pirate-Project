@@ -7,7 +7,11 @@ using UnityEngine;
 /// 
 /// ToDo:
 /// -Finish female health, specifically pregnancy day proximity check
-/// -Create bodily injuries
+/// -Create birth defects
+/// -Finish injury cascade section
+/// 
+/// -Create physical detection for body parts.
+/// -> Send messages when impacted by spell or weapon
 /// </summary>
 
 public class PawnHealth : MonoBehaviour
@@ -27,13 +31,17 @@ public class PawnHealth : MonoBehaviour
 
     private enum InjuryStatus
     {
-        Healthy,
-        Bruised,
-        Cut,
-        Eviscerated,
-        Missing_Bleeding,
-        Missing_Healed,
-        Prosthetic,
+        Healthy,            //The body part operates as expected
+        Bruised,            //Minor injury, operates at 85% capacity. Not lethal.
+        Cut,                //Minor injury, operates at 75% capacity. Not lethal, unless on core body part.
+        Eviscerated,        //Major injury, operates at 50% capacity. Lethal if not treated quickly.
+        Treated,            //A treated injury, prevents bleed out.
+        Missing_Bleeding,   //Critical injury, operates at 0% capacity, and will remove associated limbs. Lethal if not treated quickly, lethal if inflicted on core.
+        Missing_Treated,    //Missing, but treated.
+        Missing_Healed,     //Non-injury.
+        Prosthetic,         //Non-injury, restores a portion of mobility in limb.
+        Broken,             //Major injury, operates at 25% capacity.
+        Frostbite,
     }
     private InjuryStatus injuryStatus;
     private Dictionary<string, InjuryStatus> bodyDictionary = new Dictionary<string, InjuryStatus>();
@@ -67,8 +75,10 @@ public class PawnHealth : MonoBehaviour
     public PregnancyState pregnancyState;   //How long does pregnancy last? 69-74 days of course. For the meme
     #endregion
 
-    private void Start()
+    /*protected override*/ void Start()
     {
+        //base.Start();
+        pawnVisual = GetComponent<PawnVisualGeneration>();
         InitPawnStats();
         EventsManager.StartListening("NewHour", HourlyPawnStats);
         EventsManager.StartListening("NewDay", DailyPawnStats);
@@ -77,6 +87,7 @@ public class PawnHealth : MonoBehaviour
 
     void InitPawnStats()
     {
+        SetupDefaultBodyDictionary();
         age = Random.Range(18, 41);
         maxAge = Random.Range(60, 105);
         birthday = Random.Range(0, 100);
@@ -86,7 +97,41 @@ public class PawnHealth : MonoBehaviour
             SetFemaleHealth();
         }
     }
+    void SetupDefaultBodyDictionary()
+    {
+        //Left limbs
+        bodyDictionary.Add("LeftFoot", InjuryStatus.Healthy);   //No Cascade
+        bodyDictionary.Add("LeftLeg", InjuryStatus.Healthy);
+        bodyDictionary.Add("LeftThigh", InjuryStatus.Healthy);
+        bodyDictionary.Add("LeftHand", InjuryStatus.Healthy);   //No Cascade
+        bodyDictionary.Add("LeftArm", InjuryStatus.Healthy);
+        bodyDictionary.Add("LeftBicep", InjuryStatus.Healthy);
+        bodyDictionary.Add("LeftShoulder", InjuryStatus.Healthy);
 
+        bodyDictionary.Add("LeftEye", InjuryStatus.Healthy);    //No Cascade
+
+        //Right limbs
+        bodyDictionary.Add("RightFoot", InjuryStatus.Healthy);  //No Cascade
+        bodyDictionary.Add("RightLeg", InjuryStatus.Healthy);
+        bodyDictionary.Add("RightThigh", InjuryStatus.Healthy);
+        bodyDictionary.Add("RightHand", InjuryStatus.Healthy);  //No Cascade
+        bodyDictionary.Add("RightArm", InjuryStatus.Healthy);
+        bodyDictionary.Add("RightBicep", InjuryStatus.Healthy);
+        bodyDictionary.Add("RightShoulder", InjuryStatus.Healthy);
+
+        bodyDictionary.Add("RightEye", InjuryStatus.Healthy);   //No Cascade
+
+        //Core
+        bodyDictionary.Add("Genitals", InjuryStatus.Healthy);   //No Cascade
+        bodyDictionary.Add("Hips", InjuryStatus.Healthy);       
+        bodyDictionary.Add("Stomach", InjuryStatus.Healthy);    
+        bodyDictionary.Add("Chest", InjuryStatus.Healthy);      //ToDo    
+        bodyDictionary.Add("Heart", InjuryStatus.Healthy);      
+        bodyDictionary.Add("Neck", InjuryStatus.Healthy);       
+        bodyDictionary.Add("Jaw", InjuryStatus.Healthy);        //No Cascade   
+        bodyDictionary.Add("Skull", InjuryStatus.Healthy);      
+        bodyDictionary.Add("Brain", InjuryStatus.Healthy);      
+    }
     void HourlyPawnStats()
     {
         internalHourCount++;
@@ -209,6 +254,108 @@ public class PawnHealth : MonoBehaviour
                 }
         }
     }
+    void DetermineBirthDefects()    //This case generates permanent injuries to a pawn, be it from birth, or recent injuries
+    {
+        foreach (KeyValuePair<string, InjuryStatus> bodykvp in bodyDictionary)
+        {
+            if (bodykvp.Value != InjuryStatus.Healthy)
+            {
+                //Do nothing
+            }
+            else
+            {
+                int randomChanceOfDisfigurement = Random.Range(1, 1000);
+                if (randomChanceOfDisfigurement >= 999)
+                {
+                    //bodykvp.Value = InjuryStatus.Missing_Healed;
+                }
+            }
+        }
+    }
+    //Cascade injuries are only triggered if a particular body part is severed. This ensures there aren't cases where the pawn may still have a hand, but no arm with which to use it.
+    //Cascades are processed by combat messages sent by weapon/spell impacts to body parts.
+    void ProcessInjuryCascades()
+    {
+        foreach (KeyValuePair<string, InjuryStatus> bodyKVP in bodyDictionary)
+        {
+            #region Left
+            if (bodyKVP.Key == "LeftLeg" && (bodyKVP.Value == InjuryStatus.Missing_Bleeding || bodyKVP.Value == InjuryStatus.Missing_Healed))
+            {
+                bodyDictionary["LeftFoot"] = InjuryStatus.Missing_Healed;
+            }
+            if (bodyKVP.Key == "LeftThigh" && (bodyKVP.Value == InjuryStatus.Missing_Bleeding || bodyKVP.Value == InjuryStatus.Missing_Healed))
+            {
+                bodyDictionary["LeftLeg"] = InjuryStatus.Missing_Healed;
+                bodyDictionary["LeftFoot"] = InjuryStatus.Missing_Healed;
+            }
+            if (bodyKVP.Key == "LeftArm" && (bodyKVP.Value == InjuryStatus.Missing_Bleeding || bodyKVP.Value == InjuryStatus.Missing_Healed))
+            {
+                bodyDictionary["LeftHand"] = InjuryStatus.Missing_Healed;
+            }
+            if (bodyKVP.Key == "LeftBicep" && (bodyKVP.Value == InjuryStatus.Missing_Bleeding || bodyKVP.Value == InjuryStatus.Missing_Healed))
+            {
+                bodyDictionary["LeftArm"] = InjuryStatus.Missing_Healed;
+                bodyDictionary["LeftHand"] = InjuryStatus.Missing_Healed;
+            }
+            if (bodyKVP.Key == "LeftShoulder" && (bodyKVP.Value == InjuryStatus.Missing_Bleeding || bodyKVP.Value == InjuryStatus.Missing_Healed))
+            {
+                bodyDictionary["LeftBicep"] = InjuryStatus.Missing_Healed;
+                bodyDictionary["LeftArm"] = InjuryStatus.Missing_Healed;
+                bodyDictionary["LeftHand"] = InjuryStatus.Missing_Healed;
+            }
+            #endregion
+            #region Right
+            if (bodyKVP.Key == "RightLeg" && (bodyKVP.Value == InjuryStatus.Missing_Bleeding || bodyKVP.Value == InjuryStatus.Missing_Healed))
+            {
+                bodyDictionary["RightFoot"] = InjuryStatus.Missing_Healed;
+            }
+            if (bodyKVP.Key == "RightThigh" && (bodyKVP.Value == InjuryStatus.Missing_Bleeding || bodyKVP.Value == InjuryStatus.Missing_Healed))
+            {
+                bodyDictionary["RightLeg"] = InjuryStatus.Missing_Healed;
+                bodyDictionary["RightFoot"] = InjuryStatus.Missing_Healed;
+            }
+            if (bodyKVP.Key == "RightArm" && (bodyKVP.Value == InjuryStatus.Missing_Bleeding || bodyKVP.Value == InjuryStatus.Missing_Healed))
+            {
+                bodyDictionary["RightHand"] = InjuryStatus.Missing_Healed;
+            }
+            if (bodyKVP.Key == "RightBicep" && (bodyKVP.Value == InjuryStatus.Missing_Bleeding || bodyKVP.Value == InjuryStatus.Missing_Healed))
+            {
+                bodyDictionary["RightArm"] = InjuryStatus.Missing_Healed;
+                bodyDictionary["RightHand"] = InjuryStatus.Missing_Healed;
+            }
+            if (bodyKVP.Key == "RightShoulder" && (bodyKVP.Value == InjuryStatus.Missing_Bleeding || bodyKVP.Value == InjuryStatus.Missing_Healed))
+            {
+                bodyDictionary["RightBicep"] = InjuryStatus.Missing_Healed;
+                bodyDictionary["RightArm"] = InjuryStatus.Missing_Healed;
+                bodyDictionary["RightHand"] = InjuryStatus.Missing_Healed;
+            }
+            #endregion
+            #region Core
+            if (bodyKVP.Key == "Hips" && (bodyKVP.Value == InjuryStatus.Missing_Bleeding || bodyKVP.Value == InjuryStatus.Missing_Healed))
+            {
+                bodyDictionary["RightFoot"] = InjuryStatus.Missing_Healed;
+                bodyDictionary["RightLeg"] = InjuryStatus.Missing_Healed;
+                bodyDictionary["RightThigh"] = InjuryStatus.Missing_Healed;
+                bodyDictionary["LeftFoot"] = InjuryStatus.Missing_Healed;
+                bodyDictionary["LeftLeg"] = InjuryStatus.Missing_Healed;
+                bodyDictionary["LeftThigh"] = InjuryStatus.Missing_Healed;
+                bodyDictionary["Genitals"] = InjuryStatus.Missing_Healed;
+            }
+            if (bodyKVP.Key == "Stomach" && (bodyKVP.Value == InjuryStatus.Missing_Bleeding || bodyKVP.Value == InjuryStatus.Missing_Healed))
+            {
+                bodyDictionary["RightFoot"] = InjuryStatus.Missing_Healed;
+                bodyDictionary["RightLeg"] = InjuryStatus.Missing_Healed;
+                bodyDictionary["RightThigh"] = InjuryStatus.Missing_Healed;
+                bodyDictionary["LeftFoot"] = InjuryStatus.Missing_Healed;
+                bodyDictionary["LeftLeg"] = InjuryStatus.Missing_Healed;
+                bodyDictionary["LeftThigh"] = InjuryStatus.Missing_Healed;
+                bodyDictionary["Genitals"] = InjuryStatus.Missing_Healed;
+                bodyDictionary["Hips"] = InjuryStatus.Missing_Healed;
+            }
+            #endregion
+        }
+    }
+
     //Initializes female health
     void SetFemaleHealth()
     {
@@ -219,7 +366,7 @@ public class PawnHealth : MonoBehaviour
         if (daysInCycle == maxFertilityDay)
         {
             //If pawn has partner, is above age, and meets the fertility check
-            if (pawnNeeds.partner != null && age > 18)
+            if (pawnNeeds.partner != null && age > 18 && bodyDictionary["Genitals"] == InjuryStatus.Healthy)
             {
                 int randomStartPregChance = Random.Range(0, 100);
                 if (randomStartPregChance >= 2)
@@ -249,7 +396,7 @@ public class PawnHealth : MonoBehaviour
         {
             case PregnancyState.Not_Pregnant:
                 {
-                    //Get rid of this
+                    //Get rid of this -- 3mo's later; but replace with what?
                     if (daysInCycle == maxFertilityDay || daysInCycle == (maxFertilityDay + 5) || daysInCycle == (maxFertilityDay - 5))
                     {
                         if (daysInCycle != maxFertilityDay)

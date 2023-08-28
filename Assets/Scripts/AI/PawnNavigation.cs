@@ -4,6 +4,12 @@ using UnityEngine;
 using UnityEngine.Events;
 using System.Linq;
 
+/// <summary>
+/// This is the version 1 script determining how pawns navigate the world.
+/// 
+/// </summary>
+
+
 [RequireComponent(typeof(PawnGeneration))]
 public class PawnNavigation : MonoBehaviour
 {
@@ -67,7 +73,7 @@ public class PawnNavigation : MonoBehaviour
                             Structure tempStructure = t.GetComponent<Structure>();
                             if (tempStructure.maxResidents > tempStructure.masterWorkerList.Count)
                             {
-                                tempStructure.masterWorkerList.Add(pawn);
+                                tempStructure.masterWorkerList.Add(gameObject);
                                 homeStructure = tempStructure;
                                 break;
                             }
@@ -97,7 +103,7 @@ public class PawnNavigation : MonoBehaviour
                     Structure currentTarget = potentialHome.GetComponent<Structure>();
                     if (currentTarget.masterWorkerList.Count < currentTarget.maxResidents)
                     {
-                        currentTarget.masterWorkerList.Add(pawn);
+                        currentTarget.masterWorkerList.Add(gameObject);
                         homeStructure = currentTarget;
                         break;
                     }
@@ -111,8 +117,8 @@ public class PawnNavigation : MonoBehaviour
                 sleepStartTime = workPlace.workStartTime - sleepLength;
                 if (sleepStartTime < 0)
                 {
-                    Debug.Log(pawn.name + " sleep start time is outside parameters at: " + sleepStartTime);
-                    //sleepStartTime = 24 - 
+                    sleepStartTime = 24 + sleepStartTime; 
+                    //Debug.Log(pawn.name + " sleep start time is outside parameters at: " + sleepStartTime);
                 }
                 //Debug.Log("Sleep Start " + sleepStartTime);
                 HourToHour();

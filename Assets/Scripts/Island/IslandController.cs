@@ -33,7 +33,7 @@ public class IslandController : MonoBehaviour
     public List<CargoSO> cargoRequestQueue;
     private List<CargoSO> cargoRequestsSent;
     //public Dictionary<Structure, CargoSO> structureTracker = new Dictionary<Structure, CargoSO>();
-    public List<PawnGeneration> unassignedWorkers = new List<PawnGeneration>();
+    public List<GameObject> unassignedWorkers = new List<GameObject>();
     public List<PawnGeneration> pawnsOnIsland = new List<PawnGeneration>();
 
     

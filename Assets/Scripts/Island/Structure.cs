@@ -26,11 +26,13 @@ public class Structure : MonoBehaviour
     public int workStartTime;
     public int workEndTime;
     public bool worksThroughRest;
+    public int dailyPay;
 
     [Header("Workers and Residents")]
     public int maxResidents;                                                    //Defines max occupancy of a house or shack
-    public List<PawnGeneration> masterWorkerList = new List<PawnGeneration>();  //Controls all pawns assigned to structure
+    public List<GameObject> masterWorkerList = new List<GameObject>();  //Controls all pawns assigned to structure
     [SerializeField] private int buildingWorkerLimit;
+    public List<GameObject> workersOnDuty;
 
     [Header("Structure Inventory")]
     private bool isStore;        //Determines whether the building is a store for the player
@@ -249,7 +251,7 @@ public class Structure : MonoBehaviour
                     if (islandController.unassignedWorkers.Count != 0 && islandController.unassignedWorkers[i] != null)
                     {
                         masterWorkerList.Add(islandController.unassignedWorkers[i]);
-                        islandController.unassignedWorkers[i].pawnNavigator.workPlace = this;
+                        islandController.unassignedWorkers[i].GetComponent<PawnNavigation>().workPlace = this;
                         EventsManager.TriggerEvent("FindHome_" + islandController.unassignedWorkers[i].name);
                         islandController.unassignedWorkers.RemoveAt(i);
                     }
@@ -361,7 +363,7 @@ public class Structure : MonoBehaviour
     void SendClerkToCounter()
     {
         masterWorkerList = masterWorkerList.OrderBy((d) => (d.transform.position - salePoint.position).sqrMagnitude).ToList();
-        masterWorkerList[0].pawnNavigator.agent.SetDestination(salePoint.position);
+        masterWorkerList[0].GetComponent<PawnGeneration>().pawnNavigator.agent.SetDestination(salePoint.position);
         EventsManager.TriggerEvent("NewDestination_" + masterWorkerList[0].name);
     }
 
@@ -414,7 +416,7 @@ public class Structure : MonoBehaviour
         }
     }*/
 
-
+    //This sets building cargo in and out, and working times
     void BuildingSetup()
     {
         if (isConstructionSite)
@@ -445,6 +447,10 @@ public class Structure : MonoBehaviour
                 }
             case TownStructure.Apiary:
                 {
+                    //Work start and end times
+                    workStartTime = 12;
+                    workEndTime = 18;
+
                     //Cargo required for bonus production or satisfaction
                     cargoRequired.Add(CargoSO.CargoType.Wood, 1);
                     cargoRequired.Add(CargoSO.CargoType.Sugar, 1);
@@ -460,6 +466,9 @@ public class Structure : MonoBehaviour
                 }
             case TownStructure.Apothecary:
                 {
+                    workStartTime = 9;
+                    workEndTime = 17;
+
                     cargoRequired.Add(CargoSO.CargoType.Roots, 1);
                     cargoRequired.Add(CargoSO.CargoType.Animal_Parts, 1);
 
@@ -475,6 +484,9 @@ public class Structure : MonoBehaviour
                 }
             case TownStructure.Armorer:
                 {
+                    workStartTime = 7;
+                    workEndTime = 16;
+
                     cargoRequired.Add(CargoSO.CargoType.Wood, 1);
                     cargoRequired.Add(CargoSO.CargoType.Coal, 1);
                     cargoRequired.Add(CargoSO.CargoType.Tools, 1);
@@ -483,12 +495,18 @@ public class Structure : MonoBehaviour
                 }
             case TownStructure.Armory:
                 {
+                    workStartTime = 8;
+                    workEndTime = 14;
+
                     cargoRequired.Add(CargoSO.CargoType.Gunpowder, 1);
                     cargoRequired.Add(CargoSO.CargoType.Weapons, 1);
                     break;
                 }
             case TownStructure.Bakery:
                 {
+                    workStartTime = 4;
+                    workEndTime = 16;
+
                     cargoRequired.Add(CargoSO.CargoType.Honey, 1);
                     cargoRequired.Add(CargoSO.CargoType.Wood, 1);
                     cargoRequired.Add(CargoSO.CargoType.Sugar, 1);
@@ -503,6 +521,9 @@ public class Structure : MonoBehaviour
                 }
             case TownStructure.Bank:
                 {
+                    workStartTime = 10;
+                    workEndTime = 6;
+
                     cargoRequired.Add(CargoSO.CargoType.Gold, 1);
 
                     cargoProduced.Add(CargoSO.CargoType.Gold, Mathf.RoundToInt(Random.Range(0, 3)));
@@ -510,12 +531,18 @@ public class Structure : MonoBehaviour
                 }
             case TownStructure.Barber:
                 {
+                    workStartTime = 8;
+                    workEndTime = 8;
+
                     cargoRequired.Add(CargoSO.CargoType.Medical_Supplies, 1);
                     cargoRequired.Add(CargoSO.CargoType.Tools, 1);
                     break;
                 }
             case TownStructure.Barn:
                 {
+                    workStartTime = 5;
+                    workEndTime = 13;
+
                     cargoRequired.Add(CargoSO.CargoType.Water, 1);
                     cargoRequired.Add(CargoSO.CargoType.Flour, 1);
                     cargoRequired.Add(CargoSO.CargoType.Tools, 1);
@@ -525,6 +552,9 @@ public class Structure : MonoBehaviour
                 }
             case TownStructure.Bawdy_House:
                 {
+                    workStartTime = 14;
+                    workEndTime = 22;
+
                     cargoRequired.Add(CargoSO.CargoType.Roots, 1);
                     cargoRequired.Add(CargoSO.CargoType.Water, 1);
                     cargoRequired.Add(CargoSO.CargoType.Food, 1);
@@ -532,6 +562,9 @@ public class Structure : MonoBehaviour
                 }
             case TownStructure.Blacksmith:
                 {
+                    workStartTime = 8;
+                    workEndTime = 14;
+
                     cargoRequired.Add(CargoSO.CargoType.Wood, 1);
                     cargoRequired.Add(CargoSO.CargoType.Water, 1);
                     cargoRequired.Add(CargoSO.CargoType.Coal, 1);
@@ -546,11 +579,16 @@ public class Structure : MonoBehaviour
                 }
             case TownStructure.Broker:
                 {
+                    workStartTime = 7;
+                    workEndTime = 16;
                     //This structure sells warehouse space to the player
                     break;
                 }
             case TownStructure.Butcher:
                 {
+                    workStartTime = 6;
+                    workEndTime = 15;
+
                     cargoRequired.Add(CargoSO.CargoType.Wood, 1);
                     cargoRequired.Add(CargoSO.CargoType.Water, 1);
                     cargoRequired.Add(CargoSO.CargoType.Tools, 1);
@@ -563,18 +601,24 @@ public class Structure : MonoBehaviour
                 }
             case TownStructure.Candle_Maker:
                 {
+                    workStartTime = 9;
+                    workEndTime = 5;
                     cargoRequired.Add(CargoSO.CargoType.Wax, 1);
                     cargoRequired.Add(CargoSO.CargoType.Coal, 1);
                     break;
                 }
             case TownStructure.Carpenter:
                 {
+                    workStartTime = 9;
+                    workEndTime = 5;
                     cargoRequired.Add(CargoSO.CargoType.Wood, 1);
                     cargoRequired.Add(CargoSO.CargoType.Tools, 1);
                     break;
                 }
             case TownStructure.Church:
                 {
+                    workStartTime = 5;
+                    workEndTime = 9;
                     cargoRequired.Add(CargoSO.CargoType.Gold, 1);
                     cargoRequired.Add(CargoSO.CargoType.Books, 1);
                     cargoRequired.Add(CargoSO.CargoType.Alcohol, 1);
@@ -583,6 +627,8 @@ public class Structure : MonoBehaviour
                 }
             case TownStructure.Clay_Pit:
                 {
+                    workStartTime = 6;
+                    workEndTime = 14;
                     cargoRequired.Add(CargoSO.CargoType.Coal, 1);
                     cargoRequired.Add(CargoSO.CargoType.Tools, 1);
 

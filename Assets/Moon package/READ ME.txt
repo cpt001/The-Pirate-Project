@@ -1,0 +1,1 @@
+Don't forget to set the far clipping plane to at least 20 000 units, so your camera will be able to render the huge skydome.

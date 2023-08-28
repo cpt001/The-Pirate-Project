@@ -51,7 +51,7 @@ public class CustomerInteraction : MonoBehaviour
         {
             pawnNav = other.GetComponent<PawnNavigation>();
             //Maybe time to create a pawn wallet/inventory?
-            if (parentStructure.masterWorkerList.Contains(pawnNav.pawn))
+            if (parentStructure.masterWorkerList.Contains(pawnNav.gameObject))
             {
                 //Do nothing if it's a worker from the worker list
             }

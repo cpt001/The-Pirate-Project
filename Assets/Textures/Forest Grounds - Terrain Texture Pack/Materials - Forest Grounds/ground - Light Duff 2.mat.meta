@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: faa1bed1e6751b44eaf5d6c9358f66a7
+labels:
+- texture
+- terrain
+- forest
+- ground
+- dirt
+- leaves
+- earth
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
