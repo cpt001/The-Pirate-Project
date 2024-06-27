@@ -16,6 +16,7 @@ public class CargoSO : ScriptableObject
             //Consumer: Bakery, Shacks, Gypsy, Apothecary, Bawdy House
         Animal_Parts,       //Producer: Gypsy, Hunter, Apothecary, Dock
             //Consumer: Gypsy, Hunter, Leathersmith, Apothecary, Lighthouse, Prison
+        Animal_Fat,
         Water,              //Producer: Well
             //Consumer: Apothecary, Bakery, Barn, Bawdy House, Blacksmith, Butcher, Distillery, Forge, Gypsy, House, Jeweler, Mill, Prison, Shack, Tar Kiln
         Steel_Ingot,        //Producer: Blacksmith, Forge
@@ -24,8 +25,6 @@ public class CargoSO : ScriptableObject
             //Consumer: Blacksmith, Forge
         Coal,               //Producer: Mineshaft       //Note: Coal is preferred, burns longer, but is rarer
             //Consumer: Apothecary, Armorer, Bakery, Blacksmith, Candle Maker, Clay Pit, Distillery, Drydock, Forge, Gypsy, Jeweler, Tailor, Tar Kiln, Tavern
-        Charcoal,           //Producer: Shack, Sawmill, Logging Camp
-            //Consumer: Same as coal
         Gunpowder,          //Producer: Host Continent, Alchemist
             //Consumer: Armory, Garrison, Hunter, Shipwright
         Weapons,            //Producer: Blacksmith
@@ -74,8 +73,6 @@ public class CargoSO : ScriptableObject
             //Consumer: Construction Sites, Shipwright, Drydock
         Bricks,             //Producer: Clay Pit
             //Consumer: Construction Sites
-        Special_Order,      //Producer: Any     //Desc: These are items ordered for delivery by high end customers
-            //Consumer: Governor's Mansion, House
     }
     public CargoType cargoType;
     [SerializeField] private GameObject cargoShapePrefab;   //Crate, Barrel, Chest, Parcel

@@ -1,0 +1,135 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4456706485923235722
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1670494272378766416}
+  - component: {fileID: 6840653027868898287}
+  - component: {fileID: 2076536200006305250}
+  - component: {fileID: 3303389533373836569}
+  m_Layer: 0
+  m_Name: Rope Prefab
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1670494272378766416
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4456706485923235722}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!23 &6840653027868898287
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4456706485923235722}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 55512963f268a3b4f83e9245e32eb809, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &2076536200006305250
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4456706485923235722}
+  m_Mesh: {fileID: 6894429951279531639, guid: ad6373b0e9958144a9e9388cd81e581f, type: 3}
+--- !u!114 &3303389533373836569
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4456706485923235722}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f1e544c2c9fb4f4081187df81d7be46, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startAttach: {fileID: 0}
+  endAttach: {fileID: 0}
+  length: 2
+  widthStart: 1
+  widthEnd: 1
+  swingAngle: 0.5
+  swingFreq: 2
+  swingOffset: 1.3254344
+  alpha: 0
+  startConnect: {fileID: 0}
+  startObj: {fileID: 0}
+  endConnect: {fileID: 0}
+  endObj: {fileID: 0}
+  ropeForce: 0
+  stretch: 1
+  ropeStart: 0
+  ropeEnd: 0
+  ropeStartAttach: 0
+  ropeEndAttach: 0
+  adjustZ: 0
+  adjustY: 0
+  adjustZEnd: 0
+  adjustYEnd: 0
+  attached: []
+  attachedObjects: []
+  p0: {x: -3.0229669, y: -0.3587779, z: -0.00000074505806}
+  p1: {x: 0, y: 0, z: 0}
+  a: 1.6444817
+  p: 1.3416058
+  q: -2.2227724
+  arcl: 3.4854543
+  flipx: 1
+  endPos: {x: 75.95746, y: 2.977111, z: -17.770716}
+  startIndex: 0
+  endIndex: 0
+  ropeMeshIndex: 0
+  showStartConnect: 0
+  showEndConnect: 0
+  isPrefab: 0

@@ -17,7 +17,7 @@ using UnityEngine;
 public class PawnHealth : MonoBehaviour
 {
     private PawnVisualGeneration pawnVisual;
-    private PawnNeeds pawnNeeds;
+    //private PawnNeeds pawnNeeds;
 
     [SerializeField] private int age;   //Age of the character
     private int maxAge;
@@ -156,7 +156,7 @@ public class PawnHealth : MonoBehaviour
             daysRemaining--;
             if (daysRemaining <= -1)
             {
-                Debug.Log(pawnNeeds.name + " be ded");
+                //Debug.Log(pawnNeeds.name + " be ded");
                 Destroy(gameObject);
             }
         }
@@ -366,7 +366,7 @@ public class PawnHealth : MonoBehaviour
         if (daysInCycle == maxFertilityDay)
         {
             //If pawn has partner, is above age, and meets the fertility check
-            if (pawnNeeds.partner != null && age > 18 && bodyDictionary["Genitals"] == InjuryStatus.Healthy)
+            /*if (pawnNeeds.partner != null && age > 18 && bodyDictionary["Genitals"] == InjuryStatus.Healthy)
             {
                 int randomStartPregChance = Random.Range(0, 100);
                 if (randomStartPregChance >= 2)
@@ -376,7 +376,7 @@ public class PawnHealth : MonoBehaviour
 
                     DetermineFemaleHealth();    //Send the status upriver for standard determination
                 }
-            }
+            }*/
         }
     }
     //Determined daily

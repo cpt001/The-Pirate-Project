@@ -1,0 +1,72 @@
+Version 1.11
+Shaders updated to keep a furled sail from being deformed due to sail scaling.
+
+Version 1.10
+Changed the way ripples are applied in the shader, the ripples now happen in the sailforward direction which looks better than the old way.
+Moved some common shader functions to a cginc file for reduced shader sizes
+Sail Pos script updated to work correctly with the new ripples
+HDRP and URP shader graphs also updated to use new ripple
+Fixed the various create texture helper windows causing an error on Unity 2021+
+Added an Unlit shader for builtin pipeline which will run faster on mobile.
+
+Version 1.09
+Standard and optimize shaders updated to use the new ripple noise texture system so will work correctly with the SailPos system
+Small change to the shader after a report of an error on some versions of Unity about missing _VorSeed param.
+
+Version 1.08
+Sails will no longer update if they are not visible.
+Sail shader param setting now uses ID's instead of strings for faster updating
+Made the various map builders make the generated textures readable so you dont have to change them in the improt settings.
+Fixed an error in the SailPos component when the Sail param was empty
+
+Version 1.07
+Made some changes to the sail impact system, it can now use Box Colliders.
+Square Sail prefabs been updated to have box colliders, tri sails use a simple convex proxy 
+Sail ripple system replaced with a ripple texture, makes the shader faster and also needed for the Sail Pos system. If you have sails in the scene which arnt rippling add the Ripple texture to the material
+Added a new component called SailPos, this can be used to position objects on the sail surface.
+Bounds Values added to the Sail component so the sail bounds can easily be adjusted to stop deformed sails being culled early
+Sail Gizmos now includes an orange bounds box with handles for easy adjusting of the bounds area
+
+Version 1.06
+Fixed the help icon on the component inspector bars not having the right link for help
+Added Sail Impacts system for doing damage to your sails. Note Impacts are currently only supported for the Built In Shader as Unity has not added Vector3 array support to ShaderGraphs
+Added a new demo scene to show sail impacts. Use mouse and click to fire at sail.
+Added a new demo scene to show sail impacts. Use mouse and click to fire at sail.
+Docs updated with Impact info, Reverse Maps, and Tips section
+
+Version 1.05
+Sail param id enum popups are now sorted to make it easier to find the param
+Fixed an issue with the multi edit of sails not updating all the values, works correctly now
+Added helper SetValue methods to the Sail component to be used if updating param values from script SetValue(SailParamID, value);
+Added helper SetValue methods to the SailGroup component to be used if updating param values from script SetValue(SailParamID, value);
+
+Version 1.04
+Fixed an issue with the wind direction and sail movement
+Added a SailSideways param to control how much the sail moves when the wind is edge on
+The Sail Furl will work in edit mode now for quicker testing of furl order setups
+Added new feature of reverse Mask Map for movement for when wind is against, useful for when a sail would hit a mask it can now look like it wraps around any obstacle
+Move Map builder now has support for vertical gradient as well as horizontal
+Move Map builder now has support for adding a bulge blob area
+Move Map builder now has option to use a base map as a starting point, so can copy exisiting move maps and add new features to them
+Sail script now has a scene gizmo making it easier to select sails that are deformed
+Docs updated
+
+Version 1.03
+Swapped the Voronoi ripple code for Noise based for nicer looking ripples
+Some adjustment to how the FillPercent and SailWind params work, check the docs for new descriptions of the values
+
+Version 1.02
+MultiEdit support added to the Sail component so you can edit multiple sails at the same time
+Fixed sails not updating when play mode entered
+Add a Sail Tilt option to allow you to angle the bottom of the sail relative to the top
+Add a Top arch option to the shader
+Add triangular sails objects
+Added option of edges curves for Move Map maker to make more complex move maps in Unity
+Docs updated
+
+Version 1.01
+Added a Standard version of the Sail Shader for builtin
+Improved the Translucency effect
+
+Verison 1.0
+Original release

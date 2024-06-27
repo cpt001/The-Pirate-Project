@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a611910b33f37440ae2c68918c2ee9c, type: 3}
+  m_Name: New Rope Parts
+  m_EditorClassIdentifier: 
+  endObjects:
+  - {fileID: 1044641583155689163, guid: 4827e0c852a0e464189977392de4fe3b, type: 3}
+  - {fileID: 8920307879329620171, guid: 531aa429c1aceeb499f750586a957be7, type: 3}
+  - {fileID: 1884352976492640694, guid: b67ea07cacef2a24c834289f807f5786, type: 3}
+  - {fileID: 1950061039314413020, guid: eab086a632e8d544c8b83da61fbb585d, type: 3}
+  - {fileID: 8684654787590620355, guid: fa9b68ca1fc8d0746a7090d6af15519b, type: 3}
+  - {fileID: 4855105384772941989, guid: ad085fedaf6f9c74386a0e73c746437d, type: 3}
+  - {fileID: 0}
+  ropes: []

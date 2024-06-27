@@ -15,6 +15,18 @@ public class CameraController : MonoBehaviour
 
     public Camera mainCamera;
 
+    void SetPlayerCamera()
+    {
+
+    }
+    void SetShipCamera()
+    {
+
+    }
+    void SetIslandOverviewCamera()
+    {
+        throw new System.NotImplementedException();
+    }
 
     // Start is called before the first frame update
     void Start()

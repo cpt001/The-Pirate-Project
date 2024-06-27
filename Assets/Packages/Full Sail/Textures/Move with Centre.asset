@@ -1,0 +1,225 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1182c7307d13854991a74a44f5bb69d, type: 3}
+  m_Name: Move with Centre
+  m_EditorClassIdentifier: 
+  width: 256
+  height: 256
+  fixFalloff: 0.072
+  fixFalloffPow: 0.38
+  fixTL: 0
+  fixTR: 0
+  fixBL: 0
+  fixBR: 0
+  useFill: 0
+  fill:
+    serializedVersion: 2
+    key0: {r: 1, g: 1, b: 1, a: 1}
+    key1: {r: 1, g: 1, b: 1, a: 1}
+    key2: {r: 0.16862746, g: 0.16862746, b: 0.16862746, a: 0}
+    key3: {r: 0.16981131, g: 0.16981131, b: 0.16981131, a: 0}
+    key4: {r: 1, g: 1, b: 1, a: 0}
+    key5: {r: 1, g: 1, b: 1, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 0
+    ctime1: 25058
+    ctime2: 30455
+    ctime3: 34310
+    ctime4: 40863
+    ctime5: 65535
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_NumColorKeys: 6
+    m_NumAlphaKeys: 2
+  fillRepeat: 1
+  useVertFill: 0
+  vertFill:
+    serializedVersion: 2
+    key0: {r: 1, g: 1, b: 1, a: 1}
+    key1: {r: 1, g: 1, b: 1, a: 1}
+    key2: {r: 0.16981131, g: 0.16981131, b: 0.16981131, a: 0}
+    key3: {r: 0.21698111, g: 0.21698111, b: 0.21698111, a: 0}
+    key4: {r: 1, g: 1, b: 1, a: 0}
+    key5: {r: 1, g: 1, b: 1, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 0
+    ctime1: 24672
+    ctime2: 32189
+    ctime3: 35273
+    ctime4: 42405
+    ctime5: 65535
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_NumColorKeys: 6
+    m_NumAlphaKeys: 2
+  vertFillRepeat: 1
+  useCurves: 0
+  fillCrvX:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0.0025031287
+      value: 0.25412542
+      inSlope: 4.175193
+      outSlope: 4.175193
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.06007509
+    - serializedVersion: 3
+      time: 0.5
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.99624527
+      value: 0.21781735
+      inSlope: -4.0129137
+      outSlope: -4.0129137
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.057572126
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  fillCrvY:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: -0.0031280518
+      value: 0.16830444
+      inSlope: 2.8959556
+      outSlope: 2.8959556
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.06343123
+    - serializedVersion: 3
+      time: 0.5
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.9968262
+      value: 0.18481445
+      inSlope: -2.7739425
+      outSlope: -2.7739425
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.05029213
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  useEdgeCurves: 0
+  fillCrvX1:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.5
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  fillCrvY1:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.5
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  useBlob: 1
+  blobPos: {x: 0.25, y: 0.5}
+  blobRadius: 0.003
+  blobAmt: 0.067
+  blobFalloff: 0.319
+  blobFalloffPow: 0.7
+  baseMap: {fileID: 2800000, guid: defdaa53db5c7ec48a6f02dcef96ceaf, type: 3}

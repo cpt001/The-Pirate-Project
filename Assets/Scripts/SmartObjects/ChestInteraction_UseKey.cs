@@ -16,8 +16,8 @@ public class ChestInteraction_UseKey : SimpleInteraction
         linkedChest = GetComponent<SmartObject_Chest>();
     }
 
-    public override bool Usable()
+    /*public override bool Usable()
     {
         return base.Usable() && linkedChest.isOpen;
-    }
+    }*/
 }
