@@ -59,6 +59,7 @@ public class Cannon : MonoBehaviour
     {
         loaded = false;
         yield return new WaitForSeconds(fireDelay * (numCrewManning * 0.25f));  //Fire delay is increased if >4 crew man cannon
+        
         StartCoroutine(EffectController());
         //Raycast checks for combat targets that are too close
         RaycastHit rayHit;
@@ -78,6 +79,7 @@ public class Cannon : MonoBehaviour
         else
         {
             GameObject cannonBall = ShotPool.shotInstance.GetPooledObject();
+            EventsManager.TriggerEvent("FreshShot" + cannonBall);
             if (cannonBall != null)
             {
                 //Vector3 originalRotation = barrel.transform.localEulerAngles;
@@ -90,7 +92,7 @@ public class Cannon : MonoBehaviour
             }
         }
 
-        StartCoroutine(ReloadTime(60.0f));  //Minute and a half between shots theoretically
+        StartCoroutine(ReloadTime(6.0f));  //Minute and a half between shots theoretically
     }
     private IEnumerator EffectController()
     {

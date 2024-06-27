@@ -67,11 +67,11 @@ public class PawnNavPlanning : PawnBaseClass
         EventsManager.StartListening("FindHome_" + pawn.name, FindHomeStructure);
     }
 
-    protected override void Update()
+    /*protected override void Update()
     {
         base.Update();
-    }
-
+    }*/
+    
 
 
     void FindHomeStructure()
@@ -168,13 +168,13 @@ public class PawnNavPlanning : PawnBaseClass
     {
         pawn = GetComponent<PawnBaseClass>();
         agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
-        churchStructure = GameObject.Find("Church").GetComponent<Structure>();
+        //churchStructure = GameObject.Find("Church").GetComponent<Structure>();
 
         moveSpeed = Random.Range(2.2f, 3.5f);
         agent.speed = moveSpeed;
     }
 
-    void SeekSmartObject()
+    /*void SeekSmartObject()
     {
         //Create a list of closest objects to pawn
         //Create a list of interactions from target object.
@@ -203,7 +203,7 @@ public class PawnNavPlanning : PawnBaseClass
         {
             //This should seek through the home structure's items first, then look elsewhere, going outward from the home.
         }
-    }
+    }*/
 
     void HourToHour()
     {

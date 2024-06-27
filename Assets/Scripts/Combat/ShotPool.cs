@@ -22,7 +22,7 @@ public class ShotPool : MonoBehaviour
 
         for (int i = 0; i < amountToPool; i++)
         {
-            tmp = Instantiate(objectToPool);
+            tmp = Instantiate(objectToPool, transform);
             tmp.SetActive(false);
             pooledObjects.Add(tmp);
         }

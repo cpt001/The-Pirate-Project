@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 /// <summary>
+/// This is somehow the most inefficient script in the project, including the ocean rendering
+/// 
 /// Lantern needs to turn on and off dynamically based on trigger volume. 
 /// Possible solutions:
 /// -Single volume at entrance that toggles the lantern. would need to get time of day on exit for appropriate response.
@@ -19,10 +21,12 @@ public class LightFlicker : MonoBehaviour
     [Tooltip("How much to smooth out the randomness; lower values = sparks, higher = lantern")]
     [Range(1, 75)]
     [SerializeField] private int smoothing = 5;
-    private bool lanternBool;
+    private bool lanternBool = true;
     public bool lanternOverride;
-    [SerializeField] private bool playerLantern = false;
-    [SerializeField] private bool environmentLighting = false;
+    [SerializeField] private bool isPlayersLantern = false;
+    [SerializeField] private bool handheldLantern = false;
+
+    private int hour;
 
 
     // Continuous average calculation via FIFO queue
@@ -30,22 +34,18 @@ public class LightFlicker : MonoBehaviour
     Queue<float> smoothQueue;
     float lastSum = 0;
 
-
-    /// <summary>
-    /// Reset the randomness and start again. You usually don't need to call
-    /// this, deactivating/reactivating is usually fine but if you want a strict
-    /// restart you can do.
-    /// </summary>
-    public void Reset()
-    {
-        smoothQueue.Clear();
-        lastSum = 0;
-    }
-
     void Start()
     {
-        EventsManager.StartListening("ToggleLights", ToggleLights);
-        ToggleLightsImmediate();
+        SetInitialLightStatus();
+        SetEventTriggers();
+        
+
+        /*ToggleLightsImmediate();
+*/
+    }
+
+    void SetInitialLightStatus()
+    {
         smoothQueue = new Queue<float>(smoothing);
         // External or internal light?
         if (light == null)
@@ -55,81 +55,88 @@ public class LightFlicker : MonoBehaviour
             {
                 meshRend = GetComponent<MeshRenderer>();
             }
-            if (!playerLantern)
+            if (GameObject.Find("DemoLighting").GetComponent<TimeScalar>().isNightTime)
             {
-                light.enabled = false;
-                if (meshRend)
+                if (!handheldLantern)
                 {
-                    meshRend.enabled = false;
+                    light.enabled = false;
+                    if (meshRend)
+                    {
+                        meshRend.enabled = false;
+                    }
                 }
-            }
-            else
-            {
-                light.enabled = true;
-                if (meshRend)
+                else
                 {
-                    meshRend.enabled = true;
+                    light.enabled = true;
+                    if (meshRend)
+                    {
+                        meshRend.enabled = true;
+                    }
                 }
             }
         }
     }
 
-    void ToggleLights() 
-    { 
-        if (!lanternOverride)
-        {
-            StartCoroutine(ToggleLightsAt(60));
-            EventsManager.StartListening("ToggleLights", ToggleLights);
-        }
-        if (environmentLighting)
-        {
-            StartCoroutine(ToggleLightsAt(5));
-        }
-        else if (lanternOverride)
-        {
-            EventsManager.StopListening("ToggleLights", ToggleLights);
-            lanternBool = true;
-            SetLights(lanternBool);
-        }
-    }
-    void ToggleLightsImmediate()
+    void SetEventTriggers()
     {
-        StartCoroutine(ToggleLightsAt(0));
+        if (gameObject.activeInHierarchy)
+        {
+            EventsManager.StartListening("ToggleLights", ToggleLight);
+        }
     }
-    IEnumerator ToggleLightsAt(float waitTime)
+
+
+
+    void ToggleLight()
+    {
+        if (gameObject.activeInHierarchy)
+        {
+            StartCoroutine(ToggleLightsOnBy(15.0f));
+        }
+    }
+    IEnumerator ToggleLightsOnBy(float waitTime)
     {
         float randomTimeToLights = Random.Range(0, waitTime);
         yield return new WaitForSeconds(randomTimeToLights);
-        lanternBool = !lanternBool;
-        SetLights(lanternBool);
+        SetLights(lanternBool = !lanternBool);
     }
 
+    //Controls both the mesh and light source.
     public void SetLights(bool lightToggle)
     {
-        if (meshRend)
+        Debug.Log("Light set to: " + lightToggle);
+        if (handheldLantern)
         {
             meshRend.enabled = lightToggle;
         }
         light.enabled = lightToggle;
     }
 
-    void Update()
+    private void Update()
     {
         if (light == null)
             return;
 
-        // pop off an item if too big
-        while (smoothQueue.Count >= smoothing)
+        if (isPlayersLantern)
         {
-            lastSum -= smoothQueue.Dequeue();
+            StartCoroutine(ToggleLightsOnBy(0));
         }
 
-        // Generate random new item, calculate new average
-        float newVal = Random.Range(minIntensity, maxIntensity);
-        smoothQueue.Enqueue(newVal);
-        lastSum += newVal;
+        // pop off an item if too big
+        if (light.isActiveAndEnabled)
+        {
+            while (smoothQueue.Count >= smoothing)
+            {
+                lastSum -= smoothQueue.Dequeue();
+            }
 
-        // Calculate new smoothed average
-        light.intensity = lastSum / (float)smoothQueue.Count;
+            // Generate random new item, calculate new average
+            float newVal = Random.Range(minIntensity, maxIntensity);
+            smoothQueue.Enqueue(newVal);
+            lastSum += newVal;
+
+            // Calculate new smoothed average
+            light.intensity = lastSum / (float)smoothQueue.Count;
+        }
     }
 }

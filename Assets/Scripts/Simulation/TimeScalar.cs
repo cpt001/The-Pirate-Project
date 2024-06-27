@@ -30,7 +30,7 @@ public class TimeScalar : MonoBehaviour
     private Color32 oceanAwayNight = new Color32(12, 12, 12, 1);
 
     //public bool isDayOfRest;
-    private float daylightSpeed = 1.25f;    //Controls how long daylight will last in a day.
+    public bool isNightTime;
     private float timeSpeed = 1.25f;        //Controls how fast time will progress.
     [SerializeField] private int hoursPassed = 0;
     private int nextHour = 15;
@@ -92,11 +92,15 @@ public class TimeScalar : MonoBehaviour
         EventsManager.TriggerEvent("NewHour");
         oceanObject.OceanMaterial.SetColor("_SkyBase", oceanNight);
         oceanObject.OceanMaterial.SetColor("_SkyAwayFromSun", oceanAwayNight);
+        if (hoursPassed == 0)
+        {
+            isNightTime = true;
+        }
     }
 
     void Update()
     {
-        transform.Rotate(Vector3.left * (daylightSpeed * Time.deltaTime));
+        transform.Rotate(Vector3.left * (timeSpeed * Time.deltaTime));
         fauxRotValue += timeSpeed * Time.deltaTime;
         HUDClock.text = "Time: " + hoursPassed.ToString();
 
@@ -150,12 +154,14 @@ public class TimeScalar : MonoBehaviour
             case 5:
                 {
                     StartCoroutine(LerpSun(1.4f, oceanDay, oceanAwayDay, 35.0f));
+                    isNightTime = false;
                     EventsManager.TriggerEvent("ToggleLights");
                     break;
                 }
             case 19:
                 {
                     StartCoroutine(LerpSun(0, oceanNight, oceanAwayNight, 35.0f));
+                    isNightTime = true;
                     EventsManager.TriggerEvent("ToggleLights");
                     break; 
                 }

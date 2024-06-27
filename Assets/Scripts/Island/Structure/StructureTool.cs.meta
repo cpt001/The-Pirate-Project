@@ -1,0 +1,45 @@
+fileFormatVersion: 2
+guid: ba40d1f38fb56ae4e943cfea4637c84e
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - assignedTown: {instanceID: 0}
+  - bankModel: {fileID: 6512721273861912427, guid: 695dc357af22c9f46bc294a3f2a3a59c,
+      type: 3}
+  - barnModel: {fileID: 1784677216869509262, guid: f7023a07c5afffa43a44e6a8f149df0f,
+      type: 3}
+  - bigWorkshopModel: {fileID: 6818105116565631011, guid: dbcb79b9494ac044799c467ef3e688da,
+      type: 3}
+  - fishingShackModel: {fileID: 8563709016812842698, guid: f78befac4fac7734ba8f6e866d42ecac,
+      type: 3}
+  - churchModel: {fileID: 4258167140160489891, guid: 715c3ff8e65debf459e0fa733a91a747,
+      type: 3}
+  - genericBuilding1: {fileID: 7421323102758977460, guid: 762e0fded04962b488663fa770787a29,
+      type: 3}
+  - innModel: {fileID: 1527513671220622728, guid: 1de126e2414a2514c99a02b08f6a517a,
+      type: 3}
+  - mineOfficeModel: {fileID: 7389103572269758775, guid: 29be43c0e94abf746a08993cbe3e2b7a,
+      type: 3}
+  - shackModel: {fileID: 6374043024269484477, guid: 9d8b9d8855a23fa44b3e6939996bb79c,
+      type: 3}
+  - warehouseModel: {fileID: 5143214019610185560, guid: fa2936bc94c5eeb40834d2b6b147a5b1,
+      type: 3}
+  - NYIsmallWorkshopModel: {instanceID: 0}
+  - NYIgraveyardModel: {instanceID: 0}
+  - NYIgypsyWagonModel: {instanceID: 0}
+  - NYImarketStallModel: {instanceID: 0}
+  - NYIclayPitModel: {instanceID: 0}
+  - NYIprisonModel: {instanceID: 0}
+  - NYIgarrisonModel: {instanceID: 0}
+  - NYIwatchtowerModel: {instanceID: 0}
+  - NYImillModel: {instanceID: 0}
+  - NYIshipwrightModel: {instanceID: 0}
+  - NYIdrydockModel: {instanceID: 0}
+  - NYIdistilleryModel: {instanceID: 0}
+  - NYIforgeModel: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

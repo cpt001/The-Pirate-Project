@@ -234,7 +234,7 @@ namespace UnityStandardAssets.ImageEffects
             adaptionSpeed = adaptionSpeed < 0.001f ? 0.001f : adaptionSpeed;
             tonemapMaterial.SetFloat("_AdaptionSpeed", adaptionSpeed);
 
-            rt.MarkRestoreExpected(); // keeping luminance values between frames, RT restore expected
+            //rt.MarkRestoreExpected(); // keeping luminance values between frames, RT restore expected
 
 #if UNITY_EDITOR
             if (Application.isPlaying && !freshlyBrewedInternalRt)

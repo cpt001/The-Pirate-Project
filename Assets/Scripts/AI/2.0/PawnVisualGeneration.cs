@@ -181,10 +181,10 @@ public class PawnVisualGeneration : MonoBehaviour
 
         }
         transform.GetComponent<MeshRenderer>().enabled = false;
-        unitBody = Instantiate(unitBody, new Vector3(transform.position.x, transform.position.y - 1, transform.position.z), Quaternion.identity, transform);
+        unitBody = Instantiate(unitBody, new Vector3(transform.position.x, transform.position.y, transform.position.z), Quaternion.identity, transform);
         #endregion
         #region SetHeight
-        float heightScalar = Random.Range(0.9f, 1.1f);
+        float heightScalar = Random.Range(0.75f, 1f);
         unitBody.transform.localScale = new Vector3(heightScalar, heightScalar, heightScalar);
         #endregion
 
@@ -195,10 +195,10 @@ public class PawnVisualGeneration : MonoBehaviour
         characterName = "NullName"; //Name of the character
         genderPrefs = (PawnPreferredPartner)Random.Range(0, 2);
         gameObject.name = "Pawn_" + selectedName + " [" + pawnGender + "]";
-        if (characterName == "NullName")
+        /*if (characterName == "NullName")
         {
             Debug.Log("Character has no name! " + gameObject);
-        }
+        }*/
 
         //Heterochromia determined here
         #endregion

@@ -5,6 +5,9 @@ using UnityEngine.Events;
 using System.Linq;
 /// <summary>
 /// Changelog:
+/// --> Obsolete, using structure tool instead
+/// 
+/// 
 /// -Removed producer building system, as it's defunct with the new work location system
 /// Current plan:
 /// -> fix structure crafting to match a selection of items for the player.
@@ -419,6 +422,7 @@ public class Structure : MonoBehaviour
     //This sets building cargo in and out, and working times
     void BuildingSetup()
     {
+        //Refactor this into the individual structures for specific requirements
         if (isConstructionSite)
         {
             cargoRequired.Add(CargoSO.CargoType.Tools, 1);

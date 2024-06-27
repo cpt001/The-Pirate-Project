@@ -13,9 +13,9 @@ public class ChestInteraction_ToggleLock : SimpleInteraction
         linkedChest = GetComponent<SmartObject_Chest>();
     }
 
-    public override void Perform(PawnBaseClass performer, UnityAction<BaseInteractions> onCompleted)
+    /*public override void Perform(PawnBaseClass performer, UnityAction<BaseInteractions> onCompleted)
     {
         linkedChest.toggleLocked();
         base.Perform(performer, onCompleted);
-    }
+    }*/
 }

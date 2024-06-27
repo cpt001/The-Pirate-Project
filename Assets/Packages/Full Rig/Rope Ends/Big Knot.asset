@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c6d35a8442d2e54e8ae11379fcf2892, type: 3}
+  m_Name: Big Knot
+  m_EditorClassIdentifier: 
+  ropeStart: 0
+  tangent: 0.22
+  adjustZ: 0
+  adjustY: 0
+  width: 1
+  ropeType: 1
+  prefab: {fileID: 3475360868327681658, guid: 9272ac8db9d8ba04db7c3ff292898f42, type: 3}

@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 570efc8cbc54c1f40bd99df4f6226034, type: 3}
+  m_Name: Six Rope Pulley
+  m_EditorClassIdentifier: 
+  mesh: {fileID: -8595359665050763797, guid: 5d9822a47524f8a42bbd9a2520844174, type: 3}
+  material: {fileID: 2100000, guid: 55512963f268a3b4f83e9245e32eb809, type: 2}
+  ropeNum: 12
