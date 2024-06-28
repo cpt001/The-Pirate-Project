@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Packages/Full Sail/Shaders/Builtin/Sails Shader.shader.meta
 guid: a16c8b5f3a039a342bfee8951505ce12
+========
+guid: 5f8d5ef3e659aed4caab82d88f85bd1b
+>>>>>>>> 1257cd564e557af009fde4b9a2ffd1ae28720f8b:Assets/Packages/Full Sail/Shaders/Builtin/Sails Shader Optimized Standard.shader.meta
 ShaderImporter:
   externalObjects: {}
   defaultTextures: []

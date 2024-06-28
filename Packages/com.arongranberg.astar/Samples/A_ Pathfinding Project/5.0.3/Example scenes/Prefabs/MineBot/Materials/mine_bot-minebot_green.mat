@@ -7,6 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
+<<<<<<<< HEAD:Packages/com.arongranberg.astar/Samples/A_ Pathfinding Project/5.0.3/Example scenes/Prefabs/MineBot/Materials/mine_bot-minebot_green.mat
   m_Name: mine_bot-minebot_green
   m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
   m_Parent: {fileID: 0}
@@ -16,6 +17,12 @@ Material:
   - _NORMALMAP
   m_InvalidKeywords: []
   m_LightmapFlags: 2
+========
+  m_Name: MicroSplatMaterial
+  m_Shader: {fileID: 4800000, guid: 6e5502e63884cc146851a1659b3a3ff9, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 4
+>>>>>>>> 1257cd564e557af009fde4b9a2ffd1ae28720f8b:Assets/Packages/PlaceholderSoftware/MapMagic/Demo/Compatibility/MicroSplat/MicroSplatMaterial.mat
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
@@ -26,11 +33,47 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BumpMap:
+<<<<<<<< HEAD:Packages/com.arongranberg.astar/Samples/A_ Pathfinding Project/5.0.3/Example scenes/Prefabs/MineBot/Materials/mine_bot-minebot_green.mat
         m_Texture: {fileID: 2800000, guid: 7cec4fc9f20c5e145941cf016d68ff64, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Cube:
         m_Texture: {fileID: 8900000, guid: cf75cef0c04674bf88463d85196d8876, type: 2}
+========
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Control0:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Control1:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Control2:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Control3:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _CustomControl0:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _CustomControl1:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _CustomControl2:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _CustomControl3:
+        m_Texture: {fileID: 0}
+>>>>>>>> 1257cd564e557af009fde4b9a2ffd1ae28720f8b:Assets/Packages/PlaceholderSoftware/MapMagic/Demo/Compatibility/MicroSplat/MicroSplatMaterial.mat
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -43,6 +86,10 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _DetailNormalMap:
         m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Diffuse:
+        m_Texture: {fileID: 18700000, guid: c8f589bbfa8234a43adca87f2bfc6dd2, type: 2}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _EmissionMap:
@@ -61,8 +108,13 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+<<<<<<<< HEAD:Packages/com.arongranberg.astar/Samples/A_ Pathfinding Project/5.0.3/Example scenes/Prefabs/MineBot/Materials/mine_bot-minebot_green.mat
     - _Normal:
         m_Texture: {fileID: 2800000, guid: 7cec4fc9f20c5e145941cf016d68ff64, type: 3}
+========
+    - _NormalSAO:
+        m_Texture: {fileID: 18700000, guid: 5df824de786097a4385aa3b63c6f5f9c, type: 2}
+>>>>>>>> 1257cd564e557af009fde4b9a2ffd1ae28720f8b:Assets/Packages/PlaceholderSoftware/MapMagic/Demo/Compatibility/MicroSplat/MicroSplatMaterial.mat
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
@@ -73,18 +125,35 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+<<<<<<<< HEAD:Packages/com.arongranberg.astar/Samples/A_ Pathfinding Project/5.0.3/Example scenes/Prefabs/MineBot/Materials/mine_bot-minebot_green.mat
     - _SpecGlossMap:
+========
+    - _PerPixelNormal:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _PerTexProps:
+        m_Texture: {fileID: 5222800681592566679, guid: 49dbd948e03db8c4c84fdd487c391eeb,
+          type: 2}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _TerrainHolesTexture:
+>>>>>>>> 1257cd564e557af009fde4b9a2ffd1ae28720f8b:Assets/Packages/PlaceholderSoftware/MapMagic/Demo/Compatibility/MicroSplat/MicroSplatMaterial.mat
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
     - _BumpScale: 1
+    - _Contrast: 0.35
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
+<<<<<<<< HEAD:Packages/com.arongranberg.astar/Samples/A_ Pathfinding Project/5.0.3/Example scenes/Prefabs/MineBot/Materials/mine_bot-minebot_green.mat
     - _Emission: 1
     - _EmissionLM: 0
+========
+>>>>>>>> 1257cd564e557af009fde4b9a2ffd1ae28720f8b:Assets/Packages/PlaceholderSoftware/MapMagic/Demo/Compatibility/MicroSplat/MicroSplatMaterial.mat
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
@@ -101,6 +170,7 @@ Material:
     - _ZWrite: 1
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
+<<<<<<<< HEAD:Packages/com.arongranberg.astar/Samples/A_ Pathfinding Project/5.0.3/Example scenes/Prefabs/MineBot/Materials/mine_bot-minebot_green.mat
     - _EmissionColor: {r: 0, g: 0.98771864, b: 4.0000005, a: 1}
     - _SpecColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   m_BuildTextureStacks: []
@@ -108,3 +178,8 @@ Material:
 --- !u!1002 &2100001
 EditorExtensionImpl:
   serializedVersion: 6
+========
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _UVScale: {r: 45, g: 45, b: 0, a: 0}
+  m_BuildTextureStacks: []
+>>>>>>>> 1257cd564e557af009fde4b9a2ffd1ae28720f8b:Assets/Packages/PlaceholderSoftware/MapMagic/Demo/Compatibility/MicroSplat/MicroSplatMaterial.mat

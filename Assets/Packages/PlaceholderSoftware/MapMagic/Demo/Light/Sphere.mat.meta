@@ -1,6 +1,11 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Packages/PlaceholderSoftware/MapMagic/Demo/Light/Sphere.mat.meta
 guid: 17ad4806c8a12854cb051d066095aa73
 timeCreated: 1494951907
+========
+guid: 54754f104deed324cbc5e1847f6762c3
+timeCreated: 1494951896
+>>>>>>>> 1257cd564e557af009fde4b9a2ffd1ae28720f8b:Assets/Packages/PlaceholderSoftware/MapMagic/Demo/Light/Light.prefab.meta
 licenseType: Store
 NativeFormatImporter:
   userData: 

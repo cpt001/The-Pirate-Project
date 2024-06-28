@@ -5,9 +5,14 @@ Material:
   serializedVersion: 8
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
+<<<<<<<< HEAD:Packages/com.arongranberg.astar/Samples/A_ Pathfinding Project/5.0.3/Example scenes/Materials/SciFi/Diffuse_Mat.mat
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Diffuse_Mat
+========
+  m_PrefabInternal: {fileID: 0}
+  m_Name: GroundRTS
+>>>>>>>> 1257cd564e557af009fde4b9a2ffd1ae28720f8b:Packages/com.arongranberg.astar/Samples/A_ Pathfinding Project/5.0.3/Example scenes/Scenes/OldExamples/Example18_RTS/Materials/GroundRTS.mat
   m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -41,11 +46,16 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _EmissionMap:
         m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
+        m_Scale: {x: 120, y: 120}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
+<<<<<<<< HEAD:Packages/com.arongranberg.astar/Samples/A_ Pathfinding Project/5.0.3/Example scenes/Materials/SciFi/Diffuse_Mat.mat
         m_Texture: {fileID: 2800000, guid: d17b17981e4ecc44ea647636e4c17e84, type: 3}
         m_Scale: {x: 1, y: 1}
+========
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 120, y: 120}
+>>>>>>>> 1257cd564e557af009fde4b9a2ffd1ae28720f8b:Packages/com.arongranberg.astar/Samples/A_ Pathfinding Project/5.0.3/Example scenes/Scenes/OldExamples/Example18_RTS/Materials/GroundRTS.mat
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
         m_Texture: {fileID: 0}
@@ -66,7 +76,11 @@ Material:
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _GlossMapScale: 1
+<<<<<<<< HEAD:Packages/com.arongranberg.astar/Samples/A_ Pathfinding Project/5.0.3/Example scenes/Materials/SciFi/Diffuse_Mat.mat
     - _Glossiness: 0
+========
+    - _Glossiness: 0.356
+>>>>>>>> 1257cd564e557af009fde4b9a2ffd1ae28720f8b:Packages/com.arongranberg.astar/Samples/A_ Pathfinding Project/5.0.3/Example scenes/Scenes/OldExamples/Example18_RTS/Materials/GroundRTS.mat
     - _GlossyReflections: 1
     - _Metallic: 0
     - _Mode: 0
@@ -78,6 +92,12 @@ Material:
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 0.11379312, g: 0.11353922, b: 0.104589276, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+<<<<<<<< HEAD:Packages/com.arongranberg.astar/Samples/A_ Pathfinding Project/5.0.3/Example scenes/Materials/SciFi/Diffuse_Mat.mat
   m_BuildTextureStacks: []
+========
+--- !u!1002 &2100001
+EditorExtensionImpl:
+  serializedVersion: 6
+>>>>>>>> 1257cd564e557af009fde4b9a2ffd1ae28720f8b:Packages/com.arongranberg.astar/Samples/A_ Pathfinding Project/5.0.3/Example scenes/Scenes/OldExamples/Example18_RTS/Materials/GroundRTS.mat

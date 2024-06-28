@@ -1,7 +1,11 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Packages/PlaceholderSoftware/MapMagic/Demo/Trees/Birch/Prefabs/ShortSmall.prefab.meta
 guid: 1524c1c9d03075b46a414d8a21b12742
 timeCreated: 1505727379
 licenseType: Store
+========
+guid: f7776076ab4344ccabff3bcac8311e2b
+>>>>>>>> 1257cd564e557af009fde4b9a2ffd1ae28720f8b:Packages/com.arongranberg.astar/Samples/A_ Pathfinding Project/5.0.3/Example scenes/Scenes/OldExamples/Example18_RTS/Prefabs/RTSUnitHarvester.prefab.meta
 NativeFormatImporter:
   mainObjectFileID: 100100000
   userData: 

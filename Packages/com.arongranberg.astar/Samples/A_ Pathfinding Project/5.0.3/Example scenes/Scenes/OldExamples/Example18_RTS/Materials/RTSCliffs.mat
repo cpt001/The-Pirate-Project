@@ -7,6 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
+<<<<<<<< HEAD:Packages/com.arongranberg.astar/Samples/A_ Pathfinding Project/5.0.3/Example scenes/Scenes/OldExamples/Example18_RTS/Materials/RTSCliffs.mat
   m_Name: RTSCliffs
   m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
   m_Parent: {fileID: 0}
@@ -16,6 +17,16 @@ Material:
   m_InvalidKeywords: []
   m_LightmapFlags: 1
   m_EnableInstancingVariants: 0
+========
+  m_Name: Diffuse_Mat
+  m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 1
+>>>>>>>> 1257cd564e557af009fde4b9a2ffd1ae28720f8b:Packages/com.arongranberg.astar/Samples/A_ Pathfinding Project/5.0.3/Example scenes/Materials/SciFi/Diffuse_Mat.mat
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}
@@ -45,7 +56,11 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
+<<<<<<<< HEAD:Packages/com.arongranberg.astar/Samples/A_ Pathfinding Project/5.0.3/Example scenes/Scenes/OldExamples/Example18_RTS/Materials/RTSCliffs.mat
         m_Texture: {fileID: 2800000, guid: 080d6ea80188046b38abd91a30676955, type: 3}
+========
+        m_Texture: {fileID: 2800000, guid: d17b17981e4ecc44ea647636e4c17e84, type: 3}
+>>>>>>>> 1257cd564e557af009fde4b9a2ffd1ae28720f8b:Packages/com.arongranberg.astar/Samples/A_ Pathfinding Project/5.0.3/Example scenes/Materials/SciFi/Diffuse_Mat.mat
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -67,7 +82,11 @@ Material:
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _GlossMapScale: 1
+<<<<<<<< HEAD:Packages/com.arongranberg.astar/Samples/A_ Pathfinding Project/5.0.3/Example scenes/Scenes/OldExamples/Example18_RTS/Materials/RTSCliffs.mat
     - _Glossiness: 0.5
+========
+    - _Glossiness: 0
+>>>>>>>> 1257cd564e557af009fde4b9a2ffd1ae28720f8b:Packages/com.arongranberg.astar/Samples/A_ Pathfinding Project/5.0.3/Example scenes/Materials/SciFi/Diffuse_Mat.mat
     - _GlossyReflections: 1
     - _Metallic: 0
     - _Mode: 0

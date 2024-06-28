@@ -7,7 +7,11 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
+<<<<<<<< HEAD:Assets/Packages/Full Rig/Materials/rope coil.mat
   m_Name: rope coil
+========
+  m_Name: mast bits
+>>>>>>>> 1257cd564e557af009fde4b9a2ffd1ae28720f8b:Assets/Packages/Full Rig/Materials/mast bits.mat
   m_Shader: {fileID: 47, guid: 0000000000000000f000000000000000, type: 0}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
@@ -40,7 +44,11 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
+<<<<<<<< HEAD:Assets/Packages/Full Rig/Materials/rope coil.mat
         m_Texture: {fileID: 2800000, guid: e541d108c7067404baf04b8cd20d9679, type: 3}
+========
+        m_Texture: {fileID: 2800000, guid: 517c20211de94604598958e90bd5f434, type: 3}
+>>>>>>>> 1257cd564e557af009fde4b9a2ffd1ae28720f8b:Assets/Packages/Full Rig/Materials/mast bits.mat
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:

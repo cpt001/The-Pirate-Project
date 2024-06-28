@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Packages/PlaceholderSoftware/MapMagic/Generators/Biomes/Runtime/Resources.meta
 guid: 4cdcb6ffe3a6bce4a88c8aae6964bee1
+========
+guid: bf17e2e61ee73da419242a9a62827711
+>>>>>>>> 1257cd564e557af009fde4b9a2ffd1ae28720f8b:Assets/Packages/PlaceholderSoftware/MapMagic/Brush/Editor/Resources.meta
 folderAsset: yes
 DefaultImporter:
   externalObjects: {}

@@ -7,7 +7,11 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
+<<<<<<<< HEAD:Assets/Scripts/AI/GOAP/SSAI/AI/Materials/Mat_AI_Eyes.mat
   m_Name: Mat_AI_Eyes
+========
+  m_Name: blue arrow
+>>>>>>>> 1257cd564e557af009fde4b9a2ffd1ae28720f8b:Assets/Packages/Full Sail/Demo/blue arrow.mat
   m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
@@ -74,6 +78,10 @@ Material:
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
+<<<<<<<< HEAD:Assets/Scripts/AI/GOAP/SSAI/AI/Materials/Mat_AI_Eyes.mat
     - _Color: {r: 0, g: 0, b: 0, a: 1}
+========
+    - _Color: {r: 0.1745283, g: 0.49510458, b: 1, a: 1}
+>>>>>>>> 1257cd564e557af009fde4b9a2ffd1ae28720f8b:Assets/Packages/Full Sail/Demo/blue arrow.mat
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
   m_BuildTextureStacks: []

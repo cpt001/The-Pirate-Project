@@ -1,6 +1,11 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Packages/PlaceholderSoftware/MapMagic/Demo/Materials/SkyBox1940.mat.meta
 guid: 01de108acfa1fb941993ffb935ac80c0
 timeCreated: 1455830355
+========
+guid: 17ad4806c8a12854cb051d066095aa73
+timeCreated: 1494951907
+>>>>>>>> 1257cd564e557af009fde4b9a2ffd1ae28720f8b:Assets/Packages/PlaceholderSoftware/MapMagic/Demo/Light/Sphere.mat.meta
 licenseType: Store
 NativeFormatImporter:
   userData: 

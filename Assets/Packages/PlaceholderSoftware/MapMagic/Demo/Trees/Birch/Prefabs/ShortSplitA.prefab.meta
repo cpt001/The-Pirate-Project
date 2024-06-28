@@ -1,7 +1,11 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Packages/PlaceholderSoftware/MapMagic/Demo/Trees/Birch/Prefabs/ShortSplitA.prefab.meta
 guid: c15d35d9c6fa3464c99f4d3d73f917b8
 timeCreated: 1505727384
 licenseType: Store
+========
+guid: bc4df44b8649e41e082a20434165148f
+>>>>>>>> 1257cd564e557af009fde4b9a2ffd1ae28720f8b:Packages/com.arongranberg.astar/Samples/A_ Pathfinding Project/5.0.3/Example scenes/Scenes/OldExamples/Example18_RTS/Prefabs/UI/WorldSpaceQueueUI.prefab.meta
 NativeFormatImporter:
   mainObjectFileID: 100100000
   userData: 
