@@ -965,7 +965,12 @@ public class MMTownSetup : MonoBehaviour
                             case ("Mineshaft"): { str.structureSpawnProbability = 0f; break; }
                             case ("Plantation"): { str.structureSpawnProbability = 0f; break; }
                             case ("Quarry"): { str.structureSpawnProbability = 0f; break; }
-                                #endregion
+                            #endregion
+                            case null:
+                                {
+                                    Debug.Log("Error with structure");
+                                    break;
+                                }
                         }
                     }
                     break;

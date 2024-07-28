@@ -14,7 +14,9 @@ public class ControllableShip : MonoBehaviour
 {
     public Crest.BoatProbes boatTarget;
     [SerializeField] private StarterAssets.ThirdPersonController playerController;
-    [SerializeField] private CinemachineBrain cameraBrain;
+    [SerializeField] private CinemachineVirtualCamera shipCam => transform.Find("ShipCameraTrack").GetComponent<CinemachineVirtualCamera>();
+    [SerializeField] private CinemachineVirtualCamera playerFollowCam => Camera.main.transform.Find("PlayerFollowCamera").GetComponent<CinemachineVirtualCamera>();
+    [SerializeField] private CinemachineTrackedDolly shipDollyCam => shipCam.GetCinemachineComponent<CinemachineTrackedDolly>();
 
     public bool anchorDropped;
     private Rigidbody _rb;
@@ -181,7 +183,41 @@ public class ControllableShip : MonoBehaviour
             //playerController.JumpHeight = 0;
             playerController.playerPositionLocked = true;
             boatTarget._playerControlled = true;
-            //cameraBrain.
+
+            playerFollowCam.Priority = 7;
+            shipCam.Priority = 10;
+            shipDollyCam.m_PathPosition += Input.GetAxis("Mouse X");
+
+            /*shipDollyCam.m_PathOffset.y = Mathf.Clamp(shipDollyCam.m_PathOffset.y, -5, 30);
+            shipDollyCam.m_PathOffset.x = Mathf.Clamp(shipDollyCam.m_PathOffset.x, -15, 0);
+            if (shipDollyCam.m_PathOffset.y == 30 && shipDollyCam.m_PathOffset.x == 0)
+            {
+                shipDollyCam.m_PathOffset.x += Input.GetAxis("Mouse Y");
+            }
+            else if (shipDollyCam.m_PathOffset.y == 30)
+            {
+                shipDollyCam.m_PathOffset.y += Input.GetAxis("Mouse Y");
+            }*/
+
+            shipDollyCam.m_PathOffset.y = Mathf.Clamp(shipDollyCam.m_PathOffset.y, -5, 30.1f);
+            shipDollyCam.m_PathOffset.x = Mathf.Clamp(shipDollyCam.m_PathOffset.x, 0, 16);
+
+            if (shipDollyCam.m_PathOffset.y <= 30 && shipDollyCam.m_PathOffset.x >= -15)
+            {
+                shipDollyCam.m_PathOffset.y += Input.GetAxis("Mouse Y");
+            }
+            else if (shipDollyCam.m_PathOffset.y >= 30.1 && shipDollyCam.m_PathOffset.x >= -15)
+            {
+                shipDollyCam.m_PathOffset.x -= Input.GetAxis("Mouse Y") / 2;
+            }
+            /*else if (shipDollyCam.m_PathOffset.y >= 30.1 && shipDollyCam.m_PathOffset.x <= -15)
+            {
+                /shipDollyCam.m_PathOffset.x += Input.GetAxis("Mouse Y") / 2;
+            }*/
+            else if (shipDollyCam.m_PathOffset.y <= 30.1 && shipDollyCam.m_PathOffset.x >= 0)
+            {
+                shipDollyCam.m_PathOffset.x += Input.GetAxis("Mouse Y") / 2;
+            }
 
             if (anchorDropped)
             {
@@ -231,6 +267,8 @@ public class ControllableShip : MonoBehaviour
             //playerController.MoveSpeed = 2.0f;
             //playerController.JumpHeight = 2.0f;
             boatTarget._playerControlled = false;
+            playerFollowCam.Priority = 10;
+            shipCam.Priority = 7;
         }
 
         ShipSailCaseUpdate();

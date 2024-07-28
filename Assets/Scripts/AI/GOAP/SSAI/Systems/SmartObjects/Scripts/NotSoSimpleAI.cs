@@ -140,23 +140,12 @@ public class NotSoSimpleAI : CommonAIBase
 
         OnNewObjectSelected.Invoke(selectedObject.LookAtPoint);
 
-        // move to the target
-        //if (ai.destination != null) { ai.destination = selectedObject.InteractionPoint; }
-        /*
-        if (!Navigation.SetDestination(selectedObject.InteractionPoint, false))
-        {
-            Debug.LogError($"Could not move to {selectedObject.name}");
-            CurrentInteraction = null;
-        }
-        else
-            Debug.Log($"Going to {CurrentInteraction.DisplayName} at {selectedObject.DisplayName}");
-        */
-
         //MA - new function should allow navigation both on ship, and on land independently
         //The object needs to be tracked in update, and the destination needs to be constantly set for this to work
         if (selectedObject.transform.root.CompareTag("Ship"))
         {
             Debug.Log("Going to... " + selectedObject);
+            //is this never being called with successive runs?
             Navigation.SetShipPathing(selectedObject.transform);
         }
         else

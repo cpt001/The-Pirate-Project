@@ -91,6 +91,7 @@ public abstract class BaseNavigation : MonoBehaviour
     //If the destination is on a ship, but the unit is on land...?
     public bool SetDestination(Vector3 newDestination, bool destinationIsOnShip)
     {
+        Debug.Log("Setting destination; bool: " + destinationIsOnShip);
         LookForPathOnShip = destinationIsOnShip;
         if (destinationIsOnShip)
         {
@@ -123,13 +124,15 @@ public abstract class BaseNavigation : MonoBehaviour
     Transform localObjectToTrack;
     public void SetShipPathing(Transform objectTarget)
     {
-        State = EState.FollowingShipPath;
+        Debug.Log("Setting ship path");
         localObjectToTrack = objectTarget;
         LookForPathOnShip = true;
+        RequestShipPath();
         //Check for arrival at destination/end of path
     }
     void ShipPathing()
     {
+        State = EState.FollowingShipPath;
         Debug.Log("Firing shippathing");
         Destination = localObjectToTrack.position;
         RequestShipPath();

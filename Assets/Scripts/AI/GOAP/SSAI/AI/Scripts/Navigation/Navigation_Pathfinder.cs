@@ -47,13 +47,14 @@ public class Navigation_Pathfinder : BaseNavigation
         //Debug.Log("Destination found, navigating to: " + Destination);  //It knows theres a new destination, but isn't trying to unlock it or update it
         if (LinkedPathfinder.reachedEndOfPath)
         {
-            Debug.Log("Destination reached, stopping");
-            StopMovement();
+            Debug.Log("EOP Condition reached");
+            //Debug.Log("Destination reached, stopping");
             OnReachedDestination();
+            StopMovement();
         }
         else
         {
-            Debug.Log("Destination not reached, navigating");
+            //Debug.Log("Destination not reached, navigating");
             LinkedPathfinder.isStopped = false;
         }
     }
@@ -122,6 +123,14 @@ public class Navigation_Pathfinder : BaseNavigation
     {
         LinkedPathfinder.isStopped = true;
     }
+    /*public IEnumerator SeekUpdatingDestination()
+    {
+        while (!LinkedPathfinder.reachedEndOfPath)
+        {
+
+        }
+        yield return null;
+    }*/
 
     public override bool FindNearestPoint(Vector3 searchPos, float range, out Vector3 foundPos)
     {

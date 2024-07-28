@@ -73,6 +73,8 @@ public class CargoSO : ScriptableObject
             //Consumer: Construction Sites, Shipwright, Drydock
         Bricks,             //Producer: Clay Pit
             //Consumer: Construction Sites
+        Gems,
+
     }
     public CargoType cargoType;
     [SerializeField] private GameObject cargoShapePrefab;   //Crate, Barrel, Chest, Parcel
