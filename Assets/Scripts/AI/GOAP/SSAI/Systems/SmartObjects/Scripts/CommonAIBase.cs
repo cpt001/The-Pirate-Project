@@ -120,10 +120,19 @@ public class CommonAIBase : MonoBehaviour
     {
         if (CurrentInteraction != null)
         {
+            //Debug.Log("Current Interaction: " + CurrentInteraction + "|| Destination reached: " + Navigation.CompletedPathOnShip + " || Performing: " + StartedPerforming);
+
             if (Navigation.IsAtDestination && !StartedPerforming)
             {
                 StartedPerforming = true;
                 CurrentInteraction.Perform(this, OnInteractionFinished);
+            }
+            else if (Navigation.CompletedPathOnShip && !StartedPerforming)
+            {
+                StartedPerforming = true;
+                Navigation.CompletedPathOnShip = false;
+                CurrentInteraction.Perform(this, OnInteractionFinished);
+                //This works now, but how do i repath the AI to the new destination?
             }
         }
 

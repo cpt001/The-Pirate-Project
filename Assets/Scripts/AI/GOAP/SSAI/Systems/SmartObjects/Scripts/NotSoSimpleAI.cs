@@ -142,25 +142,28 @@ public class NotSoSimpleAI : CommonAIBase
 
         //MA - new function should allow navigation both on ship, and on land independently
         //The object needs to be tracked in update, and the destination needs to be constantly set for this to work
-        if (selectedObject.transform.root.CompareTag("Ship"))
+
+        //The selected object tracker might be preventing the pathfinding from realizing that the transform is not the target
+        if (selectedObject != null)
         {
-            Debug.Log("Going to... " + selectedObject);
-            //is this never being called with successive runs?
-            Navigation.SetShipPathing(selectedObject.transform);
-        }
-        else
-        {
-            Debug.Log("Object stationary; not in update category");
-            if (!Navigation.SetDestination(selectedObject.InteractionPoint, false))
+            if (selectedObject.transform.root.CompareTag("Ship"))
             {
-                Debug.LogError($"Could not move to {selectedObject.name}");
-                CurrentInteraction = null;
+                Navigation.SetShipPathing(selectedObject.transform);
+                Debug.Log($"Going to {CurrentInteraction.DisplayName} at {selectedObject.DisplayName} on {selectedObject.transform.root.name}");
+                //is this never being called with successive runs?
             }
             else
-                //Debug.Log("Entered landfind condition");
-                Debug.Log($"Going to {CurrentInteraction.DisplayName} at {selectedObject.DisplayName}");
+            {
+                Debug.Log("Object stationary; not in update category");
+                if (!Navigation.SetDestination(selectedObject.InteractionPoint, false))
+                {
+                    Debug.LogError($"Could not move to {selectedObject.name}");
+                    CurrentInteraction = null;
+                }
+                else
+                    //Debug.Log("Entered landfind condition");
+                    Debug.Log($"Going to {CurrentInteraction.DisplayName} at {selectedObject.DisplayName}");
+            }
         }
-
-
     }
 }

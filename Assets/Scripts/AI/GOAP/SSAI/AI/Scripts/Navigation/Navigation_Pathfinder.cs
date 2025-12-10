@@ -44,19 +44,38 @@ public class Navigation_Pathfinder : BaseNavigation
     protected override void RequestShipPath()
     {
         LinkedPathfinder.destination = Destination;
-        //Debug.Log("Destination found, navigating to: " + Destination);  //It knows theres a new destination, but isn't trying to unlock it or update it
+        //Debug.Log("Destination: " + Destination);
+        bool atDestination = false;
+        //SetDestination(Destination, true);
+
+        if (LinkedPathfinder.reachedEndOfPath)
+        {
+            atDestination = true;
+        }
+
+        if (atDestination)
+        {
+            OnReachedDestination();
+            StopMovement();
+        }
+        #region Old Attempt
+        /*//Debug.Log("Destination found, navigating to: " + Destination);  //It knows theres a new destination, but isn't trying to unlock it or update it
         if (LinkedPathfinder.reachedEndOfPath)
         {
             Debug.Log("EOP Condition reached");
-            //Debug.Log("Destination reached, stopping");
-            OnReachedDestination();
+            //IsAtDestination(true);    //This is likely the solution, just dont know how to implement
+            OnReachedDestination();     //Is this the correct method? Is the prescribed task being performed?
             StopMovement();
+
         }
         else
         {
             //Debug.Log("Destination not reached, navigating");
             LinkedPathfinder.isStopped = false;
         }
+        */
+        //Is this stopping just because it's not requesting another path?
+        #endregion
     }
     protected override void Tick_Default()
     {
@@ -123,14 +142,6 @@ public class Navigation_Pathfinder : BaseNavigation
     {
         LinkedPathfinder.isStopped = true;
     }
-    /*public IEnumerator SeekUpdatingDestination()
-    {
-        while (!LinkedPathfinder.reachedEndOfPath)
-        {
-
-        }
-        yield return null;
-    }*/
 
     public override bool FindNearestPoint(Vector3 searchPos, float range, out Vector3 foundPos)
     {

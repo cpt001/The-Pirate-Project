@@ -27,7 +27,8 @@ public abstract class BaseNavigation : MonoBehaviour
     [SerializeField] protected Transform DEBUG_MoveTarget;
     [SerializeField] protected bool DEBUG_ShowHeading;
 
-    private bool LookForPathOnShip = false;
+    public bool LookForPathOnShip = false;
+    public bool CompletedPathOnShip = false;
 
     public Vector3 Destination { get; private set; }
     public EState State { get; private set; } = EState.Idle;
@@ -41,7 +42,7 @@ public abstract class BaseNavigation : MonoBehaviour
         {
             if (State != EState.Idle)
             {
-                Debug.Log("Not idling, not at destination");    //So it's never exiting the non-idle condition
+                //Debug.Log("Not idling, not at destination");    //So it's never exiting the non-idle condition
                 return false;
             }
             Vector3 vecToDestination = Destination - transform.position;
@@ -76,7 +77,7 @@ public abstract class BaseNavigation : MonoBehaviour
         if (LookForPathOnShip == true)
         {
             ShipPathing();
-            Debug.Log("Looking for ship path");
+            //Debug.Log("Looking for ship path");
         }
     }
 
@@ -91,12 +92,10 @@ public abstract class BaseNavigation : MonoBehaviour
     //If the destination is on a ship, but the unit is on land...?
     public bool SetDestination(Vector3 newDestination, bool destinationIsOnShip)
     {
-        Debug.Log("Setting destination; bool: " + destinationIsOnShip);
+        Debug.Log("Setting destination for " + newDestination +"; onShipBool: " + destinationIsOnShip);
         LookForPathOnShip = destinationIsOnShip;
         if (destinationIsOnShip)
         {
-            //This condition is never fired?
-            Debug.Log("Destination on ship");
             return true;    //This definitely needs to return true, or the destination isn't actually set
         }
         else
@@ -133,7 +132,7 @@ public abstract class BaseNavigation : MonoBehaviour
     void ShipPathing()
     {
         State = EState.FollowingShipPath;
-        Debug.Log("Firing shippathing");
+        //Debug.Log("Firing shippathing");
         Destination = localObjectToTrack.position;
         RequestShipPath();
     }
@@ -165,11 +164,11 @@ public abstract class BaseNavigation : MonoBehaviour
     //Need to figure out how to stop destination pathfinding. Null out destination?
     protected virtual void OnReachedDestination()
     {
-        //Without this bool, the state is fired infinitely. 
-        //
+        Debug.Log("Destination reached!");
         State = EState.Idle;
         if (LookForPathOnShip == true)
         {
+            CompletedPathOnShip = true;
             LookForPathOnShip = false;
         }
     }
