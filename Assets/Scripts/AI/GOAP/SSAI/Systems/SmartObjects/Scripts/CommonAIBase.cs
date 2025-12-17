@@ -120,19 +120,19 @@ public class CommonAIBase : MonoBehaviour
     {
         if (CurrentInteraction != null)
         {
-            //Debug.Log("Current Interaction: " + CurrentInteraction + "|| Destination reached: " + Navigation.CompletedPathOnShip + " || Performing: " + StartedPerforming);
+            Debug.Log("CAIB Current Interaction: " + CurrentInteraction + "|| Destination reached: " + Navigation.CompletedPathOnShip + " || Performing: " + StartedPerforming);
 
-            if (Navigation.IsAtDestination && !StartedPerforming)
+            if ((Navigation.IsAtDestination || Navigation.CompletedPathOnShip) && !StartedPerforming)
             {
+                //IAD is never set to false, triggering the issues
+                Debug.Log("Condition 1");
                 StartedPerforming = true;
+                if (Navigation.CompletedPathOnShip)
+                {
+                    Navigation.CompletedPathOnShip = false;
+                    Debug.Log("CPOS bool swapped to " + Navigation.CompletedPathOnShip);
+                }
                 CurrentInteraction.Perform(this, OnInteractionFinished);
-            }
-            else if (Navigation.CompletedPathOnShip && !StartedPerforming)
-            {
-                StartedPerforming = true;
-                Navigation.CompletedPathOnShip = false;
-                CurrentInteraction.Perform(this, OnInteractionFinished);
-                //This works now, but how do i repath the AI to the new destination?
             }
         }
 
@@ -161,9 +161,10 @@ public class CommonAIBase : MonoBehaviour
 
     protected virtual void OnInteractionFinished(BaseInteraction interaction)
     {
+
         interaction.UnlockInteraction(this);
         CurrentInteraction = null;
-        Debug.Log($"Finished {interaction.DisplayName}");
+        //Debug.Log($"Finished {interaction.DisplayName}");
     }
 
     public void UpdateIndividualStat(AIStat linkedStat, float amount, Trait.ETargetType targetType)

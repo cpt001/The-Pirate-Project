@@ -144,12 +144,16 @@ public class NotSoSimpleAI : CommonAIBase
         //The object needs to be tracked in update, and the destination needs to be constantly set for this to work
 
         //The selected object tracker might be preventing the pathfinding from realizing that the transform is not the target
-        if (selectedObject != null)
+        if (CurrentInteraction != null)
         {
+            //Estate probably needs to be set here
+            Debug.Log("Not nulled: " + selectedObject);
             if (selectedObject.transform.root.CompareTag("Ship"))
             {
                 Navigation.SetShipPathing(selectedObject.transform);
-                Debug.Log($"Going to {CurrentInteraction.DisplayName} at {selectedObject.DisplayName} on {selectedObject.transform.root.name}");
+                Debug.Log($"NSSI Going to {CurrentInteraction.DisplayName} at {selectedObject.DisplayName} on {selectedObject.transform.root.name}");
+
+                //Is all of this because im not setting the destination...?
                 //is this never being called with successive runs?
             }
             else
@@ -164,6 +168,10 @@ public class NotSoSimpleAI : CommonAIBase
                     //Debug.Log("Entered landfind condition");
                     Debug.Log($"Going to {CurrentInteraction.DisplayName} at {selectedObject.DisplayName}");
             }
+        }
+        else
+        {
+            Debug.Log("Object Nulled!");
         }
     }
 }

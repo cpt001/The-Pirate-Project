@@ -76,7 +76,7 @@ public abstract class BaseNavigation : MonoBehaviour
         //This bool is never set to true again
         if (LookForPathOnShip == true)
         {
-            ShipPathing();
+            UpdateShipPathing();
             //Debug.Log("Looking for ship path");
         }
     }
@@ -126,14 +126,17 @@ public abstract class BaseNavigation : MonoBehaviour
         Debug.Log("Setting ship path");
         localObjectToTrack = objectTarget;
         LookForPathOnShip = true;
+        State = EState.FollowingShipPath;
         RequestShipPath();
         //Check for arrival at destination/end of path
     }
-    void ShipPathing()
+    public void UpdateShipPathing()
     {
         State = EState.FollowingShipPath;
         //Debug.Log("Firing shippathing");
+        //Why is this destination not updating??? --12/17/25 or is it the lott?
         Destination = localObjectToTrack.position;
+        //RequestPath();
         RequestShipPath();
     }
 

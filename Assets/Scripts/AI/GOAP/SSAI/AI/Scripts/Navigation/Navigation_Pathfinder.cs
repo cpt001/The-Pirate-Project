@@ -44,10 +44,7 @@ public class Navigation_Pathfinder : BaseNavigation
     protected override void RequestShipPath()
     {
         LinkedPathfinder.destination = Destination;
-        //Debug.Log("Destination: " + Destination);
         bool atDestination = false;
-        //SetDestination(Destination, true);
-
         if (LinkedPathfinder.reachedEndOfPath)
         {
             atDestination = true;
@@ -56,26 +53,9 @@ public class Navigation_Pathfinder : BaseNavigation
         if (atDestination)
         {
             OnReachedDestination();
+            Debug.Log("Dreach firing from sea tick, destination: " + Destination);  //No new destination... why?
             StopMovement();
         }
-        #region Old Attempt
-        /*//Debug.Log("Destination found, navigating to: " + Destination);  //It knows theres a new destination, but isn't trying to unlock it or update it
-        if (LinkedPathfinder.reachedEndOfPath)
-        {
-            Debug.Log("EOP Condition reached");
-            //IsAtDestination(true);    //This is likely the solution, just dont know how to implement
-            OnReachedDestination();     //Is this the correct method? Is the prescribed task being performed?
-            StopMovement();
-
-        }
-        else
-        {
-            //Debug.Log("Destination not reached, navigating");
-            LinkedPathfinder.isStopped = false;
-        }
-        */
-        //Is this stopping just because it's not requesting another path?
-        #endregion
     }
     protected override void Tick_Default()
     {
@@ -120,6 +100,7 @@ public class Navigation_Pathfinder : BaseNavigation
 
         if (atDestination) 
         {
+            Debug.Log("Dreach firing from land tick");
             OnReachedDestination();
         }
         else
